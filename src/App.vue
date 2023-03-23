@@ -1,9 +1,11 @@
 <script setup>
 import navbar from './components/navbar.vue';
+import graph from './components/graph.vue';
 </script>
 
 <template>
   <navbar />
+  <graph />
 </template>
 
 <style scoped>
