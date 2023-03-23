@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@antv/g6": "^4.8.8",
+    "oh-vue-icons": "^1.0.0-rc3",
     "vue": "^3.2.47"
   },
   "devDependencies": {
