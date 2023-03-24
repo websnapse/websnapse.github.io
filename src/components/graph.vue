@@ -1,42 +1,25 @@
 <template>
-    <div id="mountNode">
+    <div id="mountNode" class="flex justify-center items-start">
     </div>
 </template>
 
 <script setup>
 import G6 from '@antv/g6';
 import { onMounted } from 'vue';
+import graphData from '../data.json';
 
-const data = {
-    // The array of nodes
-    nodes: [
-        {
-            id: 'node1', // String, unique and required
-            x: 100, // Number, the x coordinate
-            y: 200, // Number, the y coordinate
-        },
-        {
-            id: 'node2', // String, unique and required
-            x: 300, // Number, the x coordinate
-            y: 200, // Number, the y coordinate
-        },
-    ],
-    // The array of edges
-    edges: [
-        {
-            source: 'node1', // String, required, the id of the source node
-            target: 'node2', // String, required, the id of the target node
-        },
-    ],
-};
+const data = graphData;
 
+const vh = window.innerHeight - 40;
+const vw = window.innerWidth;
 
 const g6 = (data) => {
     // For graph instantiation, at least the mounting container, width and height need to be set for the graph
     const graph = new G6.Graph({
         container: 'mountNode', // Specify mount container
-        width: 800, // Width of graph
-        height: 500, // Height of graph
+        width: vw,
+        height: vh,
+        fitCenter: true,
         // Default node set
         defaultNode: {
             shape: "circle",
@@ -58,7 +41,11 @@ const g6 = (data) => {
             style: {
                 stroke: "#e2e2e2"
             }
-        }
+        },
+
+        modes: {
+            default: ['click-select', 'drag-canvas', 'zoom-canvas', 'drag-node', 'edge-tooltip', 'tooltip'],
+        },
     });
     // Data loading and rendering of Graphs
     graph.data(data);
