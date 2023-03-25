@@ -1,11 +1,26 @@
 <script setup>
 import navbar from './components/navbar.vue';
 import graph from './components/graph.vue';
+import { ref } from 'vue';
+
+const mode = ref('default');
+const clear = ref(false);
+
+const changeMode = (newmode) => {
+  mode.value = newmode
+};
+
+const clearAll = () => {
+  clear.value = true;
+  setTimeout(() => {
+    clear.value = false;
+  }, 100);
+};
 </script>
 
 <template>
-  <navbar />
-  <graph />
+  <navbar @changeMode="changeMode" @clear="clearAll" />
+  <graph :graph_mode="mode" :clear_all="clear" />
 </template>
 
 <style scoped>
