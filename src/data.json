@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "title": "n_1",
+      "label": "n1",
       "nodeType": "regular",
       "id": "n_1",
       "content": "a",
@@ -10,7 +10,7 @@
       "y": 100
     },
     {
-      "title": "n_2",
+      "label": "n2",
       "nodeType": "regular",
       "id": "n_2",
       "content": "a",
@@ -28,7 +28,8 @@
   "edges": [
     {
       "source": "n_1",
-      "target": "n_2"
+      "target": "n_2",
+      "label": "1"
     }
   ]
 }

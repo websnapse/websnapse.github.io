@@ -1,53 +1,72 @@
 <template>
+  <button @click="changeData">change</button>
   <div id="mountNode" class="flex justify-center items-start"></div>
 </template>
 
 <script setup>
 import G6 from '@antv/g6';
 import { onMounted, ref, watch } from 'vue';
-import { initializeGraph, createGraph } from '../utils/graph';
-
-import graphData from '../data.json';
+import { createGraph } from '../utils/g6-graph';
+import { initializeRegisters } from '../utils/g6-registers';
+import { neuron } from '../stores/neuron';
+import { system } from '../stores/system';
 
 const props = defineProps(['graph_mode', 'clear_all']);
 
-const data = graphData;
+const data = system;
 
-const formula = ref('$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}.$$');
+console.log(system);
 
 const vh = window.innerHeight - 40;
 const vw = window.innerWidth;
 
-const neurons = ref(0);
+const init = async () => {
+  await initializeRegisters(neuron);
+};
 
-initializeGraph(neurons);
+init();
 
-const g6 = (data) => {
+const changeData = () => {
+  data.value = {
+    nodes: [
+      {
+        label: 'n1',
+        nodeType: 'regular',
+        id: 'n_1',
+        content: 'a',
+        rules: ['a \\to a;0', 'a^2 \\to 0'],
+        x: 100,
+        y: 100,
+      },
+    ],
+  };
+};
+
+const status = ref(false);
+
+// setTimeout(() => {
+//   status.value = 'animate';
+// }, 1000);
+
+// setInterval(function() {
+//   status.value = 'normal';
+// }, 2000);
+
+// switch status value to animate and normal periodically
+setInterval(function () {
+  status.value = !status.value;
+}, 3000);
+
+const updateEdges = (edges) => {
+  system.value.setEdges(edges);
+  console.log(system.value.edges);
+};
+
+const g6 = (system) => {
   // For graph instantiation, at least the mounting container, width and height need to be set for the graph
-  const graph = createGraph('mountNode', vw, vh);
+  const graph = createGraph('mountNode', vw, vh, updateEdges);
 
-  graph.on('aftercreateedge', (e) => {
-    const edges = graph.save().edges;
-    G6.Util.processParallelEdges(edges);
-    graph.getEdges().forEach((edge, i) => {
-      graph.updateItem(edge, {
-        curveOffset: edges[i].curveOffset,
-        curvePosition: edges[i].curvePosition,
-      });
-    });
-  });
-
-  graph.on('click', (ev) => {
-    const shape = ev.target;
-    const item = ev.item;
-    // console.log(graph.getNodes());
-    if (item) {
-      const type = item.getType();
-      // console.log(type);
-    }
-  });
-  // Data loading and rendering of Graphs
-  graph.data(data);
+  graph.data(data.value);
   graph.render();
 
   watch(
@@ -57,6 +76,21 @@ const g6 = (data) => {
     }
   );
 
+  watch(status, (val) => {
+    // loop over nodes and change status
+    graph.getNodes().forEach((node) => {
+      graph.setItemState(node, 'animate', val);
+    });
+    graph.getEdges().forEach((edge) => {
+      graph.setItemState(edge, 'animate', val);
+    });
+  });
+
+  watch(system, (newSystem) => {
+    graph.changeData(newSystem);
+    console.log(newSystem);
+  });
+
   watch(
     () => props.clear_all,
     () => {
@@ -65,7 +99,7 @@ const g6 = (data) => {
   );
 };
 
-onMounted(() => {
+onMounted(async () => {
   g6(data);
   if (typeof window !== 'undefined')
     window.onresize = () => {

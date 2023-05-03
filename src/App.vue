@@ -1,13 +1,13 @@
 <script setup>
-import navbar from './components/navbar.vue';
-import graph from './components/graph.vue';
 import { ref } from 'vue';
+import Navbar from './components/navbar.vue';
+import Graph from './components/graph.vue';
 
 const mode = ref('default');
 const clear = ref(false);
 
 const changeMode = (newmode) => {
-  mode.value = newmode
+  mode.value = newmode;
 };
 
 const clearAll = () => {
@@ -19,8 +19,8 @@ const clearAll = () => {
 </script>
 
 <template>
-  <navbar @changeMode="changeMode" @clear="clearAll" />
-  <graph :graph_mode="mode" :clear_all="clear" />
+  <Navbar @changeMode="changeMode" @clear="clearAll" />
+  <Graph :graph_mode="mode" :clear_all="clear" />
 </template>
 
 <style scoped>

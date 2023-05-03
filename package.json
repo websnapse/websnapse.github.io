@@ -14,6 +14,7 @@
     "katex": "^0.16.7",
     "oh-vue-icons": "^1.0.0-rc3",
     "vue": "^3.2.47",
+    "vue-mathjax-next": "^0.0.4",
     "vue-plugin-load-script": "^2.1.1"
   },
   "devDependencies": {
