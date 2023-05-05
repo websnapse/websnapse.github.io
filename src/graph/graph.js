@@ -15,6 +15,9 @@ export default function createGraph(container, width, height, contextMenu) {
     layout: {
       type: 'force',
       linkDistance: 400,
+      nodeStrength: 10,
+      edgeStrength: 1,
+      collideStrength: 0.8,
       preventOverlap: true,
     },
 
@@ -43,14 +46,35 @@ export default function createGraph(container, width, height, contextMenu) {
       default: [
         'click-select',
         {
+          type: 'brush-select',
+          trigger: 'shift',
+          includeEdges: true,
+          brushStyle: {
+            lineWidth: 1,
+            stroke: '#1890ff',
+            fill: '#1890ff',
+            fillOpacity: 0.2,
+            opacity: 0.3,
+            cursor: 'crosshair',
+          },
+        },
+        {
+          type: 'shortcuts-call',
+          // subject key
+          trigger: 'ctrl',
+          // vice key
+          combinedKey: 'c',
+          // move the graph to 10,10
+          functionName: 'fitCenter',
+        },
+        {
           type: 'zoom-canvas',
           enableOptimize: true,
           optimizeZoom: 0.2,
         },
         {
           type: 'drag-canvas',
-          enableOptimize: true,
-          trigger: 'a',
+          // enableOptimize: true,
         },
         'brush-select',
         'drag-node',

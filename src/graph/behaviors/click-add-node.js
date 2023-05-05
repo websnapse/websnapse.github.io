@@ -12,15 +12,21 @@ export default function clickAddNode() {
     // The click event
     onDblClick(ev) {
       neuron.value.count += 1;
-      const node_label = neuron.value.count;
+      const node_id = neuron.value.count;
 
       const graph = this.graph;
+      const last_node = graph.getNodes()[graph.getNodes().length - 1];
+      const last_node_id = last_node.getModel().id;
+      const orig_id = last_node_id.split('-')[0];
+      // get the duplicate number of the last node
+      const duplicate = parseInt(last_node_id.split('-')[1] ?? 1) + 1;
+
+      // replace the duplicatenumber
       // Add a new node on the canvas
       const node = graph.addItem('node', {
         x: ev.x,
         y: ev.y,
-        id: G6.Util.uniqueId(), // Generate a unique id
-        label: neuron.value.label,
+        id: `${orig_id}-${duplicate}`, // Generate a unique id
         nodeType: neuron.value.nodeType,
         content: neuron.value.content,
         rules: neuron.value.rules.split('\n'),

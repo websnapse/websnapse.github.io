@@ -68,10 +68,10 @@ export default function interact(graph) {
   graph.on('wheelzoom', (e) => {
     e.stopPropagation();
     // className g6-component-tooltip by default
-    const tooltips = Array.from(
+    const menu = Array.from(
       document.getElementsByClassName('g6-component-contextmenu')
     );
-    tooltips.forEach((tooltip) => {
+    menu.forEach((tooltip) => {
       if (tooltip && tooltip.style) {
         tooltip.style.transform = `scale(${graph.getZoom()})`;
       }

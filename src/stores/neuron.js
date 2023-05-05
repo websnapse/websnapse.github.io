@@ -3,8 +3,9 @@ import { ref } from 'vue';
 export const neuron = ref({
   count: 0,
   label: null,
-  content: null,
-  rules: null,
+  content: 'a',
+  rules: 'a/a \\to a; 0',
+  nodeType: 'input',
 
   addNeuron() {
     this.count += 1;

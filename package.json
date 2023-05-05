@@ -11,7 +11,6 @@
   "dependencies": {
     "@antv/g6": "^4.8.8",
     "@headlessui/vue": "^1.7.13",
-    "katex": "^0.16.7",
     "oh-vue-icons": "^1.0.0-rc3",
     "vue": "^3.2.47",
     "vue-mathjax-next": "^0.0.4",

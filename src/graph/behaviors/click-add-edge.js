@@ -23,12 +23,20 @@ export default function clickAddEdge() {
       // If this is the first node clicked, add a edge from it
       // Otherwise, if this is the second node clicked, then we should add a edge bewteen the previous node and this node
       if (this.addingEdge && this.edge) {
-        // check if source and target already exist in edges
-
         const exist = edges.filter(
           (e) =>
             e.source === this.edge.getSource().getID() && e.target === model.id
         );
+
+        console.log(model);
+
+        // check if node type is input
+        if (model.nodeType === 'input') {
+          this.graph.removeItem(this.edge);
+          this.edge = null;
+          this.addingEdge = false;
+          return;
+        }
 
         if (this.edge.getSource() !== node) {
           graph.updateItem(this.edge, {
@@ -46,12 +54,14 @@ export default function clickAddEdge() {
         this.addingEdge = false;
       } else {
         // Add a new edge to the graph with the currently clicked node's position as the end point
-        this.edge = graph.addItem('edge', {
-          source: model.id,
-          target: point,
-          label: 1,
-        });
-        this.addingEdge = true;
+        if (model.nodeType !== 'output') {
+          this.edge = graph.addItem('edge', {
+            source: model.id,
+            target: point,
+            label: 1,
+          });
+          this.addingEdge = true;
+        }
       }
     },
 

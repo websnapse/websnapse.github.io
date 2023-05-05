@@ -64,9 +64,10 @@ export default function initalizeEdge() {
             y: startPoint.y,
             fill: primary,
             r: 8,
-            opacity: 0,
+            opacity: 1,
           },
           name: 'circle-shape',
+          visible: false,
         });
       },
       setState(name, value, item) {
@@ -77,7 +78,7 @@ export default function initalizeEdge() {
           .find((e) => e.get('name') === 'circle-shape');
 
         if (name === 'animate') {
-          circle.attr('opacity', value ? 1 : 0);
+          value ? circle.show() : circle.hide();
           shape.attr('stroke', value ? primary : black);
           shape.attr('lineWidth', value ? 5 : 2);
           // change endarrow stroke color
