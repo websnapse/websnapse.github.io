@@ -380,7 +380,8 @@ export default function initializeNode() {
           const attrs = shapes[shapeName];
           Object.keys(attrs).forEach((attr) => {
             const attr_value = shapes[shapeName][attr];
-            shapeItem.attr(attr, value ? attr_value : null);
+            const orig_value = original_style[shapeName][attr];
+            shapeItem.attr(attr, value ? attr_value : orig_value);
           });
         });
       }
