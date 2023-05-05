@@ -5,16 +5,23 @@ export const convertMath = (text) => {
   return svg;
 };
 
-export const getMathWidth = (text) => {
-  const svg = MathJax.tex2svg(text).innerHTML;
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(svg, 'image/svg+xml');
-  const svg_dom = doc.querySelector('svg');
-  const width = svg_dom.getAttribute('width');
-  const height = svg_dom.getAttribute('height');
-  const px_height = parseInt(height.slice(0, -2) * 12);
-  const px_width = parseInt(width.slice(0, -2) * 12);
-  return { dom: svg, height: px_height, width: px_width };
+export const foldString = (str) => {
+  let result = '';
+  let count = 1;
+
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === str[i + 1]) {
+      count++;
+    } else {
+      if (count > 1) {
+        result += `${str[i - 1]}^{${count}}`;
+      } else {
+        result += str[i];
+      }
+      count = 1;
+    }
+  }
+  return result;
 };
 
 export const latexToImg = (formula) => {

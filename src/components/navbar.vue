@@ -8,73 +8,82 @@
         <button
           @click="changeActiveMode('default')"
           :class="
-            mode == 'default' ? 'nav-button active' : 'nav-button inactive'
+            navbar.mode == 'default'
+              ? 'tool-button active'
+              : 'tool-button inactive'
           "
         >
-          <v-icon name="bi-cursor-fill" />
+          <v-icon name="co-cursor" flip="horizontal" />
         </button>
         <button
-          @click="changeActiveMode('add')"
-          :class="mode == 'add' ? 'nav-button active' : 'nav-button inactive'"
-        >
-          <v-icon name="bi-plus-circle" />
-        </button>
-        <button
-          @click="changeActiveMode('remove')"
+          @click="changeActiveMode('edit')"
           :class="
-            mode == 'remove' ? 'nav-button active' : 'nav-button inactive'
+            navbar.mode == 'edit'
+              ? 'tool-button active'
+              : 'tool-button inactive'
           "
         >
-          <v-icon name="bi-x-circle" />
+          <v-icon name="hi-pencil" />
         </button>
-        <button class="nav-button inactive">
-          <v-icon name="bi-arrow-counterclockwise" />
+        <button
+          @click="changeActiveMode('delete')"
+          :class="
+            navbar.mode == 'delete'
+              ? 'tool-button active'
+              : 'tool-button inactive'
+          "
+        >
+          <v-icon name="hi-minus-circle" />
         </button>
-        <button class="nav-button inactive">
-          <v-icon name="bi-arrow-clockwise" />
+        <button
+          @click="changeActiveMode('pan')"
+          :class="
+            navbar.mode == 'pan' ? 'tool-button active' : 'tool-button inactive'
+          "
+        >
+          <v-icon name="hi-hand" />
         </button>
-        <button @click="clearAll" class="nav-button inactive">
+        <button class="tool-button inactive">
+          <v-icon name="hi-reply" />
+        </button>
+        <button class="tool-button inactive">
+          <v-icon name="hi-reply" flip="horizontal" />
+        </button>
+        <button @click="clearAll" class="tool-button inactive">
           <v-icon name="bi-trash" />
         </button>
-        <button class="nav-button inactive">
+        <button class="tool-button inactive">
           <v-icon name="bi-upload" />
         </button>
-        <button class="nav-button inactive">
+        <button class="tool-button inactive">
           <v-icon name="bi-download" />
         </button>
       </div>
       <div class="flex gap-2">
-        <button
-          type="button"
-          @click="openModal"
-          class="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
+        <button type="button" @click="openModal" class="nav-button">
+          <v-icon name="hi-view-grid-add" class="mr-1" />
           Add node
         </button>
-        <button
-          type="button"
-          class="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
+        <button type="button" class="nav-button">
+          <v-icon name="hi-beaker" class="mr-1" />
           Samples
         </button>
-        <button
-          type="button"
-          class="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
+        <button type="button" class="nav-button">
+          <v-icon name="hi-upload" class="mr-1" />
           Upload
         </button>
-        <button
-          type="button"
-          class="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
+        <button type="button" class="nav-button">
+          <v-icon name="hi-download" class="mr-1" />
           Save
         </button>
-        <button
-          type="button"
-          @click="toggleDisplay"
-          class="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          Display Mode
+        <button type="button" @click="toggleDisplay" class="nav-button">
+          <v-icon
+            :name="
+              navbar.view === 'default'
+                ? 'pr-window-maximize'
+                : 'pr-window-minimize'
+            "
+          />
         </button>
       </div>
     </div>
@@ -113,12 +122,10 @@ const toggleDisplay = () => {
 
 const emit = defineEmits(['changeMode', 'clear']);
 
-const mode = ref('default');
 const clear_all = ref(false);
 
-const changeActiveMode = (new_mode) => {
-  mode.value = new_mode;
-  emit('changeMode', new_mode);
+const changeActiveMode = (newMode) => {
+  navbar.value.mode = newMode;
 };
 
 const clearAll = () => {

@@ -1,5 +1,5 @@
 import G6 from '@antv/g6';
-import { latexToImg } from '../utils/mathjax';
+import { foldString, latexToImg } from '../utils/math';
 import {
   black,
   primary,
@@ -17,11 +17,14 @@ const drawNeuron = (cfg, group) => {
 
   if (cfg.nodeType === 'regular') {
     render = [cfg.content, ...cfg.rules].map((key) => {
+      if (key === 'cfg.content') {
+        return latexToImg(foldString(key));
+      }
       return latexToImg(key);
     });
   } else {
     render = [cfg.content].map((key) => {
-      return latexToImg(key);
+      return latexToImg(foldString(key));
     });
   }
 
@@ -32,18 +35,20 @@ const drawNeuron = (cfg, group) => {
   );
 
   // set neuron size to mw, mh
-  cfg.size = [2 * p + mw, 2 * p + mh];
+  const node_width = 2 * p + mw;
+  const node_height = 2 * p + mh;
+  cfg.size = [node_width, node_height];
 
-  const start_x = -(2 * p + mw) / 2;
-  const start_y = -(2 * p + mh) / 2;
+  const start_x = -node_width / 2;
+  const start_y = -node_height / 2;
 
   const shape = group.addShape('rect', {
     attrs: {
       x: start_x,
       y: start_y,
-      width: 2 * p + mw,
-      height: 2 * p + mh,
-      stroke: '#0d0e0e',
+      width: node_width,
+      height: node_height,
+      stroke: black,
       lineWidth: lineInactive,
       shadowColor: primary,
       shadowBlur: 0,
@@ -60,9 +65,9 @@ const drawNeuron = (cfg, group) => {
       attrs: {
         x: start_x - 5,
         y: start_y - 5,
-        width: 2 * p + mw + 10,
-        height: 2 * p + mh + 10,
-        stroke: '#0d0e0e',
+        width: node_width + 10,
+        height: node_height + 10,
+        stroke: black,
         lineWidth: lineInactive,
         shadowColor: primary,
         shadowBlur: 0,
@@ -79,12 +84,12 @@ const drawNeuron = (cfg, group) => {
     group.addShape('polygon', {
       attrs: {
         points: [
-          [start_x + (2 * p + mw) / 2, start_y - 2],
-          [start_x + (2 * p + mw) / 2 + 10, start_y - 15],
-          [start_x + (2 * p + mw) / 2 - 10, start_y - 15],
+          [start_x + node_width / 2, start_y - 2],
+          [start_x + node_width / 2 + 10, start_y - 15],
+          [start_x + node_width / 2 - 10, start_y - 15],
         ],
         fill: '#fff',
-        stroke: '#0d0e0e',
+        stroke: black,
         lineWidth: lineInactive,
       },
       name: 'input-indicator',
@@ -97,8 +102,8 @@ const drawNeuron = (cfg, group) => {
     attrs: {
       x: start_x,
       y: start_y,
-      width: 2 * p + mw,
-      height: 2 * p + mh,
+      width: node_width,
+      height: node_height,
       radius: r,
       fill: primary,
       opacity: 0.6,
@@ -113,8 +118,8 @@ const drawNeuron = (cfg, group) => {
     attrs: {
       x: start_x,
       y: start_y,
-      width: 2 * p + mw,
-      height: 2 * p + mh,
+      width: node_width,
+      height: node_height,
       radius: r,
       fill: primary,
       opacity: 0.6,
@@ -129,8 +134,8 @@ const drawNeuron = (cfg, group) => {
   //   {
   //     x: start_x - 10,
   //     y: start_y - 10,
-  //     width: 2 * p + mw + 20,
-  //     height: 2 * p + mh + 20,
+  //     width: node_width + 20,
+  //     height: node_height + 20,
   //     opacity: 0,
   //   },
   //   {
@@ -145,8 +150,8 @@ const drawNeuron = (cfg, group) => {
   //   {
   //     x: start_x - 10,
   //     y: start_y - 10,
-  //     width: 2 * p + mw + 20,
-  //     height: 2 * p + mh + 20,
+  //     width: node_width + 20,
+  //     height: node_height + 20,
   //     opacity: 0,
   //   },
   //   {
@@ -159,10 +164,7 @@ const drawNeuron = (cfg, group) => {
 
   const content = group.addShape('image', {
     attrs: {
-      y:
-        cfg.nodeType === 'regular'
-          ? start_y + p
-          : start_y + (mh + render[0].height + p) / 2,
+      y: cfg.nodeType === 'regular' ? start_y + p : -render[0].height / 2,
       x: start_x + (p + mw / 2 - render[0].width / 2),
       width: render[0].width,
       height: render[0].height,
@@ -181,13 +183,13 @@ const drawNeuron = (cfg, group) => {
           width: render[1 + index].width,
           height: render[1 + index].height,
           y:
-            -(2 * p + mh) / 2 +
+            -node_height / 2 +
             p +
             m +
             render
               .slice(0, 1 + index)
               .reduce((acc, item) => acc + item.height, 0),
-          x: -(2 * p + mw) / 2 + p + mw / 2 - render[1 + index].width / 2,
+          x: -node_width / 2 + p + mw / 2 - render[1 + index].width / 2,
           img: render[1 + index].dom,
         },
         name: `rule-${index}`,
@@ -238,7 +240,7 @@ export default function initializeNode() {
     options: {
       labelCfg: {
         style: {
-          fill: '#000',
+          fill: black,
           fontSize: 20,
           fontFamily: 'Cambria Math',
         },
@@ -253,14 +255,14 @@ export default function initializeNode() {
           neuron: {
             shadowBlur: 10,
             lineWidth: lineActive,
-            stroke: '#08415c',
+            stroke: primary,
           },
         },
         default: {
           neuron: {
             shadowBlur: 0,
             lineWidth: lineInactive,
-            stroke: '#0d0e0e',
+            stroke: black,
           },
         },
       },
@@ -270,6 +272,7 @@ export default function initializeNode() {
     },
     setState(name, value, item) {
       const shape = item.get('keyShape');
+      const { nodeType, duration } = item.getModel();
       const rules = item.getContainer().findAll((ele) => {
         return ele.get('name')?.includes('rule');
       });
@@ -283,18 +286,14 @@ export default function initializeNode() {
       const original_style = item._cfg.originStyle;
 
       if (name === 'simple') {
-        // get content width
-        const content_width = content.getBBox().width;
-        const content_height = content.getBBox().height;
-        // get original style of contnet
-        const original_style = item.getStateStyle('default');
+        content.attr('x', value ? -content.attr('width') / 2 : -60);
+        content.attr('y', value ? -content.attr('height') / 2 : -60);
 
-        // recenter the content
-        content.attr('x', value ? -content_width / 2 : -60);
-        content.attr('y', value ? -content_height / 2 : -60);
         shape.attr(
           'width',
-          value ? Math.max(p + content_width + p, min_height) : 2 * 20 + 100
+          value
+            ? Math.max(p + content.attr('width') + p, min_height)
+            : 2 * 20 + 100
         );
         shape.attr('height', value ? min_height : 2 * 20 + 100);
         shape.attr('radius', value ? r / 2 : r);
@@ -302,6 +301,42 @@ export default function initializeNode() {
         // recenter the shape
         shape.attr('x', -shape.attr('width') / 2);
         shape.attr('y', -shape.attr('height') / 2);
+
+        if (nodeType === 'input') {
+          const indicator = item.getContainer().find((ele) => {
+            return ele.get('name') === 'input-indicator';
+          });
+          indicator.attr(
+            'points',
+            value
+              ? [
+                  [
+                    shape.attr('x') + shape.attr('width') / 2,
+                    shape.attr('y') - 2,
+                  ],
+                  [
+                    shape.attr('x') + shape.attr('width') / 2 + 10,
+                    shape.attr('y') - 15,
+                  ],
+                  [
+                    shape.attr('x') + shape.attr('width') / 2 - 10,
+                    shape.attr('y') - 15,
+                  ],
+                ]
+              : []
+          );
+        }
+
+        if (nodeType === 'output') {
+          const indicator = item.getContainer().find((ele) => {
+            return ele.get('name') === 'output-indicator';
+          });
+          indicator.attr('radius', value ? r / 2 + 5 : r + 5);
+          indicator.attr('x', shape.attr('x') - 5);
+          indicator.attr('y', shape.attr('y') - 5);
+          indicator.attr('width', shape.attr('width') + 10);
+          indicator.attr('height', shape.attr('height') + 10);
+        }
 
         // recenter the label
         const label = item.getContainer().find((ele) => {
@@ -334,14 +369,17 @@ export default function initializeNode() {
               opacity: 0,
             },
             {
-              duration: 1500,
+              duration: duration / 5 ?? 3000,
               easing: 'easePolyInOut',
               delay: index * 500,
               repeat: true,
             }
           );
-          anim.stopAnimate();
-          anim.hide();
+          if (item.hasState('animate')) {
+            anim.show();
+          } else {
+            anim.hide();
+          }
         });
       }
       if (name === 'animate') {
@@ -360,9 +398,9 @@ export default function initializeNode() {
                   opacity: 0,
                 },
                 {
-                  duration: 1500,
+                  duration: duration / 5 ?? 3000,
                   easing: 'easePolyInOut',
-                  delay: index * 500,
+                  delay: (index * duration) / 5,
                   repeat: true,
                 }
               )
@@ -371,6 +409,8 @@ export default function initializeNode() {
         });
       } else if (!['animate', 'simple'].includes(name)) {
         const shapes = item.getStateStyle(name);
+
+        if (!shapes) return;
 
         Object.keys(shapes)?.forEach((shapeName) => {
           const shapeItem = item

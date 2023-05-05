@@ -19,8 +19,10 @@ const clearAll = () => {
 </script>
 
 <template>
-  <Navbar @changeMode="changeMode" @clear="clearAll" />
-  <Graph :graph_mode="mode" :clear_all="clear" />
+  <main class="flex flex-col h-screen">
+    <Navbar @changeMode="changeMode" @clear="clearAll" />
+    <Graph :graph_mode="mode" :clear_all="clear" />
+  </main>
 </template>
 
 <style scoped>

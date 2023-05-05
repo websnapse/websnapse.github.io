@@ -41,10 +41,14 @@ export default function interact(graph) {
 
   graph.on('canvas:click', (evt) => {
     graph.getNodes().forEach((node) => {
-      node.setState('selected', false);
+      if (node.hasState('selected')) {
+        node.setState('selected', false);
+      }
     });
     graph.getEdges().forEach((edge) => {
-      edge.setState('selected', false);
+      if (edge.hasState('selected')) {
+        edge.setState('selected', false);
+      }
     });
   });
 
@@ -73,6 +77,7 @@ export default function interact(graph) {
     );
     menu.forEach((tooltip) => {
       if (tooltip && tooltip.style) {
+        tooltip.style.transformOrigin = '0 0';
         tooltip.style.transform = `scale(${graph.getZoom()})`;
       }
     });

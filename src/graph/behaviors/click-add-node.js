@@ -16,17 +16,19 @@ export default function clickAddNode() {
 
       const graph = this.graph;
       const last_node = graph.getNodes()[graph.getNodes().length - 1];
-      const last_node_id = last_node.getModel().id;
-      const orig_id = last_node_id.split('-')[0];
+      const last_node_id = last_node?.getModel()?.id;
+      const orig_id = last_node_id?.split('-')[0] || 'n1';
       // get the duplicate number of the last node
-      const duplicate = parseInt(last_node_id.split('-')[1] ?? 1) + 1;
+      const duplicate = last_node_id
+        ? '-' + Number(parseInt(last_node_id?.split('-')[1] ?? 1) + 1)
+        : '';
 
       // replace the duplicatenumber
       // Add a new node on the canvas
       const node = graph.addItem('node', {
         x: ev.x,
         y: ev.y,
-        id: `${orig_id}-${duplicate}`, // Generate a unique id
+        id: `${orig_id}${duplicate}`, // Generate a unique id
         nodeType: neuron.value.nodeType,
         content: neuron.value.content,
         rules: neuron.value.rules.split('\n'),

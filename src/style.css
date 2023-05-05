@@ -8,15 +8,19 @@ body {
 }
 
 .nav-button {
-  @apply py-2 px-3;
+  @apply flex items-center shadow-md rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75;
+}
+
+.tool-button {
+  @apply rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-opacity-70;
 }
 
 .nav-button.inactive {
   @apply bg-gray-200 hover:bg-gray-300;
 }
 
-.nav-button.active {
-  @apply bg-gray-400;
+.active {
+  @apply bg-primary text-white;
 }
 
 canvas {

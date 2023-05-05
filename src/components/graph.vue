@@ -1,19 +1,59 @@
 <template>
-  <TransitionRoot appear :show="ruleDialogOpen" as="template">
-    <RuleDialog
-      :isOpen="ruleDialogOpen"
-      :closeModal="closeRuleDialog"
-      :details="neuronDetails"
-    />
-  </TransitionRoot>
-  <TransitionRoot appear :show="weightDialogOpen" as="template">
-    <WeightDialog
-      :isOpen="weightDialogOpen"
-      :closeModal="closeWeightDialog"
-      :details="edgeDetails"
-    />
-  </TransitionRoot>
-  <div id="mountNode" class="flex justify-center items-start"></div>
+  <div class="flex flex-col flex-1">
+    <TransitionRoot appear :show="ruleDialogOpen" as="template">
+      <RuleDialog
+        :isOpen="ruleDialogOpen"
+        :closeModal="closeRuleDialog"
+        :details="neuronDetails"
+      />
+    </TransitionRoot>
+    <TransitionRoot appear :show="weightDialogOpen" as="template">
+      <WeightDialog
+        :isOpen="weightDialogOpen"
+        :closeModal="closeWeightDialog"
+        :details="edgeDetails"
+      />
+    </TransitionRoot>
+    <div
+      id="mountNode"
+      class="flex flex-1 justify-center items-start"
+      @keydown="(e) => console.log(e)"
+    ></div>
+    <div
+      id="simulationControls"
+      class="flex flex-col items-center w-full justify-center py-8 absolute bottom-0 bg-white/40 backdrop-blur-sm"
+    >
+      <div class="flex gap-1 items-center">
+        <v-icon name="bi-shuffle" class="mr-2" />
+        <v-icon name="bi-skip-start" scale="1.5" />
+        <button
+          class="rounded-full p-1 bg-primary text-white"
+          @click="() => (navbar.running = !navbar.running)"
+        >
+          <v-icon name="bi-play-fill" scale="2" class="translate-x-[0.1rem]" />
+        </button>
+        <v-icon name="bi-skip-end" scale="1.5" />
+        <v-icon name="bi-arrow-repeat" class="ml-2" />
+      </div>
+      <div>
+        <label
+          for="default-range"
+          class="block text-sm font-medium text-gray-900 dark:text-white"
+        >
+          Default range
+        </label>
+        <input
+          id="default-range"
+          type="range"
+          min="500"
+          max="3500"
+          step="500"
+          v-model="duration"
+          class="w-full h-2 bg-primary/30 rounded-lg appearance-none cursor-pointer"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -28,6 +68,7 @@ import { system } from '../stores/system';
 import { navbar } from '../stores/navbar';
 import RuleDialog from './ruledialog.vue';
 import WeightDialog from './weightdialog.vue';
+import { clone } from '@antv/util';
 
 const props = defineProps(['graph_mode', 'clear_all']);
 
@@ -55,8 +96,8 @@ const closeWeightDialog = () => {
 
 const data = system;
 
-const vh = window.innerHeight - 40;
-const vw = window.innerWidth;
+// const vh = window.innerHeight - 40;
+// const vw = window.innerWidth;
 
 const changeData = () => {
   data.value = {
@@ -106,16 +147,11 @@ const switchStatus = (i) => {
     status.value[neurons.value[i]].value === 'default' ? 'animate' : 'default';
 };
 
-let i = 0;
-// setInterval(() => {
-//   i += 1;
-//   status.value = status_list.value[i % 5];
-// }, 3000);
+const duration = ref(2000);
 
-// switch status value to animate and normal periodically
-// setInterval(function () {
-//   status.value = !status.value;
-// }, 3000);
+const switchState = (i) => {
+  status.value = status_list.value[i];
+};
 
 const mouse = ref({ x: 0, y: 0 });
 
@@ -143,17 +179,14 @@ const updateEdge = (item) => {
   });
 };
 
-let graph;
-
-const g6 = async (system) => {
-  await initializeRegisters(neuron);
+const initializeGraph = (system, vh, vw) => {
+  initializeRegisters(neuron);
 
   const contextMenu = new G6.Menu({
     getContent(evt) {
       let content;
-      const position = { x: evt.clientX, y: evt.clientY };
+      const position = { x: evt.canvasX, y: evt.canvasY };
       mouse.value = position;
-      console.log(position);
       if (evt.target && evt.target.isCanvas && evt.target.isCanvas()) {
         content = [
           { img: '/node.svg', text: 'New Node' },
@@ -225,10 +258,33 @@ const g6 = async (system) => {
           graph.fitView();
           break;
         case 'Save':
-          const system = graph.save().edges;
+          const system_edges = graph.save().edges;
+          const system_nodes = graph.save().nodes;
+          const parsed_nodes = system_nodes.map((node) => {
+            return {
+              id: node.id,
+              content: node.content,
+              rules: node.rules,
+              x: node.x,
+              y: node.y,
+            };
+          });
+          const parsed_edges = system_edges.map((edge) => {
+            return {
+              source: edge.source,
+              target: edge.target,
+              label: edge.label,
+            };
+          });
+
+          const parsed_system = {
+            nodes: parsed_nodes,
+            edges: parsed_edges,
+          };
+
           // download the json file
           const a = document.createElement('a');
-          const file = new Blob([JSON.stringify(system)], {
+          const file = new Blob([JSON.stringify(parsed_system)], {
             type: 'text/plain',
           });
           a.href = URL.createObjectURL(file);
@@ -247,7 +303,6 @@ const g6 = async (system) => {
         case 'Edit content':
           // get item config
           const content = model.content.split('^');
-          console.log(content);
           model.content =
             content[0] + '^{' + String(Number(content[1] ?? 1) + 1) + '}';
           item.update(model);
@@ -285,7 +340,7 @@ const g6 = async (system) => {
     itemTypes: ['node', 'edge', 'canvas'],
   });
 
-  graph = createGraph('mountNode', vw, vh, contextMenu);
+  const graph = createGraph('mountNode', vw, vh, contextMenu);
 
   graph.on('rules:dblclick', async function (evt) {
     const { item } = evt;
@@ -305,11 +360,318 @@ const g6 = async (system) => {
     item.update(model);
   });
 
+  // after node is added to the graph, set its state to whatever the value of navbar view is
+  graph.on('afteradditem', (evt) => {
+    const { item } = evt;
+    // check if item is a node
+    if (item.getType() === 'node') {
+      item.setState('simple', navbar.value.view !== 'simple');
+      item.refresh();
+    }
+  });
+
+  return graph;
+};
+
+onMounted(async () => {
+  const vh = document.getElementById('mountNode').offsetHeight;
+  const vw = document.getElementById('mountNode').offsetWidth;
+  const graph = initializeGraph(data, vh, vw);
+
   graph.data(data.value);
   graph.render();
 
+  const handleKeyup = (evt) => {
+    const { key } = evt;
+
+    if (key === 'Delete') {
+      graph.getNodes().forEach((node) => {
+        if (node.hasState('selected')) {
+          graph.removeItem(node);
+        }
+      });
+      graph.getEdges().forEach((edge) => {
+        if (edge.hasState('selected')) {
+          graph.removeItem(edge);
+        }
+      });
+    }
+
+    if (key === 'v') {
+      navbar.value.mode = 'default';
+    }
+    if (key === 'h') {
+      navbar.value.mode = 'default';
+    }
+    if (key === 'e') {
+      navbar.value.mode = 'edit';
+    }
+    if (key === 'd') {
+      navbar.value.mode = 'delete';
+    }
+    if (key === 'Control') {
+      navbar.value.mode = 'default';
+    }
+  };
+
+  const undo = () => {
+    const undoStack = graph.getUndoStack();
+    if (!undoStack || undoStack.length === 0) {
+      return;
+    }
+
+    const currentData = undoStack.pop();
+    console.log(currentData);
+    if (currentData) {
+      const { action } = currentData;
+      graph.pushStack(action, clone(currentData.data), 'redo');
+      let data = currentData.data.before;
+
+      if (action === 'add') {
+        data = currentData.data.after;
+      }
+
+      switch (action) {
+        case 'visible': {
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              const item = graph.findById(model.id);
+              if (model.visible) {
+                graph.showItem(item, false);
+              } else {
+                graph.hideItem(item, false);
+              }
+            });
+          });
+          break;
+        }
+        case 'render':
+        case 'update':
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              const item = graph.findById(model.id);
+              delete model.id;
+              graph.updateItem(item, model, false);
+              if (item.getType() === 'combo') graph.updateCombo(item);
+            });
+          });
+          break;
+        case 'changedata':
+          graph.changeData(data, false);
+          break;
+        case 'delete': {
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              const itemType = model.itemType;
+              delete model.itemType;
+              graph.addItem(itemType, model, false);
+            });
+          });
+          break;
+        }
+        case 'add':
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              graph.removeItem(model.id, false);
+            });
+          });
+          break;
+        case 'updateComboTree':
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              graph.updateComboTree(model.id, model.parentId, false);
+            });
+          });
+          break;
+        case 'createCombo':
+          const afterCombos = currentData.data.after.combos;
+          const createdCombo = afterCombos[afterCombos.length - 1];
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              graph.updateComboTree(model.id, model.parentId, false);
+            });
+          });
+          graph.removeItem(createdCombo.id, false);
+          break;
+        case 'uncombo':
+          const targetCombo = data.combos[data.combos.length - 1];
+          const childrenIds = data.nodes
+            .concat(data.combos)
+            .map((child) => child.id)
+            .filter((id) => id !== targetCombo.id);
+          graph.createCombo(targetCombo, childrenIds, false);
+          break;
+        case 'layout':
+          graph.updateLayout(data, undefined, undefined, false);
+          break;
+        default:
+      }
+      graph.refresh();
+    }
+  };
+
+  const redo = () => {
+    const redoStack = graph.getRedoStack();
+
+    if (!redoStack || redoStack.length === 0) {
+      return;
+    }
+
+    const currentData = redoStack.pop();
+    if (currentData) {
+      const { action } = currentData;
+      let data = currentData.data.after;
+      graph.pushStack(action, clone(currentData.data));
+      if (action === 'delete') {
+        data = currentData.data.before;
+      }
+
+      if (!data) return;
+
+      switch (action) {
+        case 'visible': {
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              const item = graph.findById(model.id);
+              if (model.visible) {
+                graph.showItem(item, false);
+              } else {
+                graph.hideItem(item, false);
+              }
+            });
+          });
+          break;
+        }
+        case 'render':
+        case 'update':
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              const item = graph.findById(model.id);
+              delete model.id;
+              graph.updateItem(item, model, false);
+              if (item.getType() === 'combo') graph.updateCombo(item);
+            });
+          });
+          break;
+        case 'changedata':
+          graph.changeData(data, false);
+          break;
+        case 'delete':
+          if (data.edges) {
+            data.edges.forEach((model) => {
+              graph.removeItem(model.id, false);
+            });
+          }
+          if (data.nodes) {
+            data.nodes.forEach((model) => {
+              graph.removeItem(model.id, false);
+            });
+          }
+          if (data.combos) {
+            data.combos.forEach((model) => {
+              graph.removeItem(model.id, false);
+            });
+          }
+          break;
+        case 'add': {
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              const itemType = model.itemType;
+              delete model.itemType;
+              graph.addItem(itemType, model, false);
+            });
+          });
+          break;
+        }
+        case 'updateComboTree':
+          Object.keys(data).forEach((key) => {
+            const array = data[key];
+            if (!array) return;
+            array.forEach((model) => {
+              graph.updateComboTree(model.id, model.parentId, false);
+            });
+          });
+          break;
+        case 'createCombo':
+          const createdCombo = data.combos[data.combos.length - 1];
+          graph.createCombo(
+            createdCombo,
+            createdCombo.children.map((child) => child.id),
+            false
+          );
+          break;
+        case 'uncombo':
+          const beforeCombos = currentData.data.before.combos;
+          const targertCombo = beforeCombos[beforeCombos.length - 1];
+          graph.uncombo(targertCombo.id, false);
+          break;
+        case 'layout':
+          graph.updateLayout(data, undefined, undefined, false);
+          break;
+        default:
+      }
+    }
+  };
+
+  const handleKeydown = (evt) => {
+    const { key } = evt;
+    if (key === 'h') {
+      navbar.value.mode = 'pan';
+    }
+
+    if (key === 'Control') {
+      navbar.value.mode = 'addEdge';
+    }
+
+    if (evt.ctrlKey && evt.key === 'z') {
+      undo();
+    }
+
+    if (evt.ctrlKey && evt.shiftKey && evt.key === 'Z') {
+      redo();
+    }
+  };
+
+  const handleMousedown = (evt) => {
+    // check if middle mouse button is pressed
+    if (evt.button === 1) {
+      navbar.value.mode = 'pan';
+      // move the graph to the mouse position
+      graph.translate(mouse.value.x, mouse.value.y);
+    }
+  };
+
+  const handleMouseup = (evt) => {
+    if (evt.button === 1) {
+      navbar.value.mode = 'default';
+    }
+  };
+
+  window.addEventListener('keyup', handleKeyup);
+  window.addEventListener('keydown', handleKeydown);
+  window.addEventListener('mousedown', handleMousedown);
+  window.addEventListener('mouseup', handleMouseup);
+
   watch(
-    () => props.graph_mode,
+    () => navbar.value.mode,
     (val) => {
       graph.setMode(val);
     }
@@ -349,7 +711,6 @@ const g6 = async (system) => {
     }
   );
 
-  // watch navbar view
   watch(
     () => navbar.value.view,
     (newView) => {
@@ -361,9 +722,56 @@ const g6 = async (system) => {
       });
     }
   );
-};
 
-onMounted(async () => {
-  g6(data);
+  watch(
+    duration,
+    (newDuration) => {
+      // get graph items
+      const nodes = graph.getNodes();
+      const edges = graph.getEdges();
+
+      // set the duration of each node and edge
+      nodes.forEach((node) => {
+        const model = node.getModel();
+        model.duration = newDuration;
+        node.update(model);
+      });
+      edges.forEach((edge) => {
+        const model = edge.getModel();
+        model.duration = newDuration;
+        edge.update(model);
+      });
+    },
+    { immediate: true }
+  );
+
+  watch(
+    () => navbar.value.running,
+    (isRunning) => {
+      let i = 0;
+      let run = setInterval(request, duration.value);
+      function request() {
+        console.log(duration);
+        clearInterval(run);
+        status.value = status_list.value[i % 5];
+        i++;
+
+        run = setInterval(request, duration.value);
+      }
+      if (isRunning) {
+      } else {
+        // stop the interval
+        clearInterval(run);
+      }
+    }
+  );
+
+  // if the width and height of mountNode changes, update width and height of graph
+  const resizeObserver = new ResizeObserver((entries) => {
+    const { width, height } = entries[0].contentRect;
+    graph.changeSize(width, height);
+  });
+
+  resizeObserver.observe(document.getElementById('mountNode'));
 });
 </script>

@@ -21,15 +21,10 @@ export default function createGraph(container, width, height, contextMenu) {
       preventOverlap: true,
     },
 
+    enabledStack: true,
+
     defaultNode: {
       type: 'neuron',
-
-      // anchorPoints: [
-      //   [0, 0.5],
-      //   [0.5, 0],
-      //   [1, 0.5],
-      //   [0.5, 1],
-      // ],
     },
 
     defaultEdge: {
@@ -47,7 +42,7 @@ export default function createGraph(container, width, height, contextMenu) {
         'click-select',
         {
           type: 'brush-select',
-          trigger: 'shift',
+          trigger: 'drag',
           includeEdges: true,
           brushStyle: {
             lineWidth: 1,
@@ -72,31 +67,17 @@ export default function createGraph(container, width, height, contextMenu) {
           enableOptimize: true,
           optimizeZoom: 0.2,
         },
-        {
-          type: 'drag-canvas',
-          // enableOptimize: true,
-        },
-        'brush-select',
-        'drag-node',
-        // 'tooltip',
-        'click-add-node',
-        'click-add-edge',
-        // {
-        //   type: 'create-edge',
-        //   trigger: 'click',
-        // },
-      ],
-
-      add: [
-        'click-select',
-        // 'drag-canvas',
-        'zoom-canvas',
         'drag-node',
         'click-add-node',
-        'tooltip',
       ],
 
-      remove: ['click-select', 'remove-node', 'tooltip'],
+      edit: ['click-add-node', 'drag-add-edge'],
+
+      addEdge: ['drag-add-edge'],
+
+      pan: ['drag-canvas', 'zoom-canvas'],
+
+      delete: ['click-select', 'remove-node'],
     },
   });
 

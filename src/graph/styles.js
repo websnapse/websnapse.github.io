@@ -1,5 +1,5 @@
 export const black = '#0d0e0e';
-export const primary = '#08415c';
+export const primary = '#9B7AA0';
 export const lineDash = [4, 2, 1, 2];
 export const r = 50;
 export const m = 20;

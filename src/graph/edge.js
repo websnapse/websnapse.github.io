@@ -18,7 +18,8 @@ export default function initalizeEdge() {
             endArrow: {
               path: 'M 0,0 L 20,4 L 20,-4 Z',
               d: 5,
-              stroke: '#00000000',
+              stroke: black,
+              strokeOpacity: 0,
               fill: black,
             },
           },
@@ -28,7 +29,8 @@ export default function initalizeEdge() {
             endArrow: {
               path: 'M 0,0 L 23,4 L 23,-4 Z',
               d: 5,
-              stroke: '#00000000',
+              stroke: primary,
+              strokeOpacity: 0,
               fill: primary,
             },
           },
@@ -50,8 +52,7 @@ export default function initalizeEdge() {
           endArrow: {
             path: 'M 0,0 L 20,4 L 20,-4 Z',
             d: 5,
-            stroke: '#00000000',
-            fill: '#000',
+            fill: black,
           },
         },
       },
@@ -72,6 +73,7 @@ export default function initalizeEdge() {
       },
       setState(name, value, item) {
         const shape = item.get('keyShape');
+        const model = item.getModel();
 
         const circle = item
           .get('group')
@@ -85,8 +87,8 @@ export default function initalizeEdge() {
           shape.attr('endArrow', {
             path: 'M 0,0 L 20,4 L 20,-4 Z',
             d: 5,
-            stroke: '#00000000',
             fill: value ? primary : black,
+            strokeOpacity: 0,
           });
 
           if (value) {
@@ -94,19 +96,19 @@ export default function initalizeEdge() {
             shape.animate(
               () => {
                 index++;
-                if (index > 9) {
+                if (index > 5) {
                   index = 0;
                 }
                 const res = {
                   lineDash,
-                  lineDashOffset: -index,
+                  lineDashOffset: index,
                 };
                 // return the params for this frame
                 return res;
               },
               {
                 repeat: true,
-                duration: 3000,
+                duration: model.duration ?? 3000,
               }
             );
             circle.animate(
@@ -121,7 +123,7 @@ export default function initalizeEdge() {
                 };
               },
               {
-                duration: 3000, // the duration for executing once
+                duration: model.duration ?? 3000, // the duration for executing once
               }
             );
           } else {
