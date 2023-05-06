@@ -1,27 +1,43 @@
 import G6 from '@antv/g6';
 import interact from './interactions';
+import initializeContextMenu from './contextMenu';
 
-export default function createGraph(container, width, height, contextMenu) {
+export default function createGraph(container, width, height) {
   const grid = new G6.Grid();
 
   const graph = new G6.Graph({
     container: container, // Specify mount container
-    plugins: [grid, contextMenu], // Configure Grid and Minimap to the graph
+    plugins: [grid], // Configure Grid and Minimap to the graph
     width: width,
     height: height,
     fitCenter: true,
+    fitViewPadding: [100, 0, 230, 0],
     linkCenter: false,
-    pixelRatio: 2,
+    pixelRatio: 0.5,
+    optimizeThreshold: 5,
     layout: {
       type: 'force',
-      linkDistance: 400,
+      onLayoutEnd: (graph) => {
+        console.log('force layout done');
+      },
+      linkDistance: (d) => {
+        return Math.max(400 / parseInt(d.label), 200);
+      },
       nodeStrength: 10,
-      edgeStrength: 1,
-      collideStrength: 0.8,
+      edgeStrength: (d) => {
+        return Math.min(parseInt(d.label), 10);
+      },
+      collideStrength: 1,
+      damping: 0.01,
+      nodeSpacing: 50,
+      minMovement: 0.01,
+      maxIteration: 100,
       preventOverlap: true,
     },
 
     enabledStack: true,
+
+    maxStep: 20,
 
     defaultNode: {
       type: 'neuron',
@@ -29,12 +45,6 @@ export default function createGraph(container, width, height, contextMenu) {
 
     defaultEdge: {
       type: 'circle-running',
-    },
-
-    animate: true,
-    animateCfg: {
-      duration: 100,
-      easing: 'easeCubic',
     },
 
     modes: {
@@ -80,6 +90,12 @@ export default function createGraph(container, width, height, contextMenu) {
       delete: ['click-select', 'remove-node'],
     },
   });
+
+  const contextMenu = initializeContextMenu(graph);
+
+  graph.addPlugin(contextMenu);
+
+  console.log(graph);
 
   interact(graph);
 

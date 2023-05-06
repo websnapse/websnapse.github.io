@@ -10,13 +10,11 @@ export default function interact(graph) {
   graph.on('node:mouseenter', (evt) => {
     const { item } = evt;
     item.setState('hover', true);
-    item.setState('animate', true);
   });
 
   graph.on('node:mouseleave', (evt) => {
     const { item } = evt;
     item.clearStates('hover');
-    item.clearStates('animate');
   });
 
   graph.on('edge:mouseenter', (evt) => {

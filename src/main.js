@@ -9,6 +9,8 @@ import * as HiIcons from 'oh-vue-icons/icons/hi';
 import * as CoIcons from 'oh-vue-icons/icons/co';
 import { PrWindowMaximize, PrWindowMinimize } from 'oh-vue-icons/icons/pr';
 
+import Popper from 'vue3-popper';
+
 import VueMathjax from 'vue-mathjax-next';
 
 const Bi = Object.values({ ...BiIcons });
@@ -28,4 +30,5 @@ addIcons(PrWindowMaximize, PrWindowMinimize);
 const app = createApp(App);
 app.use(VueMathjax);
 app.component('v-icon', OhVueIcon);
+app.component('Popper', Popper);
 app.mount('#app');

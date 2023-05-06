@@ -1,26 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Lexend', sans-serif;
 }
 
 .nav-button {
-  @apply flex items-center shadow-md rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75;
+  @apply flex items-center shadow-md rounded-md bg-primary px-4 py-2 text-sm font-medium text-base hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75;
 }
 
 .tool-button {
-  @apply rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-opacity-70;
+  @apply p-3 text-sm font-medium text-gray-700 hover:bg-dark hover:text-base leading-none;
 }
 
-.nav-button.inactive {
-  @apply bg-gray-200 hover:bg-gray-300;
+.menu-button {
+  @apply flex w-full items-center px-4 py-2;
 }
 
-.active {
-  @apply bg-primary text-white;
+.nav-button {
+  @apply bg-primary hover:bg-dark;
+}
+
+.tool-active {
+  @apply bg-primary text-base hover:bg-primary leading-none;
+}
+
+.slider {
+  @apply w-full h-2 bg-primary/30 rounded-lg appearance-none cursor-pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 rounded-full bg-primary cursor-pointer;
 }
 
 canvas {
@@ -35,9 +47,20 @@ canvas {
 }
 
 .context-menu-item {
-  @apply py-2 px-3 text-gray-400 hover:bg-gray-200 hover:text-gray-800 cursor-pointer text-base flex items-center font-semibold;
+  @apply py-2 px-3 text-dark hover:bg-primary/20 hover:text-dark cursor-pointer flex items-center font-semibold;
 }
 
 .context-menu-icon {
   @apply w-5 h-5 mr-2;
+}
+
+.tooltip {
+  --popper-theme-background-color: theme('colors.dark');
+  --popper-theme-text-color: theme('colors.base');
+  --popper-theme-padding: 0.5rem 1rem;
+  --popper-theme-border-radius: 0.5rem;
+}
+
+.g6-grid {
+  @apply bg-base;
 }

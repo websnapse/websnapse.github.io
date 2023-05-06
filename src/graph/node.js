@@ -10,22 +10,25 @@ import {
   min_height,
   lineInactive,
   lineActive,
+  base,
 } from './styles';
 
 const drawNeuron = (cfg, group) => {
   let render;
 
   if (cfg.nodeType === 'regular') {
-    render = [cfg.content, ...cfg.rules].map((key) => {
-      if (key === 'cfg.content') {
-        return latexToImg(foldString(key));
-      }
-      return latexToImg(key);
-    });
+    let rendered_content;
+    if (parseInt(cfg.content) > 1) {
+      rendered_content = latexToImg(`a^{${cfg.content}}`);
+    } else if (parseInt(cfg.content) === 1) {
+      rendered_content = latexToImg(`a`);
+    } else {
+      rendered_content = latexToImg(cfg.content);
+    }
+    const rendered_rules = cfg.rules.map((key) => latexToImg(key));
+    render = [rendered_content, ...rendered_rules];
   } else {
-    render = [cfg.content].map((key) => {
-      return latexToImg(foldString(key));
-    });
+    render = [latexToImg(foldString(cfg.content))];
   }
 
   const mw = Math.max(Math.max(...render.map((item) => item.width)), min_width);
@@ -53,7 +56,7 @@ const drawNeuron = (cfg, group) => {
       shadowColor: primary,
       shadowBlur: 0,
       radius: r,
-      fill: '#fff',
+      fill: base,
     },
     name: 'neuron',
     draggable: true,
@@ -72,7 +75,7 @@ const drawNeuron = (cfg, group) => {
         shadowColor: primary,
         shadowBlur: 0,
         radius: r + 5,
-        fill: '#fff',
+        fill: base,
       },
       name: 'output-indicator',
       draggable: true,
@@ -88,7 +91,7 @@ const drawNeuron = (cfg, group) => {
           [start_x + node_width / 2 + 10, start_y - 15],
           [start_x + node_width / 2 - 10, start_y - 15],
         ],
-        fill: '#fff',
+        fill: base,
         stroke: black,
         lineWidth: lineInactive,
       },
@@ -129,38 +132,6 @@ const drawNeuron = (cfg, group) => {
     draggable: true,
     zIndex: -2,
   });
-
-  // animation1.animate(
-  //   {
-  //     x: start_x - 10,
-  //     y: start_y - 10,
-  //     width: node_width + 20,
-  //     height: node_height + 20,
-  //     opacity: 0,
-  //   },
-  //   {
-  //     duration: 1500,
-  //     easing: 'easePolyInOut',
-  //     delay: 0,
-  //     repeat: true, // repeat
-  //   }
-  // );
-
-  // animation2.animate(
-  //   {
-  //     x: start_x - 10,
-  //     y: start_y - 10,
-  //     width: node_width + 20,
-  //     height: node_height + 20,
-  //     opacity: 0,
-  //   },
-  //   {
-  //     duration: 1500,
-  //     easing: 'easeCubic',
-  //     delay: 500,
-  //     repeat: true, // repeat
-  //   }
-  // );
 
   const content = group.addShape('image', {
     attrs: {
@@ -360,6 +331,7 @@ export default function initializeNode() {
             'height',
             value ? shape.attr('height') : shape.attr('height')
           );
+          anim.stopAnimate();
           anim.animate(
             {
               x: -shape.attr('width') / 2 - 10,

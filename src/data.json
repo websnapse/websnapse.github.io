@@ -3,7 +3,7 @@
     {
       "nodeType": "regular",
       "id": "n1",
-      "content": "a",
+      "content": "1",
       "rules": ["a \\to a;0", "a^2 \\to 0"],
       "x": 100,
       "y": 100
@@ -11,7 +11,7 @@
     {
       "nodeType": "regular",
       "id": "n2",
-      "content": "a",
+      "content": "1",
       "rules": [
         "{(a^2)^3}^+ \\to a;0",
         "a^2 \\to 0",
@@ -24,7 +24,7 @@
     {
       "nodeType": "regular",
       "id": "n3",
-      "content": "a",
+      "content": "1",
       "rules": [
         "{(a^2)^3}^+ \\to a;0",
         "a^2 \\to 0",
@@ -37,7 +37,7 @@
     {
       "nodeType": "regular",
       "id": "n4",
-      "content": "a",
+      "content": "1",
       "rules": [
         "{(a^2)^3}^+ \\to a;0",
         "a^2 \\to 0",
@@ -50,7 +50,7 @@
     {
       "nodeType": "regular",
       "id": "n5",
-      "content": "a",
+      "content": "1",
       "rules": [
         "{(a^2)^3}^+ \\to a;0",
         "a^2 \\to 0",
@@ -63,7 +63,7 @@
     {
       "nodeType": "regular",
       "id": "n6",
-      "content": "a",
+      "content": "1",
       "rules": [
         "{(a^2)^3}^+ \\to a;0",
         "a^2 \\to 0",
@@ -76,7 +76,7 @@
     {
       "nodeType": "regular",
       "id": "n7",
-      "content": "a",
+      "content": "1",
       "rules": [
         "{(a^2)^3}^+ \\to a;0",
         "a^2 \\to 0",
