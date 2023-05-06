@@ -231,7 +231,6 @@ const tick = ref(0);
 
 const changeTick = (i) => {
   tick.value += i;
-  // reset the interval
   clearInterval(intervalId);
   navbar.value.running = false;
 };
@@ -372,6 +371,15 @@ onMounted(async () => {
         graph.setItemState(node, 'animate', newValue[key].value === 'animate');
         graph.setItemState(node, 'running', true);
       }
+    }
+  });
+
+  watch(duration, (newDuration) => {
+    if (navbar.value.running) {
+      clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        tick.value++;
+      }, newDuration);
     }
   });
 
