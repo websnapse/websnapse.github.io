@@ -12,7 +12,7 @@ body {
 }
 
 .tool-button {
-  @apply p-3 text-sm font-medium text-gray-700 hover:bg-dark hover:text-base leading-none;
+  @apply p-3 leading-none text-sm font-medium text-gray-700 hover:bg-dark hover:text-base hover:leading-none;
 }
 
 .menu-button {
@@ -24,7 +24,7 @@ body {
 }
 
 .tool-active {
-  @apply bg-primary text-base hover:bg-primary leading-none;
+  @apply leading-none hover:leading-none bg-primary text-base hover:bg-primary;
 }
 
 .slider {

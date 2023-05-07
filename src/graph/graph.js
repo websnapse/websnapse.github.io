@@ -11,7 +11,7 @@ export default function createGraph(container, width, height) {
     width: width,
     height: height,
     fitCenter: true,
-    fitViewPadding: [100, 0, 230, 0],
+    fitViewPadding: [200, 0, 230, 0],
     linkCenter: false,
     pixelRatio: 0.5,
     optimizeThreshold: 5,

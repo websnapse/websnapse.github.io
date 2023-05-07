@@ -238,7 +238,36 @@ export default function initializeNode() {
         },
       },
     },
-    drawShape: function drawShape(cfg, group) {
+    // TODO: update only the content of the neuron if state is animating
+    // update: (cfg, item, type) => {
+    //   if (item.hasState('animate')) {
+    //     // update the content
+    //     const rendered_content = latexToImg(cfg.content);
+    //     const content = item.getChildren().find((ele) => {
+    //       return ele.get('name') === 'content';
+    //     });
+    //     content.attr('img', rendered_content.dom);
+
+    //     // recenter the content
+    //     content.attr('x', -content.attr('width') / 2);
+    //     content.attr('y', -content.attr('height') / 2);
+    //   } else this.update(cfg, item, type);
+    // },
+    //   // only update the content of the neuron if state is animating
+    //   if (group.hasState('animate')) {
+    //     // update the content
+    //     const rendered_content = latexToImg(cfg.content);
+    //     const content = group.getChildren().find((ele) => {
+    //       return ele.get('name') === 'content';
+    //     });
+    //     content.attr('img', rendered_content.dom);
+
+    //     // recenter the content
+    //     content.attr('x', -content.attr('width') / 2);
+    //     content.attr('y', -content.attr('height') / 2);
+    //   }
+    // },
+    drawShape: (cfg, group) => {
       return drawNeuron(cfg, group);
     },
     setState(name, value, item) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1">
+  <div class="flex flex-col">
     <TransitionRoot appear :show="ruleDialogOpen" as="template">
       <RuleDialog
         :isOpen="ruleDialogOpen"
@@ -16,23 +16,22 @@
     </TransitionRoot>
     <div
       id="mountNode"
-      class="flex flex-1 justify-center items-start"
-      @keydown="(e) => console.log(e)"
+      class="flex h-screen w-screen overflow-hidden justify-center items-start"
     ></div>
     <div
       id="simulationControls"
-      class="flex flex-col left-0 px-4 right-0 mx-auto items-center w-fit justify-center py-4 absolute bottom-0 bg-white/40 backdrop-blur-sm"
+      class="flex flex-col left-0 px-8 right-0 mx-auto rounded-md items-center w-fit justify-center py-4 absolute bottom-2 bg-base/40 backdrop-blur-sm"
     >
       <div class="flex gap-1 items-center">
-        <v-icon name="bi-shuffle" class="mr-2" />
+        <v-icon name="la-random-solid" class="mr-2" />
         <v-icon
-          name="bi-skip-start"
+          name="la-step-backward-solid"
           @click="changeTick(-1)"
           scale="1.5"
           class="cursor-pointer"
         />
         <button
-          class="rounded-full p-1 bg-primary text-white"
+          class="rounded-full p-1 bg-primary text-base"
           @click="toggleInterval"
         >
           <v-icon
@@ -44,12 +43,12 @@
           <v-icon name="bi-pause-fill" v-if="navbar.running" scale="2" />
         </button>
         <v-icon
-          name="bi-skip-end"
+          name="la-step-forward-solid"
           @click="changeTick(1)"
           scale="1.5"
           class="cursor-pointer"
         />
-        <v-icon name="bi-arrow-repeat" class="ml-2" @click="resetSimulation" />
+        <v-icon name="la-sync-solid" class="ml-2" @click="resetSimulation" />
       </div>
       <div class="flex flex-col items-center justify-center gap-1">
         <input
@@ -335,15 +334,15 @@ onMounted(async () => {
   window.addEventListener('keydown', handleKeydown);
   window.addEventListener('mousedown', handleMousedown);
   window.addEventListener('mouseup', handleMouseup);
-  window.addEventListener('mousemove', (evt) => {
-    if (navbar.value.mode === 'pan') {
-      const dx = evt.clientX - mouse.value.x;
-      const dy = evt.clientY - mouse.value.y;
-      const point = graph.getPointByClient(dx, dy);
-      graph.translate(point.x, point.y);
-      graph.get('canvas').setCursor('grab');
-    } else graph.get('canvas').setCursor('default');
-  });
+  // window.addEventListener('mousemove', (evt) => {
+  //   if (navbar.value.mode === 'pan') {
+  //     const dx = evt.clientX - mouse.value.x;
+  //     const dy = evt.clientY - mouse.value.y;
+  //     const point = graph.getPointByClient(dx, dy);
+  //     graph.translate(point.x, point.y);
+  //     graph.get('canvas').setCursor('grab');
+  //   } else graph.get('canvas').setCursor('default');
+  // });
 
   watch(
     () => navbar.value.mode,
@@ -386,9 +385,7 @@ onMounted(async () => {
   watch(config, (newValue, oldValue) => {
     for (const key in newValue) {
       if (newValue[key] !== oldValue[key]) {
-        console.log(key);
         const node = graph.findById(key);
-        console.log(node);
         node.update({
           content: newValue[key],
         });
@@ -398,7 +395,6 @@ onMounted(async () => {
 
   watch(system, (newSystem) => {
     graph.changeData(newSystem);
-    console.log(newSystem);
   });
 
   watch(
@@ -413,8 +409,8 @@ onMounted(async () => {
     (newView) => {
       graph.getNodes().forEach((node) => {
         newView !== 'simple'
-          ? node.setState('simple', true)
-          : node.clearStates('simple');
+          ? graph.setItemState(node, 'simple', true)
+          : graph.clearItemStates(node);
       });
       graph.refresh();
     }

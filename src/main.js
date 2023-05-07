@@ -7,6 +7,7 @@ import * as BiIcons from 'oh-vue-icons/icons/bi';
 import * as RiIcons from 'oh-vue-icons/icons/ri';
 import * as HiIcons from 'oh-vue-icons/icons/hi';
 import * as CoIcons from 'oh-vue-icons/icons/co';
+import * as LaIcons from 'oh-vue-icons/icons/la';
 import { PrWindowMaximize, PrWindowMinimize } from 'oh-vue-icons/icons/pr';
 
 import Popper from 'vue3-popper';
@@ -24,6 +25,9 @@ addIcons(...Hi);
 
 const Co = Object.values({ ...CoIcons });
 addIcons(...Co);
+
+const La = Object.values({ ...LaIcons });
+addIcons(...La);
 
 addIcons(PrWindowMaximize, PrWindowMinimize);
 

@@ -2,13 +2,6 @@ import { clone } from '@antv/util';
 
 export function undo(graph) {
   let undoStack = graph.getUndoStack();
-  // print every element of the undoStack which is a linked list
-  let element = undoStack.pop();
-  while (element) {
-    console.log(element);
-    element = undoStack.pop();
-  }
-  undoStack = graph.getUndoStack();
 
   if (!undoStack || undoStack.length === 0) {
     return;

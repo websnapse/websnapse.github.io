@@ -1,8 +1,10 @@
 <template>
-  <div class="w-full border-b flex items-center">
-    <Menu as="div" class="relative">
+  <div
+    class="absolute top-2 left-0 right-0 mx-auto w-fit shadow-lg rounded-md bg-base flex items-center divide-x divide-dark/10"
+  >
+    <Menu as="div" class="relative h-full">
       <MenuButton
-        class="px-2 flex items-center justify-center text-sm font-medium hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75"
+        class="px-4 flex items-center justify-center text-sm font-medium hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75"
       >
         <img src="../assets/logo.svg" class="w-10" />
         <v-icon name="bi-chevron-down" scale="0.5" />
@@ -21,19 +23,19 @@
         >
           <MenuItem v-slot="{ active }">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
-              <v-icon name="co-beaker" class="mr-2" />
+              <v-icon name="la-flask-solid" class="mr-2" />
               Samples
             </button>
           </MenuItem>
           <MenuItem v-slot="{ active }">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
-              <v-icon name="co-graph" class="mr-2" />
+              <v-icon name="la-project-diagram-solid" class="mr-2" />
               Load
             </button>
           </MenuItem>
           <MenuItem v-slot="{ active }">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
-              <v-icon name="co-save" class="mr-2" />
+              <v-icon name="la-save" class="mr-2" />
               Save
             </button>
           </MenuItem>
@@ -52,12 +54,22 @@
             class="tool-button"
             :class="navbar.mode == 'default' ? 'tool-active' : ''"
           >
-            <v-icon name="co-cursor" flip="horizontal" />
+            <v-icon name="la-mouse-pointer-solid" />
+          </button>
+        </Popper>
+
+        <Popper class="tooltip" hover>
+          <template #content>
+            Node
+            <span class="text-base/50 ml-2">N</span>
+          </template>
+          <button type="button" @click="openModal" class="tool-button">
+            <v-icon name="la-square" />
           </button>
         </Popper>
         <Popper class="tooltip" hover>
           <template #content>
-            Edit
+            Edge
             <span class="text-base/50 ml-2">E</span>
           </template>
           <button
@@ -65,7 +77,7 @@
             class="tool-button"
             :class="navbar.mode == 'edit' ? 'tool-active' : ''"
           >
-            <v-icon name="co-pencil" />
+            <v-icon name="la-arrow-left-solid" class="rotate-45" />
           </button>
         </Popper>
         <Popper class="tooltip" hover>
@@ -78,7 +90,7 @@
             class="tool-button"
             :class="navbar.mode == 'delete' ? 'tool-active' : ''"
           >
-            <v-icon name="co-x-circle" />
+            <v-icon name="la-eraser-solid" />
           </button>
         </Popper>
 
@@ -92,7 +104,7 @@
             class="tool-button"
             :class="navbar.mode == 'pan' ? 'tool-active' : ''"
           >
-            <v-icon name="co-touch-app" />
+            <v-icon name="la-hand-paper" />
           </button>
         </Popper>
 
@@ -102,7 +114,7 @@
             <span class="text-base/50 ml-2">^z</span>
           </template>
           <button class="tool-button">
-            <v-icon name="co-action-undo" class="rotate-90" />
+            <v-icon name="la-undo-solid" />
           </button>
         </Popper>
 
@@ -112,27 +124,33 @@
             <span class="text-base/50 ml-2">^Z</span>
           </template>
           <button class="tool-button">
-            <v-icon name="co-action-redo" class="-rotate-90" />
+            <v-icon name="la-redo-solid" />
           </button>
         </Popper>
-        <button @click="clearAll" class="tool-button">
-          <v-icon name="co-trash" />
-        </button>
-      </div>
-      <div class="flex gap-2">
-        <button type="button" @click="openModal" class="nav-button">
-          <v-icon name="hi-view-grid-add" class="mr-1" />
-          Add node
-        </button>
-        <button type="button" @click="toggleDisplay" class="nav-button">
-          <v-icon
-            :name="
-              navbar.view === 'default'
-                ? 'pr-window-maximize'
-                : 'pr-window-minimize'
-            "
-          />
-        </button>
+        <Popper class="tooltip" hover>
+          <template #content>
+            Clear
+            <span class="text-base/50 ml-2">Q</span>
+          </template>
+          <button @click="clearAll" class="tool-button">
+            <v-icon name="la-trash-alt-solid" />
+          </button>
+        </Popper>
+        <Popper class="tooltip" hover>
+          <template #content>
+            View
+            <span class="text-base/50 ml-2">Y</span>
+          </template>
+          <button type="button" @click="toggleDisplay" class="tool-button">
+            <v-icon
+              :name="
+                navbar.view === 'default'
+                  ? 'pr-window-maximize'
+                  : 'pr-window-minimize'
+              "
+            />
+          </button>
+        </Popper>
       </div>
     </div>
   </div>
