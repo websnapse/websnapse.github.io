@@ -1,12 +1,12 @@
 <template>
   <div
-    class="absolute top-2 left-0 right-0 mx-auto w-fit shadow-lg rounded-md bg-base flex items-center divide-x divide-dark/10"
+    class="absolute p-1 top-2 left-0 right-0 mx-auto w-fit shadow-lg rounded-md bg-base flex items-center"
   >
     <Menu as="div" class="relative h-full">
       <MenuButton
-        class="px-4 flex items-center justify-center text-sm font-medium hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75"
+        class="text-primary open:bg-primary/40 open:text-base px-2 flex items-center justify-center text-sm font-medium hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75"
       >
-        <img src="../assets/logo.svg" class="w-10" />
+        <Logo class="h-10 w-fit" />
         <v-icon name="bi-chevron-down" scale="0.5" />
       </MenuButton>
 
@@ -42,6 +42,7 @@
         </MenuItems>
       </transition>
     </Menu>
+    <div class="w-px bg-dark/10 flex mx-1 h-5" />
     <div class="flex justify-between w-full">
       <div>
         <Popper class="tooltip" hover>
@@ -166,6 +167,7 @@ import NeuronDialog from './neurondialog.vue';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { neuron } from '../stores/neuron.js';
 import { navbar } from '../stores/navbar.js';
+import Logo from '../assets/logo.vue';
 
 const isOpen = ref(false);
 

@@ -14,15 +14,23 @@
         :details="edgeDetails"
       />
     </TransitionRoot>
+    <div>
+      <button
+        class="absolute p-2 text-base rounded-lg top-2 right-2 bg-primary"
+        @click="simulate"
+      >
+        <v-icon name="bi-play-fill" scale="1.5" />
+      </button>
+    </div>
     <div
       id="mountNode"
-      class="flex h-screen w-screen overflow-hidden justify-center items-start"
-    ></div>
+      class="flex items-start justify-center w-screen h-screen overflow-hidden"
+    />
     <div
       id="simulationControls"
-      class="flex flex-col left-0 px-8 right-0 mx-auto rounded-md items-center w-fit justify-center py-4 absolute bottom-2 bg-base/40 backdrop-blur-sm"
+      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-base/40 backdrop-blur-sm"
     >
-      <div class="flex gap-1 items-center">
+      <div class="flex items-center gap-1 text-dark/50">
         <v-icon name="la-random-solid" class="mr-2" />
         <v-icon
           name="la-step-backward-solid"
@@ -31,7 +39,7 @@
           class="cursor-pointer"
         />
         <button
-          class="rounded-full p-1 bg-primary text-base"
+          class="p-1 text-base rounded-full bg-primary"
           @click="toggleInterval"
         >
           <v-icon
@@ -59,7 +67,7 @@
           step="500"
           :value="duration"
           @mouseup="(e) => (duration = e.target.value)"
-          class="slider mt-4"
+          class="mt-4 slider"
         />
         <div>
           <span class="text-xs text-dark/40">{{ duration / 2000 }}x</span>
@@ -72,12 +80,12 @@
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue';
 import { TransitionRoot } from '@headlessui/vue';
-
 import RuleDialog from './ruledialog.vue';
 import WeightDialog from './weightdialog.vue';
 
 import createGraph from '../graph/graph';
 import initializeRegisters from '../graph/registers';
+import simulateSystem from '../services/simulator';
 import { neuron } from '../stores/neuron';
 import { system } from '../stores/system';
 import { navbar } from '../stores/navbar';
@@ -85,6 +93,8 @@ import { navbar } from '../stores/navbar';
 import { undo, redo } from '../graph/utils/actionStack';
 
 const props = defineProps(['graph_mode', 'clear_all']);
+
+const simulate = ref(null);
 
 const neuronDetails = ref({
   id: '',
@@ -138,6 +148,7 @@ const statusArray = Array.from(Array(5).keys()).map((_) => {
 });
 
 const status_list = ref([status.value, ...statusArray]);
+console.log(status_list.value);
 
 const configArray = Array.from(Array(5).keys()).map((_) => {
   return data.value.nodes.reduce((acc, cur) => {
@@ -145,6 +156,8 @@ const configArray = Array.from(Array(5).keys()).map((_) => {
     return acc;
   }, {});
 });
+
+const max_tick = ref(5);
 
 const config_list = ref([config.value, ...configArray]);
 
@@ -240,6 +253,10 @@ const toggleInterval = () => {
   navbar.value.running = !navbar.value.running;
   if (navbar.value.running) {
     intervalId = setInterval(() => {
+      if (tick.value === max_tick.value) {
+        clearInterval(intervalId);
+        navbar.value.running = false;
+      }
       tick.value++;
     }, duration.value);
   } else {
@@ -253,13 +270,74 @@ const resetSimulation = () => {
   tick.value = 0;
 };
 
-onMounted(async () => {
+onMounted(() => {
   const vh = document.getElementById('mountNode').offsetHeight;
   const vw = document.getElementById('mountNode').offsetWidth;
   const graph = initializeGraph(data, vh, vw);
 
   graph.data(data.value);
   graph.render();
+
+  const body = computed(() => {
+    const { nodes, edges } = graph.save();
+    const adj_mtx = graph.getAdjMatrix(false, true);
+
+    const parsed_adj_mtx = adj_mtx.map((row) =>
+      Array(row.length)
+        .fill(0)
+        .map((val, i) => (row[i] === 1 ? 1 : 0))
+    );
+
+    console.log(parsed_adj_mtx);
+    const parsed_nodes = nodes.map((node) => {
+      return {
+        id: node.id,
+        content: node.content,
+        rules: node.rules,
+        nodeType: node.nodeType,
+      };
+    });
+    const parsed_edges = edges.map((edge) => {
+      return {
+        source: edge.source,
+        target: edge.target,
+        label: edge.label,
+      };
+    });
+
+    const parsed_system = {
+      nodes: parsed_nodes,
+      edges: parsed_edges,
+      adj_mtx: parsed_adj_mtx,
+    };
+
+    return parsed_system;
+  });
+
+  simulate.value = async () => {
+    const res = await simulateSystem(body.value);
+    const neuron_keys = res.keys;
+    const configurations = res.configurations.map((config) => {
+      return neuron_keys.reduce((acc, cur, i) => {
+        acc[cur] = config[i];
+        return acc;
+      }, {});
+    });
+
+    const states = res.states.map((state) => {
+      return neuron_keys.reduce((acc, cur, i) => {
+        acc[cur] = {
+          value:
+            state[i] === 1 ? 'animate' : state[i] === 0 ? 'default' : 'closed',
+        };
+        return acc;
+      }, {});
+    });
+
+    status_list.value = states;
+    config_list.value = configurations;
+    max_tick.value = configurations.length;
+  };
 
   const handleKeyup = (evt) => {
     const { key } = evt;
@@ -367,7 +445,8 @@ onMounted(async () => {
             newValue[key].value === 'animate'
           );
         }
-        graph.setItemState(node, 'animate', newValue[key].value === 'animate');
+        graph.clearItemStates(node);
+        graph.setItemState(node, newValue[key].value, true);
         graph.setItemState(node, 'running', true);
       }
     }
@@ -439,36 +518,15 @@ onMounted(async () => {
   );
 
   watch(tick, (newTick) => {
-    status.value = status_list.value[newTick % 5];
-    config.value = config_list.value[newTick % 5];
+    status.value = status_list.value[newTick];
+    config.value = config_list.value[newTick];
   });
-
-  // watch(
-  //   () => navbar.value.running,
-  //   (isRunning) => {
-  //     let i = 0;
-  //     let run = setInterval(request, duration.value);
-  //     function request() {
-  //       console.log(duration);
-  //       clearInterval(run);
-  //       status.value = status_list.value[i % 5];
-  //       i++;
-
-  //       run = setInterval(request, duration.value);
-  //     }
-  //     if (isRunning) {
-  //     } else {
-  //       // stop the interval
-  //       clearInterval(run);
-  //     }
-  //   }
-  // );
 
   // if the width and height of mountNode changes, update width and height of graph
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
-    console.log(width, height);
     graph.changeSize(width, height);
+    graph.fitView();
   });
 
   resizeObserver.observe(document.getElementById('mountNode'));

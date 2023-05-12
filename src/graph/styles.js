@@ -5,6 +5,7 @@ const fullConfig = resolveConfig(tailwindConfig);
 
 export const black = '#0d0e0e';
 export const primary = fullConfig.theme.colors.primary;
+export const error = fullConfig.theme.colors.error;
 export const base = fullConfig.theme.colors.base;
 export const lineDash = [4, 2, 1, 2];
 export const r = 50;

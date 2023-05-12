@@ -9,7 +9,6 @@ export default function dragAddEdge() {
         dragstart: 'onDragStart',
         drag: 'onDrag',
         drop: 'onDrop',
-        drop: 'onDrop',
       };
     },
 
@@ -17,8 +16,10 @@ export default function dragAddEdge() {
       const node = ev.item;
       const graph = this.graph;
       const point = { x: ev.x, y: ev.y };
-      const model = node.getModel();
+      const model = node?.getModel();
       const edges = graph.save().edges;
+
+      if (!model) return;
 
       this.edge = graph.addItem(
         'edge',

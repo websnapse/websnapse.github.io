@@ -1,128 +1,54 @@
 {
   "nodes": [
     {
-      "nodeType": "regular",
       "id": "n1",
-      "content": "1",
-      "rules": ["a \\to a;0", "a^2 \\to 0"],
-      "x": 100,
-      "y": 100
+      "nodeType": "regular",
+      "content": 2,
+      "rules": ["a^2/a \\to a;1", "a \\to 0"]
     },
     {
-      "nodeType": "regular",
       "id": "n2",
-      "content": "1",
-      "rules": [
-        "{(a^2)^3}^+ \\to a;0",
-        "a^2 \\to 0",
-        "a^3 \\to 0",
-        "a^3 \\to 0"
-      ],
-      "x": 400,
-      "y": 100
+      "nodeType": "regular",
+      "content": 1,
+      "rules": ["a \\to a;1", "a \\to a;2"]
     },
     {
-      "nodeType": "regular",
       "id": "n3",
-      "content": "1",
-      "rules": [
-        "{(a^2)^3}^+ \\to a;0",
-        "a^2 \\to 0",
-        "a^3 \\to 0",
-        "a^3 \\to 0"
-      ],
-      "x": 400,
-      "y": 100
+      "nodeType": "regular",
+      "content": 3,
+      "rules": ["a^3 \\to a;0", "a \\to a;2", "a^2 \\to 0"]
     },
     {
-      "nodeType": "regular",
-      "id": "n4",
-      "content": "1",
-      "rules": [
-        "{(a^2)^3}^+ \\to a;0",
-        "a^2 \\to 0",
-        "a^3 \\to 0",
-        "a^3 \\to 0"
-      ],
-      "x": 400,
-      "y": 100
-    },
-    {
-      "nodeType": "regular",
-      "id": "n5",
-      "content": "1",
-      "rules": [
-        "{(a^2)^3}^+ \\to a;0",
-        "a^2 \\to 0",
-        "a^3 \\to 0",
-        "a^3 \\to 0"
-      ],
-      "x": 400,
-      "y": 100
-    },
-    {
-      "nodeType": "regular",
-      "id": "n6",
-      "content": "1",
-      "rules": [
-        "{(a^2)^3}^+ \\to a;0",
-        "a^2 \\to 0",
-        "a^3 \\to 0",
-        "a^3 \\to 0"
-      ],
-      "x": 400,
-      "y": 100
-    },
-    {
-      "nodeType": "regular",
-      "id": "n7",
-      "content": "1",
-      "rules": [
-        "{(a^2)^3}^+ \\to a;0",
-        "a^2 \\to 0",
-        "a^3 \\to 0",
-        "a^3 \\to 0"
-      ],
-      "x": 400,
-      "y": 100
+      "id": "out",
+      "nodeType": "output",
+      "content": 0
     }
   ],
-
   "edges": [
     {
       "source": "n1",
       "target": "n2",
-      "label": "1"
+      "label": 1
+    },
+    {
+      "source": "n1",
+      "target": "n3",
+      "label": 1
+    },
+    {
+      "source": "n2",
+      "target": "n1",
+      "label": 1
     },
     {
       "source": "n2",
       "target": "n3",
-      "label": "1"
+      "label": 1
     },
     {
       "source": "n3",
-      "target": "n4",
-      "label": "1"
-    },
-    {
-      "source": "n4",
-      "target": "n5",
-      "label": "1"
-    },
-    {
-      "source": "n5",
-      "target": "n6",
-      "label": "1"
-    },
-    {
-      "source": "n5",
-      "target": "n4",
-      "label": "1"
-    },
-    {
-      "source": "n1",
-      "target": "n7",
-      "label": "1"
+      "target": "out",
+      "label": 1
     }
   ]
 }

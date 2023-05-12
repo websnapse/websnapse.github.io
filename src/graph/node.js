@@ -3,6 +3,7 @@ import { foldString, latexToImg } from '../utils/math';
 import {
   black,
   primary,
+  error,
   r,
   m,
   p,
@@ -219,6 +220,7 @@ export default function initializeNode() {
       stateStyles: {
         hover: {
           neuron: {
+            shadowColor: primary,
             shadowBlur: 10,
           },
         },
@@ -227,11 +229,20 @@ export default function initializeNode() {
             shadowBlur: 10,
             lineWidth: lineActive,
             stroke: primary,
+            shadowColor: primary,
+          },
+        },
+        closed: {
+          neuron: {
+            shadowBlur: 10,
+            stroke: error,
+            shadowColor: error,
           },
         },
         default: {
           neuron: {
             shadowBlur: 0,
+            shadowColor: primary,
             lineWidth: lineInactive,
             stroke: black,
           },
