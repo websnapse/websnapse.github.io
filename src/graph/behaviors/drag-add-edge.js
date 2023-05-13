@@ -6,8 +6,8 @@ export default function dragAddEdge() {
 
     getEvents() {
       return {
-        dragstart: 'onDragStart',
-        drag: 'onDrag',
+        'node:dragstart': 'onDragStart',
+        'node:drag': 'onDrag',
         drop: 'onDrop',
       };
     },
@@ -19,7 +19,13 @@ export default function dragAddEdge() {
       const model = node?.getModel();
       const edges = graph.save().edges;
 
-      if (!model) return;
+      if (model.nodeType === 'output') return;
+
+      const exist = edges.filter(
+        (e) => e.source === model.id && e.target === model.id
+      );
+
+      if (exist.length > 0) return;
 
       this.edge = graph.addItem(
         'edge',
@@ -30,23 +36,6 @@ export default function dragAddEdge() {
         },
         true
       );
-
-      const exist = edges.filter(
-        (e) =>
-          e.source === this.edge.getSource().getID() && e.target === model.id
-      );
-
-      // check if node type is input
-      if (model.nodeType === 'input') {
-        this.graph.removeItem(this.edge, false);
-        this.edge = null;
-        this.addingEdge = false;
-        return;
-      }
-
-      if (exist.length > 0) {
-        this.graph.removeItem(this.edge, false);
-      }
     },
 
     onDrag(ev) {
@@ -64,7 +53,17 @@ export default function dragAddEdge() {
 
     onDrop(ev) {
       const currentEdge = ev.item;
-      const model = currentEdge.getModel();
+      const source = this.edge?.getSource();
+      const model = ev?.item?.getModel();
+
+      if (!source) return;
+
+      if (model.nodeType === 'input' || !model) {
+        this.graph.removeItem(this.edge, false);
+        this.edge = null;
+        this.addingEdge = false;
+        return;
+      }
 
       if (this.edge == currentEdge) {
         this.graph.removeItem(this.edge, false);

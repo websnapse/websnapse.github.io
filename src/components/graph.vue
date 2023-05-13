@@ -182,9 +182,9 @@ const switchState = (i) => {
 const mouse = ref({ x: 0, y: 0 });
 
 const updateNeuron = (item) => {
-  const { id, content, rules } = item.getModel();
+  const { id, content, rules, nodeType } = item.getModel();
   return new Promise((resolve, reject) => {
-    neuronDetails.value = { id, content, rules };
+    neuronDetails.value = { id, content, rules, nodeType };
     ruleDialogOpen.value = true;
 
     watch(ruleDialogOpen, (newVal, oldVal) => {

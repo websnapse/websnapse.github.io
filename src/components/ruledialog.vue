@@ -18,7 +18,7 @@
     </TransitionChild>
 
     <div class="fixed inset-0 overflow-y-auto">
-      <div class="flex min-h-full items-center justify-center p-4 text-center">
+      <div class="flex items-center justify-center min-h-full p-4 text-center">
         <TransitionChild
           as="template"
           enter="duration-300 ease-out"
@@ -29,7 +29,7 @@
           leave-to="opacity-0 scale-95"
         >
           <DialogPanel
-            class="w-full max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+            class="w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
           >
             <DialogTitle
               as="h3"
@@ -38,7 +38,7 @@
               Node Properties
             </DialogTitle>
 
-            <div class="grid grid-cols-3 mt-4 gap-4">
+            <div class="grid grid-cols-3 gap-4 mt-4">
               <div class="col-span-3">
                 <form class="flex flex-col gap-4">
                   <div class="relative flex flex-col gap-1">
@@ -52,7 +52,7 @@
                       type="search"
                       id="default-search"
                       v-model="props.details.id"
-                      class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="n1"
                       required
                     />
@@ -68,12 +68,15 @@
                       type="search"
                       id="default-search"
                       v-model="props.details.content"
-                      class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="a"
                       required
                     />
                   </div>
-                  <div class="relative flex flex-col gap-1">
+                  <div
+                    class="relative flex flex-col gap-1"
+                    v-if="props.details.nodeType === 'regular'"
+                  >
                     <label
                       for="message"
                       class="block mb-2 text-sm font-medium text-gray-900"
@@ -90,12 +93,12 @@
                   </div>
                 </form>
               </div>
-              <!-- <div class="relative col-span-2 flex items-center justify-center">
+              <!-- <div class="relative flex items-center justify-center col-span-2">
                 <div
-                  class="py-4 px-10 flex items-center flex-col border border-black rounded-3xl"
+                  class="flex flex-col items-center px-10 py-4 border border-black rounded-3xl"
                 >
                   <div class="w-fit">$$ a $$</div>
-                  <div class="w-fit mt-4">$$ a^2 \to a $$</div>
+                  <div class="mt-4 w-fit">$$ a^2 \to a $$</div>
                   <div class="w-fit">$$ a^2 \to a $$</div>
                 </div>
               </div> -->
@@ -103,7 +106,7 @@
               <div class="mt-4">
                 <button
                   type="button"
-                  class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   @click="props.closeModal"
                 >
                   Update
@@ -131,7 +134,7 @@ const props = defineProps(['isOpen', 'closeModal', 'details']);
 
 // create computed variable for the rules that joins the array into a string
 const rules = computed({
-  get: () => props.details.rules.join('\n'),
+  get: () => props.details?.rules?.join('\n'),
   set: (value) => {
     props.details.rules = value.split('\n');
   },
