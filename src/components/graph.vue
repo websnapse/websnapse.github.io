@@ -161,6 +161,8 @@ const max_tick = ref(5);
 
 const config_list = ref([config.value, ...configArray]);
 
+console.log(config_list.value);
+
 const neurons = computed(() => {
   return Object.keys(status.value);
 });
@@ -253,11 +255,12 @@ const toggleInterval = () => {
   navbar.value.running = !navbar.value.running;
   if (navbar.value.running) {
     intervalId = setInterval(() => {
-      if (tick.value === max_tick.value) {
+      if (tick.value + 1 >= max_tick.value) {
         clearInterval(intervalId);
         navbar.value.running = false;
+      } else {
+        tick.value++;
       }
-      tick.value++;
     }, duration.value);
   } else {
     clearInterval(intervalId);
@@ -323,6 +326,8 @@ onMounted(() => {
         return acc;
       }, {});
     });
+
+    console.log(configurations);
 
     const states = res.states.map((state) => {
       return neuron_keys.reduce((acc, cur, i) => {
@@ -445,7 +450,7 @@ onMounted(() => {
             newValue[key].value === 'animate'
           );
         }
-        graph.clearItemStates(node);
+        node.clearStates(['default', 'animate', 'closed']);
         graph.setItemState(node, newValue[key].value, true);
         graph.setItemState(node, 'running', true);
       }
@@ -454,10 +459,12 @@ onMounted(() => {
 
   watch(duration, (newDuration) => {
     if (navbar.value.running) {
-      clearInterval(intervalId);
-      intervalId = setInterval(() => {
-        tick.value++;
-      }, newDuration);
+      if (tick.value < max_tick.value) {
+        clearInterval(intervalId);
+        intervalId = setInterval(() => {
+          tick.value++;
+        }, newDuration);
+      }
     }
   });
 
@@ -520,6 +527,7 @@ onMounted(() => {
   watch(tick, (newTick) => {
     status.value = status_list.value[newTick];
     config.value = config_list.value[newTick];
+    console.log(config.value);
   });
 
   // if the width and height of mountNode changes, update width and height of graph

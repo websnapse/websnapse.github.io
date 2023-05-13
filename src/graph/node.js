@@ -18,14 +18,7 @@ const drawNeuron = (cfg, group) => {
   let render;
 
   if (cfg.nodeType === 'regular') {
-    let rendered_content;
-    if (parseInt(cfg.content) > 1) {
-      rendered_content = latexToImg(`a^{${cfg.content}}`);
-    } else if (parseInt(cfg.content) === 1) {
-      rendered_content = latexToImg(`a`);
-    } else {
-      rendered_content = latexToImg(cfg.content);
-    }
+    let rendered_content = latexToImg(cfg.content);
     const rendered_rules = cfg.rules.map((key) => latexToImg(key));
     render = [rendered_content, ...rendered_rules];
   } else {
