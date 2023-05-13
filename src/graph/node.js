@@ -22,7 +22,7 @@ const drawNeuron = (cfg, group) => {
     const rendered_rules = cfg.rules.map((key) => latexToImg(key));
     render = [rendered_content, ...rendered_rules];
   } else {
-    render = [latexToImg(foldString(cfg.content))];
+    render = [latexToImg(foldString(`${cfg.content}`))];
   }
 
   const mw = Math.max(Math.max(...render.map((item) => item.width)), min_width);

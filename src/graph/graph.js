@@ -78,10 +78,11 @@ export default function createGraph(container, width, height) {
           optimizeZoom: 0.2,
         },
         'drag-node',
-        'click-add-node',
       ],
 
-      edit: ['click-add-node', 'drag-add-edge'],
+      node: ['click-add-node', 'drag-node'],
+
+      edge: ['drag-add-edge'],
 
       addEdge: ['drag-add-edge'],
 

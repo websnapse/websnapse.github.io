@@ -9,6 +9,7 @@ import * as HiIcons from 'oh-vue-icons/icons/hi';
 import * as CoIcons from 'oh-vue-icons/icons/co';
 import * as LaIcons from 'oh-vue-icons/icons/la';
 import { PrWindowMaximize, PrWindowMinimize } from 'oh-vue-icons/icons/pr';
+import { MdMinimizeOutlined } from 'oh-vue-icons/icons/md';
 
 import Popper from 'vue3-popper';
 
@@ -29,7 +30,7 @@ addIcons(...Co);
 const La = Object.values({ ...LaIcons });
 addIcons(...La);
 
-addIcons(PrWindowMaximize, PrWindowMinimize);
+addIcons(PrWindowMaximize, PrWindowMinimize, MdMinimizeOutlined);
 
 const app = createApp(App);
 app.use(VueMathjax);

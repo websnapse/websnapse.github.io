@@ -1,10 +1,10 @@
 <template>
   <div
-    class="absolute p-1 top-2 left-0 right-0 mx-auto w-fit shadow-lg rounded-md bg-base flex items-center"
+    class="absolute left-0 right-0 flex items-center p-1 mx-auto rounded-md shadow-lg top-2 w-fit bg-base"
   >
     <Menu as="div" class="relative h-full">
       <MenuButton
-        class="text-primary open:bg-primary/40 open:text-base px-2 flex items-center justify-center text-sm font-medium hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75"
+        class="flex items-center justify-center px-2 text-sm font-medium text-primary open:bg-primary/40 open:text-base hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75"
       >
         <Logo class="h-10 w-fit" />
         <v-icon name="bi-chevron-down" scale="0.5" />
@@ -19,7 +19,7 @@
         leave-to-class="transform scale-95 opacity-0"
       >
         <MenuItems
-          class="shadow shadow-dark absolute left-1 mt-2 w-max origin-top-left divide-y divide-dark/10 rounded-md py-1 bg-dark text-base ring-1 ring-black ring-opacity-5 focus:outline-none"
+          class="absolute py-1 mt-2 text-base origin-top-left divide-y rounded-md shadow shadow-dark left-1 w-max divide-dark/10 bg-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
         >
           <MenuItem v-slot="{ active }">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
@@ -42,13 +42,13 @@
         </MenuItems>
       </transition>
     </Menu>
-    <div class="w-px bg-dark/10 flex mx-1 h-5" />
+    <div class="flex w-px h-5 mx-1 bg-dark/10" />
     <div class="flex justify-between w-full">
       <div>
         <Popper class="tooltip" hover>
           <template #content>
             Select
-            <span class="text-base/50 ml-2">V</span>
+            <span class="ml-2 text-base/50">V</span>
           </template>
           <button
             @click="changeActiveMode('default')"
@@ -58,25 +58,29 @@
             <v-icon name="la-mouse-pointer-solid" />
           </button>
         </Popper>
-
         <Popper class="tooltip" hover>
           <template #content>
             Node
-            <span class="text-base/50 ml-2">N</span>
+            <span class="ml-2 text-base/50">N</span>
           </template>
-          <button type="button" @click="openModal" class="tool-button">
+          <button
+            type="button"
+            @click="changeActiveMode('node')"
+            class="tool-button"
+            :class="navbar.mode == 'node' ? 'tool-active' : ''"
+          >
             <v-icon name="la-square" />
           </button>
         </Popper>
         <Popper class="tooltip" hover>
           <template #content>
             Edge
-            <span class="text-base/50 ml-2">E</span>
+            <span class="ml-2 text-base/50">E</span>
           </template>
           <button
-            @click="changeActiveMode('edit')"
+            @click="changeActiveMode('edge')"
             class="tool-button"
-            :class="navbar.mode == 'edit' ? 'tool-active' : ''"
+            :class="navbar.mode == 'edge' ? 'tool-active' : ''"
           >
             <v-icon name="la-arrow-left-solid" class="rotate-45" />
           </button>
@@ -84,21 +88,24 @@
         <Popper class="tooltip" hover>
           <template #content>
             Delete
-            <span class="text-base/50 ml-2">D</span>
+            <span class="ml-2 text-base/50">D</span>
           </template>
           <button
             @click="changeActiveMode('delete')"
             class="tool-button"
             :class="navbar.mode == 'delete' ? 'tool-active' : ''"
           >
-            <v-icon name="la-eraser-solid" />
+            <v-icon label="Eraser Logo">
+              <v-icon name="md-minimize-outlined" />
+              <v-icon name="la-eraser-solid" />
+            </v-icon>
           </button>
         </Popper>
 
         <Popper class="tooltip" hover>
           <template #content>
             Hand
-            <span class="text-base/50 ml-2">H</span>
+            <span class="ml-2 text-base/50">H</span>
           </template>
           <button
             @click="changeActiveMode('pan')"
@@ -112,7 +119,7 @@
         <Popper class="tooltip" hover>
           <template #content>
             Undo
-            <span class="text-base/50 ml-2">^z</span>
+            <span class="ml-2 text-base/50">^z</span>
           </template>
           <button class="tool-button">
             <v-icon name="la-undo-solid" />
@@ -122,7 +129,7 @@
         <Popper class="tooltip" hover>
           <template #content>
             Redo
-            <span class="text-base/50 ml-2">^Z</span>
+            <span class="ml-2 text-base/50">^Z</span>
           </template>
           <button class="tool-button">
             <v-icon name="la-redo-solid" />
@@ -131,7 +138,7 @@
         <Popper class="tooltip" hover>
           <template #content>
             Clear
-            <span class="text-base/50 ml-2">Q</span>
+            <span class="ml-2 text-base/50">Q</span>
           </template>
           <button @click="clearAll" class="tool-button">
             <v-icon name="la-trash-alt-solid" />
@@ -140,7 +147,7 @@
         <Popper class="tooltip" hover>
           <template #content>
             View
-            <span class="text-base/50 ml-2">Y</span>
+            <span class="ml-2 text-base/50">Y</span>
           </template>
           <button type="button" @click="toggleDisplay" class="tool-button">
             <v-icon
@@ -155,37 +162,20 @@
       </div>
     </div>
   </div>
-  <TransitionRoot appear :show="isOpen" as="template">
-    <NeuronDialog :isOpen="isOpen" :closeModal="closeModal" />
-  </TransitionRoot>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { TransitionRoot } from '@headlessui/vue';
-import NeuronDialog from './neurondialog.vue';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { neuron } from '../stores/neuron.js';
 import { navbar } from '../stores/navbar.js';
 import Logo from '../assets/logo.vue';
-
-const isOpen = ref(false);
-
-const closeModal = () => {
-  console.log(neuron.value);
-  isOpen.value = false;
-};
-const openModal = () => {
-  isOpen.value = true;
-};
 
 const toggleDisplay = () => {
   navbar.value.view = navbar.value.view == 'default' ? 'simple' : 'default';
 };
 
 const emit = defineEmits(['changeMode', 'clear']);
-
-const clear_all = ref(false);
 
 const changeActiveMode = (newMode) => {
   navbar.value.mode = newMode;

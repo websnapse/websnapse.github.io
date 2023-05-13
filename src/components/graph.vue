@@ -1,17 +1,23 @@
 <template>
   <div class="flex flex-col">
-    <TransitionRoot appear :show="ruleDialogOpen" as="template">
-      <RuleDialog
-        :isOpen="ruleDialogOpen"
-        :closeModal="closeRuleDialog"
-        :details="neuronDetails"
+    <TransitionRoot appear :show="createNeuronDialogOpen" as="template">
+      <CreateNeuronDialog
+        :isOpen="createNeuronDialogOpen"
+        :closeModal="() => (createNeuronDialogOpen = false)"
       />
     </TransitionRoot>
-    <TransitionRoot appear :show="weightDialogOpen" as="template">
-      <WeightDialog
-        :isOpen="weightDialogOpen"
-        :closeModal="closeWeightDialog"
-        :details="edgeDetails"
+    <TransitionRoot appear :show="editNeuronDialogOpen" as="template">
+      <EditNeuronDialog
+        :isOpen="editNeuronDialogOpen"
+        :closeModal="() => (editNeuronDialogOpen = false)"
+        :details="dialogDetails"
+      />
+    </TransitionRoot>
+    <TransitionRoot appear :show="editSynapseDialogOpen" as="template">
+      <EditSynapseDialog
+        :isOpen="editSynapseDialogOpen"
+        :closeModal="() => (editSynapseDialogOpen = false)"
+        :details="dialogDetails"
       />
     </TransitionRoot>
     <div>
@@ -80,8 +86,9 @@
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue';
 import { TransitionRoot } from '@headlessui/vue';
-import RuleDialog from './ruledialog.vue';
-import WeightDialog from './weightdialog.vue';
+import CreateNeuronDialog from './CreateNeuronDialog.vue';
+import EditNeuronDialog from './EditNeuronDialog.vue';
+import EditSynapseDialog from './EditSynapseDialog.vue';
 
 import createGraph from '../graph/graph';
 import initializeRegisters from '../graph/registers';
@@ -89,6 +96,14 @@ import simulateSystem from '../services/simulator';
 import { neuron } from '../stores/neuron';
 import { system } from '../stores/system';
 import { navbar } from '../stores/navbar';
+import {
+  createNeuronDialogOpen,
+  editSynapseDialogOpen,
+  editNeuronDialogOpen,
+  dialogDetails,
+} from '../stores/dialog';
+
+import { updateNeuron, updateSynapse } from '../utils/dialog';
 
 import { undo, redo } from '../graph/utils/actionStack';
 
@@ -175,35 +190,7 @@ const switchStatus = (i) => {
 
 const duration = ref(2000);
 
-const switchState = (i) => {
-  status.value = status_list.value[i];
-};
-
 const mouse = ref({ x: 0, y: 0 });
-
-const updateNeuron = (item) => {
-  const { id, content, rules, nodeType } = item.getModel();
-  return new Promise((resolve, reject) => {
-    neuronDetails.value = { id, content, rules, nodeType };
-    ruleDialogOpen.value = true;
-
-    watch(ruleDialogOpen, (newVal, oldVal) => {
-      resolve(neuronDetails.value);
-    });
-  });
-};
-
-const updateEdge = (item) => {
-  const { label } = item.getModel();
-  return new Promise((resolve, reject) => {
-    edgeDetails.value = { weight: label };
-    weightDialogOpen.value = true;
-
-    watch(weightDialogOpen, (newVal, oldVal) => {
-      resolve(edgeDetails.value);
-    });
-  });
-};
 
 const initializeGraph = (system, vh, vw) => {
   initializeRegisters(neuron);
@@ -223,7 +210,7 @@ const initializeGraph = (system, vh, vw) => {
   graph.on('edge:dblclick', async function (evt) {
     const { item } = evt;
     const model = item.getModel();
-    const updated = await updateEdge(item);
+    const updated = await updateSynapse(item);
     model.label = updated.weight;
     item.update(model);
   });
@@ -368,7 +355,10 @@ onMounted(() => {
       graph.get('canvas').setCursor('default');
     }
     if (key === 'e') {
-      navbar.value.mode = 'edit';
+      navbar.value.mode = 'edge';
+    }
+    if (key === 'n') {
+      navbar.value.mode = 'node';
     }
     if (key === 'd') {
       navbar.value.mode = 'delete';
@@ -386,7 +376,7 @@ onMounted(() => {
     }
 
     if (key === 'Control') {
-      navbar.value.mode = 'addEdge';
+      navbar.value.mode = 'edge';
     }
 
     if (evt.ctrlKey && evt.key === 'z') {

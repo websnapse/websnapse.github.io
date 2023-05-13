@@ -39,15 +39,18 @@ export default function initializeContextMenu(graph) {
     ${content
       .map(
         (item) =>
-          `<li class='context-menu-item'>
-            <img src=${item.img} class="context-menu-icon" />
+          `<li>
+            <div class='context-menu-item'>
+            <img src=${item.img} class="context-menu-icon pointer-events-none" />
             ${item.text}
+            </div>
           </li>`
       )
       .join('')}
   </ul>`;
     },
     handleMenuClick: (target, item) => {
+      console.log(target);
       const command = target.innerText;
       // get target position
       const point = target.getBoundingClientRect();
