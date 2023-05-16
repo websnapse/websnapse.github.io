@@ -50,12 +50,12 @@ export default function initializeContextMenu(graph) {
   </ul>`;
     },
     handleMenuClick: (target, item) => {
-      console.log(target);
       const command = target.innerText;
       // get target position
       const point = target.getBoundingClientRect();
-      point.x = point.x + point.width / 2;
-      point.y = (point.y + point.height) / 2;
+      // point.x = (point.x + point.width) / 2;
+      // point.y = (point.y + point.height) / 2;
+      console.log(item);
 
       const model = item?.getModel();
       // get mouse positions in the graph canvas

@@ -34,6 +34,7 @@ export default function interact(graph) {
 
   graph.on('node:click', (evt) => {
     const { item } = evt;
+    console.log(item.getModel());
     item.setState('selected', true);
   });
 

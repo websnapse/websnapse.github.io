@@ -6,6 +6,7 @@ export default {
       colors: {
         primary: '#9B7AA0',
         dark: '#210B2C',
+        'dark-50': '#877f90',
         base: '#EDF2F4',
         error: '#D90429',
       },

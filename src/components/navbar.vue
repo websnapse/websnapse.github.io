@@ -95,10 +95,10 @@
             class="tool-button"
             :class="navbar.mode == 'delete' ? 'tool-active' : ''"
           >
-            <v-icon label="Eraser Logo">
-              <v-icon name="md-minimize-outlined" />
-              <v-icon name="la-eraser-solid" />
-            </v-icon>
+            <v-icon
+              name="la-eraser-solid"
+              class="after:content-[' '] after:block after:bg-dark-50 after:h-2 after:w-full"
+            />
           </button>
         </Popper>
 

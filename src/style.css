@@ -12,7 +12,7 @@ body {
 }
 
 .tool-button {
-  @apply p-3 text-sm font-medium leading-none rounded-xl text-dark/50 hover:bg-dark hover:text-base hover:leading-none;
+  @apply p-3 text-sm font-medium leading-none rounded-xl text-dark-50 hover:bg-dark hover:text-base hover:leading-none;
 }
 
 .tool-active {
