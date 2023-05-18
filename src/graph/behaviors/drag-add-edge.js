@@ -19,7 +19,7 @@ export default function dragAddEdge() {
       const model = node?.getModel();
       const edges = graph.save().edges;
 
-      if (model.nodeType === 'output') return;
+      if (model.type === 'output') return;
 
       const exist = edges.filter(
         (e) => e.source === model.id && e.target === model.id
@@ -58,7 +58,7 @@ export default function dragAddEdge() {
 
       if (!source) return;
 
-      if (model.nodeType === 'input' || !model) {
+      if (model.type === 'input' || !model) {
         this.graph.removeItem(this.edge, false);
         this.edge = null;
         this.addingEdge = false;

@@ -82,13 +82,25 @@ export default function initializeContextMenu(graph) {
           const system_edges = graph.save().edges;
           const system_nodes = graph.save().nodes;
           const parsed_nodes = system_nodes.map((node) => {
+            const { id, content, rules, type, x, y, spiketrain } = node;
+
+            if (type === 'input' || type === 'output') {
+              return {
+                id,
+                type,
+                spiketrain,
+                x,
+                y,
+              };
+            }
+
             return {
-              id: node.id,
-              content: node.content,
-              rules: node.rules,
-              nodeType: node.nodeType,
-              x: node.x,
-              y: node.y,
+              id,
+              content,
+              rules,
+              type,
+              x,
+              y,
             };
           });
           const parsed_edges = system_edges.map((edge) => {

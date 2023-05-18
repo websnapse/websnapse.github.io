@@ -1,3 +1,5 @@
+import { black } from '../graph/styles';
+
 const MathJax = window.MathJax;
 
 export const convertMath = (text) => {
@@ -32,6 +34,7 @@ export const latexToImg = (formula) => {
   });
   let output = { svg: '', img: '' };
   let mjOut = wrapper.getElementsByTagName('svg')[0];
+  mjOut.style.color = black;
   output.svg = mjOut.outerHTML;
   const width = mjOut.getAttribute('width');
   const height = mjOut.getAttribute('height');

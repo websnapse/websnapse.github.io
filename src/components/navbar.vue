@@ -165,9 +165,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import { neuron } from '../stores/neuron.js';
 import { navbar } from '../stores/navbar.js';
 import Logo from '../assets/logo.vue';
 

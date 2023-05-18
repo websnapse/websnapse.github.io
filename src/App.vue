@@ -25,6 +25,10 @@ const clearAll = () => {
   </main>
 </template>
 
+<style>
+@import 'katex/dist/katex.min.css';
+</style>
+
 <style scoped>
 .logo {
   height: 6em;

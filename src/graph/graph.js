@@ -1,8 +1,10 @@
 import G6 from '@antv/g6';
 import interact from './interactions';
 import initializeContextMenu from './contextMenu';
+import initializeRegisters from './registers';
 
 export default function createGraph(container, width, height) {
+  initializeRegisters();
   const grid = new G6.Grid();
 
   const graph = new G6.Graph({
@@ -95,9 +97,6 @@ export default function createGraph(container, width, height) {
   const contextMenu = initializeContextMenu(graph);
 
   graph.addPlugin(contextMenu);
-
-  console.log(graph);
-
   interact(graph);
 
   return graph;

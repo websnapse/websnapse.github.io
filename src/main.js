@@ -12,8 +12,7 @@ import { PrWindowMaximize, PrWindowMinimize } from 'oh-vue-icons/icons/pr';
 import { MdMinimizeOutlined } from 'oh-vue-icons/icons/md';
 
 import Popper from 'vue3-popper';
-
-import VueMathjax from 'vue-mathjax-next';
+import VueKatex from '@hsorby/vue3-katex';
 
 const Bi = Object.values({ ...BiIcons });
 addIcons(...Bi);
@@ -33,7 +32,18 @@ addIcons(...La);
 addIcons(PrWindowMaximize, PrWindowMinimize, MdMinimizeOutlined);
 
 const app = createApp(App);
-app.use(VueMathjax);
+app.use(VueKatex, {
+  globalOptions: {
+    //... Define globally applied KaTeX options here
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false },
+    ],
+    macros: {
+      '\\': '\\to',
+    },
+  },
+});
 app.component('v-icon', OhVueIcon);
 app.component('Popper', Popper);
 app.mount('#app');

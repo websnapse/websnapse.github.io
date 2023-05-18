@@ -83,12 +83,19 @@
                     >
                       Rules
                     </label>
-                    <textarea
-                      id="message"
-                      v-model="rules"
-                      rows="4"
-                      class="outline-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="a^2/a^2 \to a;0"
+                    <MathEditor
+                      v-for="(rule, index) in neuron.rules"
+                      v-bind:model-value="rule"
+                      @change="(value) => (neuron.rules[index] = value)"
+                      @delete="neuron.rules.splice(index, 1)"
+                      @keydown.enter.prevent="
+                        () => {
+                          neuron.rules.push(''),
+                            $nextTick(() =>
+                              $refs.rules[neuron.rules.length - 1].focus()
+                            );
+                        }
+                      "
                     />
                   </div>
                 </form>
@@ -129,6 +136,7 @@ import {
 } from '@headlessui/vue';
 
 import { computed, watch } from 'vue';
+import MathEditor from './MathEditor.vue';
 
 const props = defineProps(['isOpen', 'closeModal', 'details']);
 

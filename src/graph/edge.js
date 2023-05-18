@@ -1,61 +1,63 @@
 import G6 from '@antv/g6';
-import { primary, black, lineDash } from './styles';
+import { primary, black, lineDash, base } from './styles';
+
+const options = {
+  stateStyles: {
+    hover: {
+      shadowBlur: 10,
+    },
+    default: {
+      shadowBlur: 0,
+      shadowColor: primary,
+      lineWidth: 2,
+      stroke: black,
+      endArrow: {
+        path: 'M 0,0 L 20,4 L 20,-4 Z',
+        d: 5,
+        stroke: black,
+        strokeOpacity: 0,
+        fill: black,
+      },
+    },
+    selected: {
+      stroke: primary,
+      lineWidth: 3,
+      endArrow: {
+        path: 'M 0,0 L 23,4 L 23,-4 Z',
+        d: 5,
+        stroke: primary,
+        strokeOpacity: 0,
+        fill: primary,
+      },
+    },
+  },
+  labelCfg: {
+    autoRotate: true,
+    style: {
+      fill: black,
+      fontSize: 20,
+      stroke: base,
+      lineWidth: 5,
+    },
+  },
+  style: {
+    shadowBlur: 0,
+    shadowColor: primary,
+    lineWidth: 2,
+    stroke: black,
+    endArrow: {
+      path: 'M 0,0 L 20,4 L 20,-4 Z',
+      d: 5,
+      fill: black,
+    },
+  },
+};
 
 export default function initalizeEdge() {
   G6.registerEdge(
     'circle-running',
     {
-      options: {
-        stateStyles: {
-          hover: {
-            shadowBlur: 10,
-          },
-          default: {
-            shadowBlur: 0,
-            shadowColor: primary,
-            lineWidth: 2,
-            stroke: black,
-            endArrow: {
-              path: 'M 0,0 L 20,4 L 20,-4 Z',
-              d: 5,
-              stroke: black,
-              strokeOpacity: 0,
-              fill: black,
-            },
-          },
-          selected: {
-            stroke: primary,
-            lineWidth: 3,
-            endArrow: {
-              path: 'M 0,0 L 23,4 L 23,-4 Z',
-              d: 5,
-              stroke: primary,
-              strokeOpacity: 0,
-              fill: primary,
-            },
-          },
-        },
-        labelCfg: {
-          autoRotate: true,
-          style: {
-            fill: black,
-            fontSize: 20,
-            stroke: 'white',
-            lineWidth: 5,
-          },
-        },
-        style: {
-          shadowBlur: 0,
-          shadowColor: primary,
-          lineWidth: 2,
-          stroke: black,
-          endArrow: {
-            path: 'M 0,0 L 20,4 L 20,-4 Z',
-            d: 5,
-            fill: black,
-          },
-        },
-      },
+      options,
       afterDraw(cfg, group) {
         const startPoint = cfg.startPoint;
 
