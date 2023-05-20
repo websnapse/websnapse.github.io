@@ -75,7 +75,7 @@
                   </div>
                   <div
                     class="relative flex flex-col gap-1"
-                    v-if="props.details.nodeType === 'regular'"
+                    v-if="props.details.type === 'regular'"
                   >
                     <label
                       for="message"

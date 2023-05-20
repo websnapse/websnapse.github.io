@@ -1,5 +1,5 @@
 import G6 from '@antv/g6';
-import { primary, black, lineDash, base } from './styles';
+import style from '@/stores/styles';
 
 const options = {
   stateStyles: {
@@ -8,47 +8,47 @@ const options = {
     },
     default: {
       shadowBlur: 0,
-      shadowColor: primary,
+      shadowColor: style.primary,
       lineWidth: 2,
-      stroke: black,
+      stroke: style.black,
       endArrow: {
         path: 'M 0,0 L 20,4 L 20,-4 Z',
         d: 5,
-        stroke: black,
+        stroke: style.black,
         strokeOpacity: 0,
-        fill: black,
+        fill: style.black,
       },
     },
     selected: {
-      stroke: primary,
+      stroke: style.primary,
       lineWidth: 3,
       endArrow: {
         path: 'M 0,0 L 23,4 L 23,-4 Z',
         d: 5,
-        stroke: primary,
+        stroke: style.primary,
         strokeOpacity: 0,
-        fill: primary,
+        fill: style.primary,
       },
     },
   },
   labelCfg: {
     autoRotate: true,
     style: {
-      fill: black,
+      fill: style.black,
       fontSize: 20,
-      stroke: base,
+      stroke: style.base,
       lineWidth: 5,
     },
   },
   style: {
     shadowBlur: 0,
-    shadowColor: primary,
+    shadowColor: style.primary,
     lineWidth: 2,
-    stroke: black,
+    stroke: style.black,
     endArrow: {
       path: 'M 0,0 L 20,4 L 20,-4 Z',
       d: 5,
-      fill: black,
+      fill: style.black,
     },
   },
 };
@@ -65,7 +65,7 @@ export default function initalizeEdge() {
           attrs: {
             x: startPoint.x,
             y: startPoint.y,
-            fill: primary,
+            fill: style.primary,
             r: 8,
             opacity: 1,
           },
@@ -83,13 +83,13 @@ export default function initalizeEdge() {
 
         if (name === 'animate') {
           value ? circle.show() : circle.hide();
-          shape.attr('stroke', value ? primary : black);
+          shape.attr('stroke', value ? style.primary : style.black);
           shape.attr('lineWidth', value ? 5 : 2);
           // change endarrow stroke color
           shape.attr('endArrow', {
             path: 'M 0,0 L 20,4 L 20,-4 Z',
             d: 5,
-            fill: value ? primary : black,
+            fill: value ? style.primary : style.black,
             strokeOpacity: 0,
           });
 
@@ -102,7 +102,7 @@ export default function initalizeEdge() {
                   index = 0;
                 }
                 const res = {
-                  lineDash,
+                  lineDash: style.lineDash,
                   lineDashOffset: index,
                 };
                 // return the params for this frame

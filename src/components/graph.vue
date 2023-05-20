@@ -86,42 +86,29 @@
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue';
 import { TransitionRoot } from '@headlessui/vue';
-import CreateNeuronDialog from './CreateNeuronDialog.vue';
-import EditNeuronDialog from './EditNeuronDialog.vue';
-import EditSynapseDialog from './EditSynapseDialog.vue';
+import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
+import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
+import EditSynapseDialog from '@/components/EditSynapseDialog.vue';
 
-import createGraph from '../graph/graph';
-import simulateSystem from '../services/simulator';
-import system from '../stores/system';
-import { navbar } from '../stores/navbar';
-import graph from '../stores/graph';
+import createGraph from '@/graph/graph';
+import simulateSystem from '@/services/simulator';
+import system from '@/stores/system';
+import { navbar } from '@/stores/navbar';
+import graph from '@/stores/graph';
 import {
   createNeuronDialogOpen,
   editSynapseDialogOpen,
   editNeuronDialogOpen,
   dialogDetails,
-} from '../stores/dialog';
+} from '@/stores/dialog';
 
-import { undo, redo } from '../graph/utils/actionStack';
-import initializeRegisters from '../graph/registers';
+import { undo, redo } from '@/graph/utils/actionStack';
+import initializeRegisters from '@/graph/registers';
 
 const props = defineProps(['graph_mode', 'clear_all']);
 
-const states = ref(
-  system.data.nodes.reduce((acc, cur) => {
-    acc[cur.id] = {
-      value: 'default',
-    };
-    return acc;
-  }, {})
-);
-
-const config = ref(
-  system.data.nodes.reduce((acc, cur) => {
-    acc[cur.id] = cur.content;
-    return acc;
-  }, {})
-);
+const states = ref();
+const config = ref();
 
 const status_list = ref([]);
 const config_list = ref([]);
@@ -326,19 +313,21 @@ onMounted(() => {
   const vh = document.getElementById('mountNode').offsetHeight;
   const vw = document.getElementById('mountNode').offsetWidth;
   initializeRegisters();
-  graph.value = createGraph('mountNode', vw, vh);
 
-  graph.value.data(system.data);
-  graph.value.render();
+  const g = createGraph('mountNode', vw, vh);
+
+  g.data(system.data);
+  g.render();
+
+  graph.value = g;
 
   window.addEventListener('keyup', handleKeyup);
   window.addEventListener('keydown', handleKeydown);
 
-  // if the width and height of mountNode changes, update width and height of graph.value
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
-    graph.value.changeSize(width, height);
-    graph.value.fitView();
+    g.changeSize(width, height);
+    g.fitView();
   });
 
   resizeObserver.observe(document.getElementById('mountNode'));

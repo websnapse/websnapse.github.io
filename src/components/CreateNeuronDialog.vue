@@ -1,5 +1,10 @@
 <template>
-  <Dialog as="div" :open="props.isOpen" class="relative z-10">
+  <Dialog
+    as="div"
+    :open="props.isOpen"
+    @close="props.closeModal"
+    class="relative z-10"
+  >
     <TransitionChild
       as="template"
       enter="duration-300 ease-out"
@@ -118,7 +123,10 @@
                       </div>
                     </Listbox>
                   </div>
-                  <div class="relative flex flex-col gap-1">
+                  <div
+                    class="relative flex flex-col gap-1"
+                    v-if="neuron.type === 'regular'"
+                  >
                     <label
                       for="content"
                       class="mb-2 text-sm font-medium text-gray-900"
@@ -128,6 +136,21 @@
                     <MathEditor
                       v-bind:model-value="neuron.content"
                       @change="(value) => (neuron.rules[index] = value)"
+                    />
+                  </div>
+                  <div
+                    class="relative flex flex-col gap-1"
+                    v-if="neuron.type !== 'regular'"
+                  >
+                    <label
+                      for="spiketrain"
+                      class="mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Spike Train
+                    </label>
+                    <MathEditor
+                      v-bind:model-value="neuron.spiketrain"
+                      @change="(value) => (neuron.spiketrain = value)"
                     />
                   </div>
                   <div
@@ -212,7 +235,8 @@ const checkDetails = () => {
       }
     });
   }
-  console.log(neuron.value.rules);
+
+  neuron.value.success = true;
   props.closeModal();
 };
 </script>

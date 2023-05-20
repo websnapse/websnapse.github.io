@@ -1,33 +1,24 @@
 import G6 from '@antv/g6';
 import { foldString, latexToImg } from '../utils/math';
-import {
-  black,
-  primary,
-  error,
-  r,
-  m,
-  p,
-  min_width,
-  min_height,
-  lineInactive,
-  lineActive,
-  base,
-} from './styles';
+import style from '@/stores/styles';
 
 const drawRegular = (cfg, group) => {
   const rendered_content = latexToImg(cfg.content);
   const rendered_rules = cfg.rules.map((key) => latexToImg(key));
   const render = [rendered_content, ...rendered_rules];
 
-  const mw = Math.max(Math.max(...render.map((item) => item.width)), min_width);
+  const mw = Math.max(
+    Math.max(...render.map((item) => item.width)),
+    style.min_width
+  );
   const mh = Math.max(
-    render.reduce((acc, item) => acc + item.height, 0) + m,
-    min_height
+    render.reduce((acc, item) => acc + item.height, 0) + style.m,
+    style.min_height
   );
 
   // set neuron size to mw, mh
-  const node_width = 2 * p + mw;
-  const node_height = 2 * p + mh;
+  const node_width = 2 * style.p + mw;
+  const node_height = 2 * style.p + mh;
   cfg.size = [node_width, node_height];
 
   const start_x = -node_width / 2;
@@ -39,12 +30,12 @@ const drawRegular = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: black,
-      lineWidth: lineInactive,
-      shadowColor: primary,
+      stroke: style.black,
+      lineWidth: style.lineInactive,
+      shadowColor: style.primary,
       shadowBlur: 0,
-      radius: r,
-      fill: base,
+      radius: style.r,
+      fill: style.base,
     },
     name: 'neuron',
     draggable: true,
@@ -57,8 +48,8 @@ const drawRegular = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      radius: r,
-      fill: primary,
+      radius: style.r,
+      fill: style.primary,
       opacity: 0.6,
     },
     visible: false,
@@ -73,8 +64,8 @@ const drawRegular = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      radius: r,
-      fill: primary,
+      radius: style.r,
+      fill: style.primary,
       opacity: 0.6,
     },
     visible: false,
@@ -85,8 +76,8 @@ const drawRegular = (cfg, group) => {
 
   const content = group.addShape('image', {
     attrs: {
-      y: start_y + p,
-      x: start_x + (p + mw / 2 - render[0].width / 2),
+      y: start_y + style.p,
+      x: start_x + (style.p + mw / 2 - render[0].width / 2),
       width: render[0].width,
       height: render[0].height,
       img: render[0].dom,
@@ -103,12 +94,12 @@ const drawRegular = (cfg, group) => {
         height: render[1 + index].height,
         y:
           -node_height / 2 +
-          p +
-          m +
+          style.p +
+          style.m +
           render
             .slice(0, 1 + index)
             .reduce((acc, item) => acc + item.height, 0),
-        x: -node_width / 2 + p + mw / 2 - render[1 + index].width / 2,
+        x: -node_width / 2 + style.p + mw / 2 - render[1 + index].width / 2,
         img: render[1 + index].dom,
       },
       name: `rule-${index}`,
@@ -120,8 +111,8 @@ const drawRegular = (cfg, group) => {
 
   const ruleBoundary = group.addShape('rect', {
     attrs: {
-      y: start_y + p + render[0].height + m,
-      x: start_x + p,
+      y: start_y + style.p + render[0].height + style.m,
+      x: start_x + style.p,
       width: mw,
       height: render
         .slice(0, 1 + cfg.rules.length)
@@ -154,18 +145,20 @@ const drawRegular = (cfg, group) => {
 };
 
 const drawInput = (cfg, group) => {
-  cfg.content = cfg.spiketrain || '';
-  const render = [latexToImg(foldString(`${cfg.content}`))];
+  const render = [latexToImg(foldString(`${cfg.spiketrain}`))];
 
-  const mw = Math.max(Math.max(...render.map((item) => item.width)), min_width);
+  const mw = Math.max(
+    Math.max(...render.map((item) => item.width)),
+    style.min_width
+  );
   const mh = Math.max(
-    render.reduce((acc, item) => acc + item.height, 0) + m,
-    min_height
+    render.reduce((acc, item) => acc + item.height, 0) + style.m,
+    style.min_height
   );
 
   // set neuron size to mw, mh
-  const node_width = 2 * p + mw;
-  const node_height = 2 * p + mh;
+  const node_width = 2 * style.p + mw;
+  const node_height = 2 * style.p + mh;
   cfg.size = [node_width, node_height];
 
   const start_x = -node_width / 2;
@@ -177,12 +170,12 @@ const drawInput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: black,
-      lineWidth: lineInactive,
-      shadowColor: primary,
+      stroke: style.black,
+      lineWidth: style.lineInactive,
+      shadowColor: style.primary,
       shadowBlur: 0,
-      radius: r,
-      fill: base,
+      radius: style.r,
+      fill: style.base,
     },
     name: 'neuron',
     draggable: true,
@@ -196,9 +189,9 @@ const drawInput = (cfg, group) => {
         [start_x + node_width / 2 + 10, start_y - 15],
         [start_x + node_width / 2 - 10, start_y - 15],
       ],
-      fill: base,
-      stroke: black,
-      lineWidth: lineInactive,
+      fill: style.base,
+      stroke: style.black,
+      lineWidth: style.lineInactive,
     },
     name: 'input-indicator',
     draggable: true,
@@ -211,8 +204,8 @@ const drawInput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      radius: r,
-      fill: primary,
+      radius: style.r,
+      fill: style.primary,
       opacity: 0.6,
     },
     visible: false,
@@ -227,8 +220,8 @@ const drawInput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      radius: r,
-      fill: primary,
+      radius: style.r,
+      fill: style.primary,
       opacity: 0.6,
     },
     visible: false,
@@ -240,7 +233,7 @@ const drawInput = (cfg, group) => {
   const content = group.addShape('image', {
     attrs: {
       y: -render[0].height / 2,
-      x: start_x + (p + mw / 2 - render[0].width / 2),
+      x: start_x + (style.p + mw / 2 - render[0].width / 2),
       width: render[0].width,
       height: render[0].height,
       img: render[0].dom,
@@ -269,18 +262,20 @@ const drawInput = (cfg, group) => {
 };
 
 const drawOutput = (cfg, group) => {
-  cfg.content = cfg.spiketrain || '';
-  const render = [latexToImg(foldString(`${cfg.content}`))];
+  const render = [latexToImg(foldString(`${cfg.spiketrain}`))];
 
-  const mw = Math.max(Math.max(...render.map((item) => item.width)), min_width);
+  const mw = Math.max(
+    Math.max(...render.map((item) => item.width)),
+    style.min_width
+  );
   const mh = Math.max(
-    render.reduce((acc, item) => acc + item.height, 0) + m,
-    min_height
+    render.reduce((acc, item) => acc + item.height, 0) + style.m,
+    style.min_height
   );
 
   // set neuron size to mw, mh
-  const node_width = 2 * p + mw;
-  const node_height = 2 * p + mh;
+  const node_width = 2 * style.p + mw;
+  const node_height = 2 * style.p + mh;
   cfg.size = [node_width, node_height];
 
   const start_x = -node_width / 2;
@@ -292,12 +287,12 @@ const drawOutput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: black,
-      lineWidth: lineInactive,
-      shadowColor: primary,
+      stroke: style.black,
+      lineWidth: style.lineInactive,
+      shadowColor: style.primary,
       shadowBlur: 0,
-      radius: r,
-      fill: base,
+      radius: style.r,
+      fill: style.base,
     },
     name: 'neuron',
     draggable: true,
@@ -310,12 +305,12 @@ const drawOutput = (cfg, group) => {
       y: start_y - 5,
       width: node_width + 10,
       height: node_height + 10,
-      stroke: black,
-      lineWidth: lineInactive,
-      shadowColor: primary,
+      stroke: style.black,
+      lineWidth: style.lineInactive,
+      shadowColor: style.primary,
       shadowBlur: 0,
-      radius: r + 5,
-      fill: base,
+      radius: style.r + 5,
+      fill: style.base,
     },
     name: 'output-indicator',
     draggable: true,
@@ -328,8 +323,8 @@ const drawOutput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      radius: r,
-      fill: primary,
+      radius: style.r,
+      fill: style.primary,
       opacity: 0.6,
     },
     visible: false,
@@ -344,8 +339,8 @@ const drawOutput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      radius: r,
-      fill: primary,
+      radius: style.r,
+      fill: style.primary,
       opacity: 0.6,
     },
     visible: false,
@@ -357,7 +352,7 @@ const drawOutput = (cfg, group) => {
   const content = group.addShape('image', {
     attrs: {
       y: -render[0].height / 2,
-      x: start_x + (p + mw / 2 - render[0].width / 2),
+      x: start_x + (style.p + mw / 2 - render[0].width / 2),
       width: render[0].width,
       height: render[0].height,
       img: render[0].dom,
@@ -406,10 +401,12 @@ const setStateRegular = (name, value, item) => {
 
     shape.attr(
       'width',
-      value ? Math.max(p + content.attr('width') + p, min_height) : 2 * 20 + 100
+      value
+        ? Math.max(style.p + content.attr('width') + style.p, style.min_height)
+        : 2 * 20 + 100
     );
-    shape.attr('height', value ? min_height : 2 * 20 + 100);
-    shape.attr('radius', value ? r / 2 : r);
+    shape.attr('height', value ? style.min_height : 2 * 20 + 100);
+    shape.attr('radius', value ? style.r / 2 : style.r);
 
     // recenter the shape
     shape.attr('x', -shape.attr('width') / 2);
@@ -441,7 +438,7 @@ const setStateRegular = (name, value, item) => {
       const indicator = item.getContainer().find((ele) => {
         return ele.get('name') === 'output-indicator';
       });
-      indicator.attr('radius', value ? r / 2 + 5 : r + 5);
+      indicator.attr('radius', value ? style.r / 2 + 5 : style.r + 5);
       indicator.attr('x', shape.attr('x') - 5);
       indicator.attr('y', shape.attr('y') - 5);
       indicator.attr('width', shape.attr('width') + 10);
@@ -463,7 +460,7 @@ const setStateRegular = (name, value, item) => {
     animations.forEach((anim, index) => {
       anim.attr('x', -shape.attr('width') / 2);
       anim.attr('y', -shape.attr('height') / 2);
-      anim.attr('radius', value ? r / 2 : r);
+      anim.attr('radius', value ? style.r / 2 : style.r);
       // resize animations
       anim.attr('width', value ? shape.attr('width') : shape.attr('width'));
       anim.attr('height', value ? shape.attr('height') : shape.attr('height'));
@@ -491,7 +488,7 @@ const setStateRegular = (name, value, item) => {
     });
   }
   if (name === 'animate') {
-    shape.attr('stroke', value ? primary : black);
+    shape.attr('stroke', value ? style.primary : style.black);
     shape.attr('lineWidth', value ? 5 : 2);
     shape.attr('shadowBlur', value ? 10 : 0);
 
@@ -538,7 +535,7 @@ const setStateRegular = (name, value, item) => {
 const options = {
   labelCfg: {
     style: {
-      fill: black,
+      fill: style.black,
       fontSize: 20,
       fontFamily: 'Cambria Math',
     },
@@ -546,31 +543,31 @@ const options = {
   stateStyles: {
     hover: {
       neuron: {
-        shadowColor: primary,
+        shadowColor: style.primary,
         shadowBlur: 10,
       },
     },
     selected: {
       neuron: {
         shadowBlur: 10,
-        lineWidth: lineActive,
-        stroke: primary,
-        shadowColor: primary,
+        lineWidth: style.lineActive,
+        stroke: style.primary,
+        shadowColor: style.primary,
       },
     },
     closed: {
       neuron: {
         shadowBlur: 10,
-        stroke: error,
-        shadowColor: error,
+        stroke: style.error,
+        shadowColor: style.error,
       },
     },
     default: {
       neuron: {
         shadowBlur: 0,
-        shadowColor: primary,
-        lineWidth: lineInactive,
-        stroke: black,
+        shadowColor: style.primary,
+        lineWidth: style.lineInactive,
+        stroke: style.black,
       },
     },
   },

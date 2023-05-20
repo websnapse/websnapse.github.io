@@ -1,4 +1,5 @@
-import { black } from '../graph/styles';
+import style from '@/stores/styles';
+import katex from 'katex';
 
 const MathJax = window.MathJax;
 
@@ -34,7 +35,7 @@ export const latexToImg = (formula) => {
   });
   let output = { svg: '', img: '' };
   let mjOut = wrapper.getElementsByTagName('svg')[0];
-  mjOut.style.color = black;
+  mjOut.style.color = style.black;
   output.svg = mjOut.outerHTML;
   const width = mjOut.getAttribute('width');
   const height = mjOut.getAttribute('height');

@@ -52,6 +52,10 @@ const system = reactive({
   tick: 0,
 });
 
+watch(data, (newData) => {
+  system.data = newData;
+});
+
 watch(
   () => system.states,
   (newValue, oldValue) => {
