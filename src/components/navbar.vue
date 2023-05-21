@@ -21,19 +21,29 @@
         <MenuItems
           class="absolute py-1 mt-2 text-base origin-top-left divide-y rounded-md shadow shadow-dark left-1 w-max divide-dark/10 bg-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
         >
-          <MenuItem v-slot="{ active }">
+          <MenuItem v-slot="{ active }" ref="samples">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
               <v-icon name="la-flask-solid" class="mr-2" />
               Samples
             </button>
           </MenuItem>
-          <MenuItem v-slot="{ active }">
-            <button :class="active ? 'bg-primary' : ''" class="menu-button">
+          <MenuItem v-slot="{ active }" ref="load">
+            <button
+              :class="active ? 'bg-primary' : ''"
+              class="menu-button"
+              @click="openFileInput"
+            >
+              <input
+                type="file"
+                id="fileInput"
+                style="display: none"
+                @change="handleFileUpload"
+              />
               <v-icon name="la-project-diagram-solid" class="mr-2" />
               Load
             </button>
           </MenuItem>
-          <MenuItem v-slot="{ active }">
+          <MenuItem v-slot="{ active }" ref="save">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
               <v-icon name="la-save" class="mr-2" />
               Save
@@ -166,14 +176,30 @@
 
 <script setup>
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import { navbar } from '../stores/navbar.js';
-import Logo from '../assets/logo.vue';
+import { navbar } from '@/stores/navbar.js';
+import Logo from '@/assets/logo.vue';
+import graph from '@/stores/graph';
 
 const toggleDisplay = () => {
   navbar.view = navbar.view == 'default' ? 'simple' : 'default';
 };
 
-const emit = defineEmits(['changeMode', 'clear']);
+const openFileInput = () => {
+  document.getElementById('fileInput').click();
+};
+
+const handleFileUpload = (e) => {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const contents = e.target.result;
+    const json = JSON.parse(contents);
+    graph.value.read(json);
+  };
+  reader.readAsText(file);
+};
+
+const emit = defineEmits(['clear']);
 
 const changeActiveMode = (newMode) => {
   navbar.mode = newMode;

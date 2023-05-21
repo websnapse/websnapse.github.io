@@ -152,34 +152,8 @@ let ws = null;
 
 const resetSimulation = () => {
   navbar.running = false;
-  // reset states of all items
   graph.value.read(original.value);
 };
-
-// const simulate = async () => {
-//   const res = await simulateSystem(system.data);
-//   const neuron_keys = res.keys;
-//   const configurations = res.configurations.map((config) => {
-//     return neuron_keys.reduce((acc, cur, i) => {
-//       acc[cur] = config[i];
-//       return acc;
-//     }, {});
-//   });
-
-//   const states = res.states.map((state) => {
-//     return neuron_keys.reduce((acc, cur, i) => {
-//       acc[cur] = {
-//         value:
-//           state[i] === 1 ? 'animate' : state[i] === 0 ? 'default' : 'closed',
-//       };
-//       return acc;
-//     }, {});
-//   });
-
-//   status_list.value = states;
-//   config_list.value = configurations;
-//   max_tick.value = configurations.length;
-// };
 
 const stopSimulate = () => {
   ws.close();
