@@ -28,10 +28,7 @@ export default function clickAddEdge() {
             e.source === this.edge.getSource().getID() && e.target === model.id
         );
 
-        console.log(model);
-
-        // check if node type is input
-        if (model.nodeType === 'input') {
+        if (model.type === 'input') {
           this.graph.removeItem(this.edge);
           this.edge = null;
           this.addingEdge = false;
@@ -54,7 +51,7 @@ export default function clickAddEdge() {
         this.addingEdge = false;
       } else {
         // Add a new edge to the graph with the currently clicked node's position as the end point
-        if (model.nodeType !== 'output') {
+        if (model.type !== 'output') {
           this.edge = graph.addItem('edge', {
             source: model.id,
             target: point,

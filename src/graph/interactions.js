@@ -1,21 +1,8 @@
+import { updateNeuron, updateSynapse } from '../utils/dialog';
+import { navbar } from '../stores/navbar';
+
 export default function interact(graph) {
-  graph.on('click', (ev) => {
-    const shape = ev.target;
-    const item = ev.item;
-    if (item) {
-      const type = item.getType();
-    }
-  });
-
-  graph.on('node:mouseenter', (evt) => {
-    const { item } = evt;
-    item.setState('hover', true);
-  });
-
-  graph.on('node:mouseleave', (evt) => {
-    const { item } = evt;
-    item.clearStates('hover');
-  });
+  graph.on('canvas:click', (evt) => {});
 
   graph.on('edge:mouseenter', (evt) => {
     const { item } = evt;
@@ -38,34 +25,49 @@ export default function interact(graph) {
     item.setState('selected', true);
   });
 
-  graph.on('canvas:click', (evt) => {
-    graph.getNodes().forEach((node) => {
-      if (node.hasState('selected')) {
-        node.setState('selected', false);
-      }
-    });
-    graph.getEdges().forEach((edge) => {
-      if (edge.hasState('selected')) {
-        edge.setState('selected', false);
-      }
-    });
+  // graph.on('node:mouseenter', (evt) => {
+  //   const { item } = evt;
+  //   item.setState('hover', true);
+  // });
+
+  // graph.on('node:mouseleave', (evt) => {
+  //   const { item } = evt;
+  //   item.clearStates('hover');
+  // });
+
+  // graph.on('node:dblclick', async function (evt) {
+  //   const { item } = evt;
+  //   const model = item.getModel();
+  //   const updated = await updateNeuron(item);
+
+  //   if (!updated.success) return;
+
+  //   if (updated.type === 'regular') {
+  //     model.id = updated.id;
+  //     model.content = updated.content;
+  //     model.rules = updated.rules;
+  //   } else {
+  //     model.id = updated.id;
+  //     model.spiketrain = updated.spiketrain;
+  //   }
+
+  //   item.update(model);
+  // });
+
+  graph.on('edge:dblclick', async function (evt) {
+    const { item } = evt;
+    const model = item.getModel();
+    const updated = await updateSynapse(item);
+    model.label = updated.weight;
+    item.update(model);
   });
 
-  graph.on('node:mouseleave', function (evt) {
-    const node = evt.item;
-    const model = node.getModel();
-    graph.updateItem(node, {
-      label: model.oriLabel,
-      labelCfg: {
-        style: {
-          fill: '#555',
-        },
-      },
-    });
-  });
-
-  graph.on('content:dblclick', function (evt) {
-    console.log('edit content');
+  graph.on('afteradditem', (evt) => {
+    const { item } = evt;
+    if (item.getType() === 'node') {
+      item.setState('simple', navbar.view !== 'simple');
+      item.refresh();
+    }
   });
 
   graph.on('wheelzoom', (e) => {

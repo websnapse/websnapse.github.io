@@ -23,7 +23,7 @@
     <div>
       <button
         class="absolute p-2 text-base rounded-lg top-2 right-2 bg-primary"
-        @click="simulate"
+        @click="startSimulate"
       >
         <v-icon name="bi-play-fill" scale="1.5" />
       </button>
@@ -44,25 +44,32 @@
           scale="1.5"
           class="cursor-pointer"
         />
-        <button
-          class="p-1 text-base rounded-full bg-primary"
-          @click="toggleInterval"
-        >
+        <button class="p-1 text-base rounded-full bg-primary">
           <v-icon
             name="bi-play-fill"
+            @click="startSimulate"
             v-if="!navbar.running"
             scale="2"
             class="translate-x-[0.1rem]"
           />
-          <v-icon name="bi-pause-fill" v-if="navbar.running" scale="2" />
+          <v-icon
+            name="bi-stop-fill"
+            v-if="navbar.running"
+            scale="2"
+            @click="stopSimulate"
+          />
         </button>
         <v-icon
           name="la-step-forward-solid"
-          @click="changeTick(1)"
+          @click="simulateNext"
           scale="1.5"
           class="cursor-pointer"
         />
-        <v-icon name="la-sync-solid" class="ml-2" @click="resetSimulation" />
+        <v-icon
+          name="la-sync-solid"
+          class="ml-2 cursor-pointer"
+          @click="resetSimulation"
+        />
       </div>
       <div class="flex flex-col items-center justify-center gap-1">
         <input
@@ -84,167 +91,53 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, computed } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { TransitionRoot } from '@headlessui/vue';
-import CreateNeuronDialog from './CreateNeuronDialog.vue';
-import EditNeuronDialog from './EditNeuronDialog.vue';
-import EditSynapseDialog from './EditSynapseDialog.vue';
+import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
+import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
+import EditSynapseDialog from '@/components/EditSynapseDialog.vue';
 
-import createGraph from '../graph/graph';
-import initializeRegisters from '../graph/registers';
-import simulateSystem from '../services/simulator';
-import { neuron } from '../stores/neuron';
-import { system } from '../stores/system';
-import { navbar } from '../stores/navbar';
+import createGraph from '@/graph/graph';
+import simulateSystem from '@/services/simulator';
+import system from '@/stores/system';
+import { navbar } from '@/stores/navbar';
+import graph from '@/stores/graph';
 import {
   createNeuronDialogOpen,
   editSynapseDialogOpen,
   editNeuronDialogOpen,
   dialogDetails,
-} from '../stores/dialog';
+} from '@/stores/dialog';
 
-import { updateNeuron, updateSynapse } from '../utils/dialog';
-
-import { undo, redo } from '../graph/utils/actionStack';
+import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
+import initializeRegisters from '@/graph/registers';
 
 const props = defineProps(['graph_mode', 'clear_all']);
 
-const simulate = ref(null);
+const original = ref();
+const status = ref();
+const config = ref();
 
-const neuronDetails = ref({
-  id: '',
-  content: '',
-  rules: '',
-});
-
-const edgeDetails = ref({
-  weight: '',
-});
-
-const weightDialogOpen = ref(false);
-
-const ruleDialogOpen = ref(false);
-
-const closeRuleDialog = () => {
-  ruleDialogOpen.value = false;
-};
-
-const closeWeightDialog = () => {
-  weightDialogOpen.value = false;
-};
-
-const data = system;
-
-// programmatically create a status ref containing an object with the node labels from the data and their status
-const status = ref(
-  data.value.nodes.reduce((acc, cur) => {
-    acc[cur.id] = {
-      value: 'default',
-    };
-    return acc;
-  }, {})
-);
-
-const config = ref(
-  data.value.nodes.reduce((acc, cur) => {
-    acc[cur.id] = cur.content;
-    return acc;
-  }, {})
-);
-
-// programmatically create an array of 5 elements
-const statusArray = Array.from(Array(5).keys()).map((_) => {
-  return data.value.nodes.reduce((acc, cur) => {
-    acc[cur.id] = {
-      value: Math.random() > 0.5 ? 'default' : 'animate',
-    };
-    return acc;
-  }, {});
-});
-
-const status_list = ref([status.value, ...statusArray]);
-console.log(status_list.value);
-
-const configArray = Array.from(Array(5).keys()).map((_) => {
-  return data.value.nodes.reduce((acc, cur) => {
-    acc[cur.id] = parseInt(Math.random() * 5);
-    return acc;
-  }, {});
-});
-
-const max_tick = ref(5);
-
-const config_list = ref([config.value, ...configArray]);
-
-console.log(config_list.value);
-
-const neurons = computed(() => {
-  return Object.keys(status.value);
-});
-
-// switchs tatus value to get from the status_list ref at index i
-const switchStatus = (i) => {
-  status.value[neurons.value[i]].value =
-    status.value[neurons.value[i]].value === 'default' ? 'animate' : 'default';
-};
-
-const duration = ref(2000);
-
-const mouse = ref({ x: 0, y: 0 });
-
-const initializeGraph = (system, vh, vw) => {
-  initializeRegisters(neuron);
-
-  const graph = createGraph('mountNode', vw, vh);
-
-  graph.on('node:dblclick', async function (evt) {
-    const { item } = evt;
-    const model = item.getModel();
-    const updated = await updateNeuron(item);
-    model.id = updated.id;
-    model.content = updated.content;
-    model.rules = updated.rules;
-    item.update(model);
-  });
-
-  graph.on('edge:dblclick', async function (evt) {
-    const { item } = evt;
-    const model = item.getModel();
-    const updated = await updateSynapse(item);
-    model.label = updated.weight;
-    item.update(model);
-  });
-
-  // after node is added to the graph, set its state to whatever the value of navbar view is
-  graph.on('afteradditem', (evt) => {
-    const { item } = evt;
-    // check if item is a node
-    if (item.getType() === 'node') {
-      item.setState('simple', navbar.value.view !== 'simple');
-      item.refresh();
-    }
-  });
-
-  return graph;
-};
-
+const status_list = ref([]);
+const config_list = ref([]);
 const tick = ref(0);
+const max_tick = ref(0);
+const duration = ref(1000);
 
 const changeTick = (i) => {
   tick.value += i;
   clearInterval(intervalId);
-  navbar.value.running = false;
+  navbar.running = false;
 };
 
 let intervalId = null;
-
 const toggleInterval = () => {
-  navbar.value.running = !navbar.value.running;
-  if (navbar.value.running) {
+  navbar.running = !navbar.running;
+  if (navbar.running) {
     intervalId = setInterval(() => {
       if (tick.value + 1 >= max_tick.value) {
         clearInterval(intervalId);
-        navbar.value.running = false;
+        navbar.running = false;
       } else {
         tick.value++;
       }
@@ -254,277 +147,193 @@ const toggleInterval = () => {
   }
 };
 
+/** @type {WebSocket} */
+let ws = null;
+
 const resetSimulation = () => {
-  navbar.value.running = false;
-  clearInterval(intervalId);
-  tick.value = 0;
+  navbar.running = false;
+  // reset states of all items
+  graph.value.read(original.value);
 };
+
+// const simulate = async () => {
+//   const res = await simulateSystem(system.data);
+//   const neuron_keys = res.keys;
+//   const configurations = res.configurations.map((config) => {
+//     return neuron_keys.reduce((acc, cur, i) => {
+//       acc[cur] = config[i];
+//       return acc;
+//     }, {});
+//   });
+
+//   const states = res.states.map((state) => {
+//     return neuron_keys.reduce((acc, cur, i) => {
+//       acc[cur] = {
+//         value:
+//           state[i] === 1 ? 'animate' : state[i] === 0 ? 'default' : 'closed',
+//       };
+//       return acc;
+//     }, {});
+//   });
+
+//   status_list.value = states;
+//   config_list.value = configurations;
+//   max_tick.value = configurations.length;
+// };
+
+const stopSimulate = () => {
+  ws.close();
+  graph.value.getNodes().forEach((node) => {
+    node.clearStates(['default', 'animate', 'closed']);
+    node.setState('default', true);
+  });
+  graph.value.getEdges().forEach((edge) => {
+    edge.clearStates(['default', 'animate', 'closed']);
+    edge.setState('default', true);
+  });
+  navbar.running = false;
+};
+
+const startSimulate = async () => {
+  ws = new WebSocket('ws://localhost:8000/simulate/ws');
+  original.value = system.data;
+  ws.onopen = function () {
+    ws.send(JSON.stringify(system.data));
+  };
+  ws.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+
+    status.value = data.states;
+    config.value = data.configurations;
+
+    if (data.halted === true) {
+      navbar.running = false;
+    }
+  };
+  navbar.running = true;
+};
+
+const simulateNext = async () => {
+  const res = await simulateSystem(system.data);
+
+  const configurations = res.keys.reduce((acc, key, index) => {
+    acc[key] = res.configurations[index];
+    return acc;
+  }, {});
+
+  const states = res.keys.reduce((acc, key, index) => {
+    acc[key] = {
+      value:
+        res.states[index] === 1
+          ? 'animate'
+          : res.states[index] === 0
+          ? 'default'
+          : 'closed',
+    };
+    return acc;
+  }, {});
+
+  status.value = states;
+  config.value = configurations;
+};
+
+watch(duration, (newDuration) => {
+  if (navbar.running) {
+    if (tick.value < max_tick.value) {
+      clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        tick.value++;
+      }, newDuration);
+    }
+  }
+});
+
+watch(
+  duration,
+  (newDuration) => {
+    // get graph.value items
+    const nodes = graph.value?.getNodes();
+    const edges = graph.value?.getEdges();
+
+    // set the duration of each node and edge
+    nodes?.forEach((node) => {
+      const model = node.getModel();
+      model.duration = newDuration;
+      node.update(model);
+    });
+    edges?.forEach((edge) => {
+      const model = edge.getModel();
+      model.duration = newDuration;
+      edge.update(model);
+    });
+  },
+  { immediate: true }
+);
+watch(tick, (newTick) => {
+  status.value = status_list.value[newTick];
+  config.value = config_list.value[newTick];
+});
+
+watch(
+  () => props.clear_all,
+  () => {
+    if (props.clear_all) graph.value.clear();
+  }
+);
 
 onMounted(() => {
   const vh = document.getElementById('mountNode').offsetHeight;
   const vw = document.getElementById('mountNode').offsetWidth;
-  const graph = initializeGraph(data, vh, vw);
+  initializeRegisters();
 
-  graph.data(data.value);
-  graph.render();
+  const g = createGraph('mountNode', vw, vh);
 
-  const body = computed(() => {
-    const { nodes, edges } = graph.save();
-    const adj_mtx = graph.getAdjMatrix(false, true);
+  g.data(system.data);
+  g.render();
 
-    const parsed_adj_mtx = adj_mtx.map((row) =>
-      Array(row.length)
-        .fill(0)
-        .map((val, i) => (row[i] === 1 ? 1 : 0))
-    );
-
-    console.log(parsed_adj_mtx);
-    const parsed_nodes = nodes.map((node) => {
-      return {
-        id: node.id,
-        content: node.content,
-        rules: node.rules,
-        nodeType: node.nodeType,
-      };
-    });
-    const parsed_edges = edges.map((edge) => {
-      return {
-        source: edge.source,
-        target: edge.target,
-        label: edge.label,
-      };
-    });
-
-    const parsed_system = {
-      nodes: parsed_nodes,
-      edges: parsed_edges,
-      adj_mtx: parsed_adj_mtx,
-    };
-
-    return parsed_system;
-  });
-
-  simulate.value = async () => {
-    const res = await simulateSystem(body.value);
-    const neuron_keys = res.keys;
-    const configurations = res.configurations.map((config) => {
-      return neuron_keys.reduce((acc, cur, i) => {
-        acc[cur] = config[i];
-        return acc;
-      }, {});
-    });
-
-    console.log(configurations);
-
-    const states = res.states.map((state) => {
-      return neuron_keys.reduce((acc, cur, i) => {
-        acc[cur] = {
-          value:
-            state[i] === 1 ? 'animate' : state[i] === 0 ? 'default' : 'closed',
-        };
-        return acc;
-      }, {});
-    });
-
-    status_list.value = states;
-    config_list.value = configurations;
-    max_tick.value = configurations.length;
-  };
-
-  const handleKeyup = (evt) => {
-    const { key } = evt;
-
-    if (key === 'Delete') {
-      graph.getNodes().forEach((node) => {
-        if (node.hasState('selected')) {
-          graph.removeItem(node);
-        }
-      });
-      graph.getEdges().forEach((edge) => {
-        if (edge.hasState('selected')) {
-          graph.removeItem(edge);
-        }
-      });
-    }
-
-    if (key === 'v') {
-      navbar.value.mode = 'default';
-    }
-    if (key === 'h') {
-      navbar.value.mode = 'default';
-      graph.get('canvas').setCursor('default');
-    }
-    if (key === 'e') {
-      navbar.value.mode = 'edge';
-    }
-    if (key === 'n') {
-      navbar.value.mode = 'node';
-    }
-    if (key === 'd') {
-      navbar.value.mode = 'delete';
-    }
-    if (key === 'Control') {
-      navbar.value.mode = 'default';
-    }
-  };
-
-  const handleKeydown = (evt) => {
-    const { key } = evt;
-    if (key === 'h') {
-      navbar.value.mode = 'pan';
-      graph.get('canvas').setCursor('grab');
-    }
-
-    if (key === 'Control') {
-      navbar.value.mode = 'edge';
-    }
-
-    if (evt.ctrlKey && evt.key === 'z') {
-      undo(graph);
-    }
-
-    if (evt.ctrlKey && evt.shiftKey && evt.key === 'Z') {
-      redo(graph);
-    }
-  };
-
-  const handleMousedown = (evt) => {
-    // check if middle mouse button is pressed
-    if (evt.button === 1) {
-      navbar.value.mode = 'pan';
-      mouse.value.x = evt.clientX;
-      mouse.value.y = evt.clientY;
-    }
-  };
-
-  const handleMouseup = (evt) => {
-    if (evt.button === 1) {
-      navbar.value.mode = 'default';
-    }
-  };
-
-  window.addEventListener('keyup', handleKeyup);
-  window.addEventListener('keydown', handleKeydown);
-  window.addEventListener('mousedown', handleMousedown);
-  window.addEventListener('mouseup', handleMouseup);
-  // window.addEventListener('mousemove', (evt) => {
-  //   if (navbar.value.mode === 'pan') {
-  //     const dx = evt.clientX - mouse.value.x;
-  //     const dy = evt.clientY - mouse.value.y;
-  //     const point = graph.getPointByClient(dx, dy);
-  //     graph.translate(point.x, point.y);
-  //     graph.get('canvas').setCursor('grab');
-  //   } else graph.get('canvas').setCursor('default');
-  // });
-
-  watch(
-    () => navbar.value.mode,
-    (val) => {
-      graph.setMode(val);
-    }
-  );
+  graph.value = g;
 
   watch(status, (newValue, oldValue) => {
     for (const key in newValue) {
-      if (newValue[key] !== oldValue[key]) {
-        const node = graph.findById(key);
-        const edges = graph.getEdges().filter((edge) => {
-          return edge.getSource().getID() === key;
-        });
+      const node = g.findById(key);
+      const edges = g.getEdges().filter((edge) => {
+        return edge.getSource().getID() === key;
+      });
 
-        for (const edge of edges) {
-          graph.setItemState(edge, 'animate', false);
-          graph.setItemState(
-            edge,
-            'animate',
-            newValue[key].value === 'animate'
-          );
-        }
-        node.clearStates(['default', 'animate', 'closed']);
-        graph.setItemState(node, newValue[key].value, true);
-        graph.setItemState(node, 'running', true);
+      for (const edge of edges) {
+        g.setItemState(edge, 'animate', false);
+        g.setItemState(edge, 'animate', newValue[key] === 'animate');
       }
-    }
-  });
-
-  watch(duration, (newDuration) => {
-    if (navbar.value.running) {
-      if (tick.value < max_tick.value) {
-        clearInterval(intervalId);
-        intervalId = setInterval(() => {
-          tick.value++;
-        }, newDuration);
-      }
+      node.clearStates(['default', 'animate', 'closed']);
+      node.setState(newValue[key], true);
+      node.setState('running', true);
     }
   });
 
   watch(config, (newValue, oldValue) => {
     for (const key in newValue) {
-      if (newValue[key] !== oldValue[key]) {
-        const node = graph.findById(key);
+      const node = g.findById(key);
+      const model = node.getModel();
+
+      if (model.type === 'regular') {
         node.update({
           content: newValue[key],
+        });
+      } else {
+        node.update({
+          spiketrain: newValue[key],
         });
       }
     }
   });
 
-  watch(system, (newSystem) => {
-    graph.changeData(newSystem);
-  });
+  window.addEventListener('keyup', handleKeyup);
+  window.addEventListener('keydown', handleKeydown);
 
-  watch(
-    () => props.clear_all,
-    () => {
-      if (props.clear_all) graph.clear();
-    }
-  );
-
-  watch(
-    () => navbar.value.view,
-    (newView) => {
-      graph.getNodes().forEach((node) => {
-        newView !== 'simple'
-          ? graph.setItemState(node, 'simple', true)
-          : graph.clearItemStates(node);
-      });
-      graph.refresh();
-    }
-  );
-
-  watch(
-    duration,
-    (newDuration) => {
-      // get graph items
-      const nodes = graph.getNodes();
-      const edges = graph.getEdges();
-
-      // set the duration of each node and edge
-      nodes.forEach((node) => {
-        const model = node.getModel();
-        model.duration = newDuration;
-        node.update(model);
-      });
-      edges.forEach((edge) => {
-        const model = edge.getModel();
-        model.duration = newDuration;
-        edge.update(model);
-      });
-    },
-    { immediate: true }
-  );
-
-  watch(tick, (newTick) => {
-    status.value = status_list.value[newTick];
-    config.value = config_list.value[newTick];
-    console.log(config.value);
-  });
-
-  // if the width and height of mountNode changes, update width and height of graph
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
-    graph.changeSize(width, height);
-    graph.fitView();
+    g.changeSize(width, height);
+    g.fitView();
   });
 
   resizeObserver.observe(document.getElementById('mountNode'));

@@ -165,20 +165,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import { neuron } from '../stores/neuron.js';
 import { navbar } from '../stores/navbar.js';
 import Logo from '../assets/logo.vue';
 
 const toggleDisplay = () => {
-  navbar.value.view = navbar.value.view == 'default' ? 'simple' : 'default';
+  navbar.view = navbar.view == 'default' ? 'simple' : 'default';
 };
 
 const emit = defineEmits(['changeMode', 'clear']);
 
 const changeActiveMode = (newMode) => {
-  navbar.value.mode = newMode;
+  navbar.mode = newMode;
 };
 
 const clearAll = () => {

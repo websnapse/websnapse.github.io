@@ -8,9 +8,14 @@ import {
 import { watch } from 'vue';
 
 export const updateNeuron = (item) => {
-  const { id, content, rules, nodeType } = item.getModel();
+  const model = item.getModel();
   return new Promise((resolve, reject) => {
-    dialogDetails.value = { id, content, rules, nodeType };
+    const { id, content, rules, type, spiketrain } = model;
+    if (model.type !== 'regular') {
+      dialogDetails.value = { id, type, spiketrain };
+    } else {
+      dialogDetails.value = { id, content, rules, type };
+    }
     editNeuronDialogOpen.value = true;
 
     watch(editNeuronDialogOpen, (newVal, oldVal) => {
@@ -31,6 +36,10 @@ export const updateSynapse = (item) => {
   });
 };
 
+/**
+ *
+ * @returns {Promise<void>}
+ */
 export const createNeuron = () => {
   return new Promise((resolve, reject) => {
     createNeuronDialogOpen.value = true;

@@ -1,6 +1,6 @@
-import { ref } from 'vue';
+import { reactive } from 'vue';
 
-export const navbar = ref({
+export const navbar = reactive({
   view: 'simple',
   running: false,
   mode: 'default',

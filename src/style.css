@@ -35,6 +35,19 @@ body {
   @apply w-4 h-4 rounded-full appearance-none cursor-pointer bg-primary;
 }
 
+.mq-editable-field.mq-math-mode,
+.mq-editable-field.mq-math-mode.mq-focused {
+  @apply block w-full p-3 text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50;
+}
+
+.mq-editable-field.mq-math-mode.mq-focused {
+  @apply border-blue-500 shadow-none ring-blue-500;
+}
+
+.input-field {
+  @apply block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500;
+}
+
 canvas {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

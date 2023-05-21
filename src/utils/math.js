@@ -1,3 +1,5 @@
+import style from '@/stores/styles';
+
 const MathJax = window.MathJax;
 
 export const convertMath = (text) => {
@@ -5,6 +7,11 @@ export const convertMath = (text) => {
   return svg;
 };
 
+/**
+ * Fold a string of repeated characters
+ * @param {string} str input string
+ * @returns {string} folded string
+ */
 export const foldString = (str) => {
   let result = '';
   let count = 1;
@@ -24,6 +31,11 @@ export const foldString = (str) => {
   return result;
 };
 
+/**
+ * Generate an SVG base64 string from a latex formula
+ * @param {string} formula
+ * @returns
+ */
 export const latexToImg = (formula) => {
   let wrapper = MathJax.tex2svg(`${formula}`, {
     em: 10,
@@ -32,6 +44,7 @@ export const latexToImg = (formula) => {
   });
   let output = { svg: '', img: '' };
   let mjOut = wrapper.getElementsByTagName('svg')[0];
+  mjOut.style.color = style.black;
   output.svg = mjOut.outerHTML;
   const width = mjOut.getAttribute('width');
   const height = mjOut.getAttribute('height');

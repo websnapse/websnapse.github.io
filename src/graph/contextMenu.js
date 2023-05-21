@@ -1,5 +1,8 @@
 import G6 from '@antv/g6';
 import { neuron } from '../stores/neuron';
+import system from '../stores/system';
+import addNode from './utils/addNode';
+import deleteItems from './utils/delete-items';
 
 export default function initializeContextMenu(graph) {
   const contextMenu = new G6.Menu({
@@ -51,67 +54,28 @@ export default function initializeContextMenu(graph) {
     },
     handleMenuClick: (target, item) => {
       const command = target.innerText;
-      // get target position
       const point = target.getBoundingClientRect();
       // point.x = (point.x + point.width) / 2;
       // point.y = (point.y + point.height) / 2;
       console.log(item);
 
       const model = item?.getModel();
-      // get mouse positions in the graph canvas
       switch (command) {
         case 'New Node':
-          const last_node = graph.getNodes()[graph.getNodes().length - 1];
-          const last_node_id = last_node.getModel().id;
-          const orig_id = last_node_id.split('-')[0];
-          // get the duplicate number of the last node
-          const duplicate = parseInt(last_node_id.split('-')[1] ?? 1) + 1;
-          graph.addItem('node', {
-            x: point.x,
-            y: point.y,
-            id: `${orig_id}-${duplicate}`, // Generate a unique id
-            nodeType: neuron.value.nodeType,
-            content: neuron.value.content,
-            rules: neuron.value.rules.split('\n'),
-          });
+          addNode(point, graph);
           break;
         case 'Fit View':
           graph.fitView();
           break;
         case 'Save':
-          const system_edges = graph.save().edges;
-          const system_nodes = graph.save().nodes;
-          const parsed_nodes = system_nodes.map((node) => {
-            return {
-              id: node.id,
-              content: node.content,
-              rules: node.rules,
-              nodeType: node.nodeType,
-              x: node.x,
-              y: node.y,
-            };
-          });
-          const parsed_edges = system_edges.map((edge) => {
-            return {
-              source: edge.source,
-              target: edge.target,
-              label: edge.label,
-            };
-          });
-
-          const parsed_system = {
-            nodes: parsed_nodes,
-            edges: parsed_edges,
-          };
-
-          // download the json file
-          const a = document.createElement('a');
-          const file = new Blob([JSON.stringify(parsed_system)], {
-            type: 'text/plain',
-          });
-          a.href = URL.createObjectURL(file);
-          a.download = 'system.json';
-          a.click();
+          console.log(system.data.edges);
+          // const a = document.createElement('a');
+          // const file = new Blob([JSON.stringify(system.data)], {
+          //   type: 'text/plain',
+          // });
+          // a.href = URL.createObjectURL(file);
+          // a.download = 'system.json';
+          // a.click();
           break;
         case 'Clear':
           graph.clear();
@@ -146,18 +110,11 @@ export default function initializeContextMenu(graph) {
           update();
           break;
         case 'Delete':
-          setTimeout(() => {
-            graph.getNodes().forEach((node) => {
-              if (node.hasState('selected')) {
-                graph.removeItem(node);
-              }
-            });
-            graph.removeItem(item);
-          }, 100);
+          deleteItems(graph);
           break;
       }
     },
-    offsetX: 16 + 10,
+    offsetX: 0,
     offsetY: 0,
     itemTypes: ['node', 'edge', 'canvas'],
   });

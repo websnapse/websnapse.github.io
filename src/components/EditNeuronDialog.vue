@@ -75,7 +75,7 @@
                   </div>
                   <div
                     class="relative flex flex-col gap-1"
-                    v-if="props.details.nodeType === 'regular'"
+                    v-if="props.details.type === 'regular'"
                   >
                     <label
                       for="message"
@@ -83,31 +83,31 @@
                     >
                       Rules
                     </label>
-                    <textarea
-                      id="message"
-                      v-model="rules"
-                      rows="4"
-                      class="outline-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="a^2/a^2 \to a;0"
+                    <MathEditor
+                      v-for="(rule, index) in props.details.rules"
+                      v-bind:model-value="rule"
+                      @change="(value) => (props.details.rules[index] = value)"
+                      @delete="props.details.rules.splice(index, 1)"
+                      @keydown.enter.prevent="
+                        () => {
+                          props.details.rules.push(''),
+                            $nextTick(() =>
+                              $refs.rules[
+                                props.details.rules.length - 1
+                              ].focus()
+                            );
+                        }
+                      "
                     />
                   </div>
                 </form>
               </div>
-              <!-- <div class="relative flex items-center justify-center col-span-2">
-                <div
-                  class="flex flex-col items-center px-10 py-4 border border-black rounded-3xl"
-                >
-                  <div class="w-fit">$$ a $$</div>
-                  <div class="mt-4 w-fit">$$ a^2 \to a $$</div>
-                  <div class="w-fit">$$ a^2 \to a $$</div>
-                </div>
-              </div> -->
 
               <div class="mt-4">
                 <button
                   type="button"
                   class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  @click="props.closeModal"
+                  @click="checkDetails"
                 >
                   Update
                 </button>
@@ -127,21 +127,21 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/vue';
-
-import { computed, watch } from 'vue';
+import MathEditor from './MathEditor.vue';
 
 const props = defineProps(['isOpen', 'closeModal', 'details']);
 
-// create computed variable for the rules that joins the array into a string
-const rules = computed({
-  get: () => props.details?.rules?.join('\n'),
-  set: (value) => {
-    props.details.rules = value.split('\n');
-  },
-});
+const checkDetails = () => {
+  if (props.details.type === 'regular') {
+    props.details.rules.forEach((rule) => {
+      if (rule === '') {
+        alert('Please enter rules');
+        return;
+      }
+    });
+  }
 
-// watch for changes in the rules and update the prop details rules
-watch(rules, (value) => {
-  props.details.rules = value.split('\n');
-});
+  props.details.success = true;
+  props.closeModal();
+};
 </script>

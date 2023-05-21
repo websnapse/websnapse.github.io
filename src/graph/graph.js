@@ -1,8 +1,10 @@
 import G6 from '@antv/g6';
 import interact from './interactions';
 import initializeContextMenu from './contextMenu';
+import initializeRegisters from './registers';
 
 export default function createGraph(container, width, height) {
+  initializeRegisters();
   const grid = new G6.Grid();
 
   const graph = new G6.Graph({
@@ -64,23 +66,15 @@ export default function createGraph(container, width, height) {
           },
         },
         {
-          type: 'shortcuts-call',
-          // subject key
-          trigger: 'ctrl',
-          // vice key
-          combinedKey: 'c',
-          // move the graph to 10,10
-          functionName: 'fitCenter',
-        },
-        {
           type: 'zoom-canvas',
           enableOptimize: true,
           optimizeZoom: 0.2,
         },
+        'node-interactions',
         'drag-node',
       ],
 
-      node: ['click-add-node', 'drag-node'],
+      node: ['click-add-node', 'drag-node', 'node-interactions'],
 
       edge: ['drag-add-edge'],
 
@@ -88,16 +82,13 @@ export default function createGraph(container, width, height) {
 
       pan: ['drag-canvas', 'zoom-canvas'],
 
-      delete: ['click-select', 'remove-node'],
+      delete: ['click-select', 'remove-item'],
     },
   });
 
   const contextMenu = initializeContextMenu(graph);
 
   graph.addPlugin(contextMenu);
-
-  console.log(graph);
-
   interact(graph);
 
   return graph;
