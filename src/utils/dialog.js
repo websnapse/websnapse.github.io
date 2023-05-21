@@ -36,6 +36,10 @@ export const updateSynapse = (item) => {
   });
 };
 
+/**
+ *
+ * @returns {Promise<void>}
+ */
 export const createNeuron = () => {
   return new Promise((resolve, reject) => {
     createNeuronDialogOpen.value = true;

@@ -2,19 +2,7 @@ import { updateNeuron, updateSynapse } from '../utils/dialog';
 import { navbar } from '../stores/navbar';
 
 export default function interact(graph) {
-  graph.on('canvas:click', (ev) => {
-    console.log(ev);
-  });
-
-  graph.on('node:mouseenter', (evt) => {
-    const { item } = evt;
-    item.setState('hover', true);
-  });
-
-  graph.on('node:mouseleave', (evt) => {
-    const { item } = evt;
-    item.clearStates('hover');
-  });
+  graph.on('canvas:click', (evt) => {});
 
   graph.on('edge:mouseenter', (evt) => {
     const { item } = evt;
@@ -36,21 +24,34 @@ export default function interact(graph) {
     item.setState('selected', true);
   });
 
-  graph.on('canvas:click', (evt) => {});
+  // graph.on('node:mouseenter', (evt) => {
+  //   const { item } = evt;
+  //   item.setState('hover', true);
+  // });
 
-  graph.on('content:dblclick', function (evt) {
-    console.log('edit content');
-  });
+  // graph.on('node:mouseleave', (evt) => {
+  //   const { item } = evt;
+  //   item.clearStates('hover');
+  // });
 
-  graph.on('node:dblclick', async function (evt) {
-    const { item } = evt;
-    const model = item.getModel();
-    const updated = await updateNeuron(item);
-    model.id = updated.id;
-    model.content = updated.content;
-    model.rules = updated.rules;
-    item.update(model);
-  });
+  // graph.on('node:dblclick', async function (evt) {
+  //   const { item } = evt;
+  //   const model = item.getModel();
+  //   const updated = await updateNeuron(item);
+
+  //   if (!updated.success) return;
+
+  //   if (updated.type === 'regular') {
+  //     model.id = updated.id;
+  //     model.content = updated.content;
+  //     model.rules = updated.rules;
+  //   } else {
+  //     model.id = updated.id;
+  //     model.spiketrain = updated.spiketrain;
+  //   }
+
+  //   item.update(model);
+  // });
 
   graph.on('edge:dblclick', async function (evt) {
     const { item } = evt;
@@ -63,7 +64,7 @@ export default function interact(graph) {
   graph.on('afteradditem', (evt) => {
     const { item } = evt;
     if (item.getType() === 'node') {
-      item.setState('simple', navbar.value.view !== 'simple');
+      item.setState('simple', navbar.view !== 'simple');
       item.refresh();
     }
   });

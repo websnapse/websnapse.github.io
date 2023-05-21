@@ -2,6 +2,7 @@ import G6 from '@antv/g6';
 import { neuron } from '../stores/neuron';
 import system from '../stores/system';
 import addNode from './utils/addNode';
+import deleteItems from './utils/delete-items';
 
 export default function initializeContextMenu(graph) {
   const contextMenu = new G6.Menu({
@@ -66,7 +67,7 @@ export default function initializeContextMenu(graph) {
           graph.fitView();
           break;
         case 'Save':
-          console.log(system.data);
+          console.log(system.data.edges);
           // const a = document.createElement('a');
           // const file = new Blob([JSON.stringify(system.data)], {
           //   type: 'text/plain',
@@ -108,14 +109,7 @@ export default function initializeContextMenu(graph) {
           update();
           break;
         case 'Delete':
-          graph.getNodes().forEach((node) => {
-            if (node.hasState('selected')) {
-              setTimeout(() => {
-                graph.removeItem(node);
-              }, 100);
-            }
-          });
-          graph.removeItem(item);
+          deleteItems(graph);
           break;
       }
     },

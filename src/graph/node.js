@@ -1,5 +1,5 @@
 import G6 from '@antv/g6';
-import { foldString, latexToImg } from '../utils/math';
+import { foldString, latexToImg } from '@/utils/math';
 import style from '@/stores/styles';
 
 const drawRegular = (cfg, group) => {

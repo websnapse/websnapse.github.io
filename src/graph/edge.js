@@ -110,7 +110,7 @@ export default function initalizeEdge() {
               },
               {
                 repeat: true,
-                duration: model.duration ?? 3000,
+                duration: model.duration ?? 1000,
               }
             );
             circle.animate(
@@ -125,7 +125,7 @@ export default function initalizeEdge() {
                 };
               },
               {
-                duration: model.duration ?? 3000, // the duration for executing once
+                duration: model.duration ?? 1000, // the duration for executing once
               }
             );
           } else {

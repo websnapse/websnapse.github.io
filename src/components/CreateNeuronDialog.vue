@@ -140,7 +140,7 @@
                   </div>
                   <div
                     class="relative flex flex-col gap-1"
-                    v-if="neuron.type !== 'regular'"
+                    v-if="neuron.type === 'input'"
                   >
                     <label
                       for="spiketrain"
@@ -234,6 +234,10 @@ const checkDetails = () => {
         return;
       }
     });
+  }
+
+  if (neuron.value.type === 'output') {
+    neuron.value.spiketrain = '';
   }
 
   neuron.value.success = true;

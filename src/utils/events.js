@@ -19,35 +19,35 @@ export const handleKeyup = (evt) => {
   }
 
   if (key === 'v') {
-    navbar.value.mode = 'default';
+    navbar.mode = 'default';
   }
   if (key === 'h') {
-    navbar.value.mode = 'default';
+    navbar.mode = 'default';
     graph.value.get('canvas').setCursor('default');
   }
   if (key === 'e') {
-    navbar.value.mode = 'edge';
+    navbar.mode = 'edge';
   }
   if (key === 'n') {
-    navbar.value.mode = 'node';
+    navbar.mode = 'node';
   }
   if (key === 'd') {
-    navbar.value.mode = 'delete';
+    navbar.mode = 'delete';
   }
   if (key === 'Control') {
-    navbar.value.mode = 'default';
+    navbar.mode = 'default';
   }
 };
 
 export const handleKeydown = (evt) => {
   const { key } = evt;
   if (key === 'h') {
-    navbar.value.mode = 'pan';
+    navbar.mode = 'pan';
     graph.value.get('canvas').setCursor('grab');
   }
 
   if (key === 'Control') {
-    navbar.value.mode = 'edge';
+    navbar.mode = 'edge';
   }
 
   if (evt.ctrlKey && evt.key === 'z') {

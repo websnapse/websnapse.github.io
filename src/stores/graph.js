@@ -4,7 +4,7 @@ import { navbar } from './navbar';
 const graph = ref(null);
 
 watch(
-  () => navbar.value.view,
+  () => navbar.view,
   (newView) => {
     graph.value.getNodes().forEach((node) => {
       newView !== 'simple'
@@ -16,7 +16,7 @@ watch(
 );
 
 watch(
-  () => navbar.value.mode,
+  () => navbar.mode,
   (val) => {
     graph.value.setMode(val);
     switch (val) {

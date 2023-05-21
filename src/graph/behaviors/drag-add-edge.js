@@ -2,8 +2,6 @@ import G6 from '@antv/g6';
 
 export default function dragAddEdge() {
   G6.registerBehavior('drag-add-edge', {
-    // Bind the events and response functions for this custom Behavior
-
     getEvents() {
       return {
         'node:dragstart': 'onDragStart',
@@ -77,6 +75,8 @@ export default function dragAddEdge() {
           },
           false
         );
+        this.edge = null;
+        this.addingEdge = false;
       } else {
         this.graph.removeItem(this.edge, false);
       }

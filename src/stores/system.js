@@ -2,58 +2,54 @@ import { watch, reactive, computed } from 'vue';
 import graph from './graph';
 import sample from '../data.json';
 
-const data = computed(() => {
-  const nodes = graph.value?.save().nodes;
-  const edges = graph.value?.save().edges;
-
-  const parsed_nodes = nodes?.map((node) => {
-    const { id, content, rules, type, x, y, spiketrain } = node;
-
-    if (type === 'input' || type === 'output') {
-      return {
-        id,
-        type,
-        spiketrain,
-        x,
-        y,
-      };
-    }
-
-    return {
-      id,
-      content,
-      rules,
-      type,
-      x,
-      y,
-    };
-  });
-  const parsed_edges = edges?.map((edge) => {
-    return {
-      source: edge.source,
-      target: edge.target,
-      label: edge.label,
-    };
-  });
-
-  const parsed_system = {
-    nodes: parsed_nodes ?? sample.nodes,
-    edges: parsed_edges ?? sample.edges,
-  };
-
-  return parsed_system;
-});
-
 const system = reactive({
-  data: data.value,
+  data: computed({
+    get() {
+      const nodes = graph.value?.save().nodes;
+      const edges = graph.value?.save().edges;
+
+      const parsed_nodes = nodes?.map((node) => {
+        const { id, content, rules, type, x, y, spiketrain } = node;
+
+        if (type === 'input' || type === 'output') {
+          return {
+            id,
+            type,
+            spiketrain,
+            x,
+            y,
+          };
+        }
+
+        return {
+          id,
+          content,
+          rules,
+          type,
+          x,
+          y,
+        };
+      });
+      const parsed_edges = edges?.map((edge) => {
+        return {
+          source: edge.source,
+          target: edge.target,
+          label: edge.label,
+        };
+      });
+
+      const parsed_system = {
+        nodes: parsed_nodes ?? sample.nodes,
+        edges: parsed_edges ?? sample.edges,
+      };
+
+      return parsed_system;
+    },
+  }),
   states: [],
   configuration: [],
   duration: 3000,
   tick: 0,
-});
-
-watch(data, (newData) => {
-  system.data = newData;
 });
 
 watch(
@@ -85,7 +81,7 @@ watch(
 watch(
   () => system.duration,
   (newDuration) => {
-    if (navbar.value.running) {
+    if (navbar.running) {
       if (tick.value < max_tick.value) {
         clearInterval(intervalId);
         intervalId = setInterval(() => {
