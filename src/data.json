@@ -27,16 +27,16 @@
     {
       "id": "out",
       "type": "output",
-      "spiketrain": "",
+      "content": "",
       "x": 1398.9588073176217,
       "y": 592.7282797809784
     }
   ],
   "edges": [
-    { "source": "n1", "target": "n2", "label": 1 },
-    { "source": "n1", "target": "n3", "label": 1 },
-    { "source": "n2", "target": "n1", "label": 1 },
-    { "source": "n2", "target": "n3", "label": 1 },
-    { "source": "n3", "target": "out", "label": 1 }
+    { "source": "n1", "target": "n2", "weight": 1 },
+    { "source": "n1", "target": "n3", "weight": 1 },
+    { "source": "n2", "target": "n1", "weight": 1 },
+    { "source": "n2", "target": "n3", "weight": 1 },
+    { "source": "n3", "target": "out", "weight": 1 }
   ]
 }

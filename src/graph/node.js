@@ -145,7 +145,7 @@ const drawRegular = (cfg, group) => {
 };
 
 const drawInput = (cfg, group) => {
-  const render = [latexToImg(foldString(`${cfg.spiketrain}`))];
+  const render = [latexToImg(foldString(`${cfg.content}`))];
 
   const mw = Math.max(
     Math.max(...render.map((item) => item.width)),
@@ -262,7 +262,7 @@ const drawInput = (cfg, group) => {
 };
 
 const drawOutput = (cfg, group) => {
-  const render = [latexToImg(foldString(`${cfg.spiketrain}`))];
+  const render = [latexToImg(foldString(`${cfg.content}`))];
 
   const mw = Math.max(
     Math.max(...render.map((item) => item.width)),
@@ -301,20 +301,20 @@ const drawOutput = (cfg, group) => {
 
   group.addShape('rect', {
     attrs: {
-      x: start_x - 5,
-      y: start_y - 5,
-      width: node_width + 10,
-      height: node_height + 10,
+      x: start_x + 5,
+      y: start_y + 5,
+      width: node_width - 10,
+      height: node_height - 10,
       stroke: style.black,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
-      radius: style.r + 5,
+      radius: style.r - 5,
       fill: style.base,
     },
     name: 'output-indicator',
     draggable: true,
-    zIndex: -3,
+    zIndex: 11,
   });
 
   const animation1 = group.addShape('rect', {
@@ -526,7 +526,7 @@ const setStateRegular = (name, value, item) => {
       Object.keys(attrs).forEach((attr) => {
         const attr_value = shapes[shapeName][attr];
         const orig_value = original_style[shapeName][attr];
-        shapeItem.attr(attr, value ? attr_value : orig_value);
+        shapeItem?.attr(attr, value ? attr_value : orig_value);
       });
     });
   }

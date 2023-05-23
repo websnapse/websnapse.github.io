@@ -31,15 +31,6 @@ const options = {
       },
     },
   },
-  labelCfg: {
-    autoRotate: true,
-    style: {
-      fill: style.black,
-      fontSize: 20,
-      stroke: style.base,
-      lineWidth: 5,
-    },
-  },
   style: {
     shadowBlur: 0,
     shadowColor: style.primary,
@@ -58,6 +49,39 @@ export default function initalizeEdge() {
     'circle-running',
     {
       options,
+      afterUpdate(cfg, item) {
+        const group = item.getContainer();
+        const label = group.find((e) => e.get('name') === 'weight');
+        const path = item.getKeyShape();
+        const point = path.getPoint(0.5);
+        label.attr({
+          x: point.x,
+          y: point.y,
+        });
+      },
+      draw(cfg, group) {
+        const { startPoint, endPoint } = cfg;
+        this.drawShape(cfg, group);
+        const keyShape = group.get('children')[0];
+
+        cfg.label = cfg.weight;
+        group.addShape('text', {
+          attrs: {
+            text: cfg.weight,
+            x: (startPoint.x + endPoint.x) / 2,
+            y: (startPoint.y + endPoint.y) / 2,
+            fontSize: 20,
+            textAlign: 'center',
+            textBaseline: 'middle',
+            fill: style.black,
+            stroke: style.base,
+            lineWidth: 10,
+          },
+          name: 'weight',
+        });
+
+        return keyShape;
+      },
       afterDraw(cfg, group) {
         const startPoint = cfg.startPoint;
 

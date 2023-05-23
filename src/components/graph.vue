@@ -288,16 +288,9 @@ onMounted(() => {
     for (const key in newValue) {
       const node = g.findById(key);
       const model = node.getModel();
-
-      if (model.type === 'regular') {
-        node.update({
-          content: newValue[key],
-        });
-      } else {
-        node.update({
-          spiketrain: newValue[key],
-        });
-      }
+      node.update({
+        content: newValue[key],
+      });
     }
   });
 

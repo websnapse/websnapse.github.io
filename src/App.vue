@@ -3,12 +3,7 @@ import { ref } from 'vue';
 import Navbar from './components/navbar.vue';
 import Graph from './components/graph.vue';
 
-const mode = ref('default');
 const clear = ref(false);
-
-const changeMode = (newmode) => {
-  mode.value = newmode;
-};
 
 const clearAll = () => {
   clear.value = true;

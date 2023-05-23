@@ -1,6 +1,6 @@
 import graph from '../stores/graph';
 import { navbar } from '../stores/navbar';
-import { undo, redo } from '../graph/utils/actionStack';
+import { undo, redo } from '../graph/utils/action-stack';
 
 export const handleKeyup = (evt) => {
   const { key } = evt;

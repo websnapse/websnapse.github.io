@@ -1,6 +1,6 @@
 import G6 from '@antv/g6';
 import interact from './interactions';
-import initializeContextMenu from './contextMenu';
+import initializeContextMenu from './context-menu';
 import initializeRegisters from './registers';
 
 export default function createGraph(container, width, height) {
@@ -12,7 +12,6 @@ export default function createGraph(container, width, height) {
     plugins: [grid], // Configure Grid and Minimap to the graph
     width: width,
     height: height,
-    fitCenter: true,
     fitViewPadding: [200, 0, 230, 0],
     linkCenter: false,
     pixelRatio: 0.5,

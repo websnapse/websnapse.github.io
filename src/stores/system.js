@@ -15,7 +15,7 @@ const system = reactive({
           return {
             id,
             type,
-            spiketrain,
+            content,
             x,
             y,
           };
@@ -34,7 +34,7 @@ const system = reactive({
         return {
           source: edge.source,
           target: edge.target,
-          label: edge.label,
+          weight: edge.weight,
         };
       });
 

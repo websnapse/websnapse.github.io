@@ -1,7 +1,7 @@
 import G6 from '@antv/g6';
 import { neuron } from '../stores/neuron';
 import system from '../stores/system';
-import addNode from './utils/addNode';
+import addNode from './utils/add-node';
 import deleteItems from './utils/delete-items';
 
 export default function initializeContextMenu(graph) {
@@ -67,7 +67,7 @@ export default function initializeContextMenu(graph) {
           graph.fitView();
           break;
         case 'Save':
-          console.log(system.data.edges);
+          console.log(system.data);
           // const a = document.createElement('a');
           // const file = new Blob([JSON.stringify(system.data)], {
           //   type: 'text/plain',
