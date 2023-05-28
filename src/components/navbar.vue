@@ -179,6 +179,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import { navbar } from '@/stores/navbar.js';
 import Logo from '@/assets/logo.vue';
 import graph from '@/stores/graph';
+import parseSystem from '@/graph/utils/parse-system';
 
 const toggleDisplay = () => {
   navbar.view = navbar.view == 'default' ? 'simple' : 'default';
@@ -194,7 +195,7 @@ const handleFileUpload = (e) => {
   reader.onload = (e) => {
     const contents = e.target.result;
     const json = JSON.parse(contents);
-    graph.value.read(json);
+    graph.value.read(parseSystem(json));
   };
   reader.readAsText(file);
 };

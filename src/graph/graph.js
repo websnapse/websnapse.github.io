@@ -18,9 +18,6 @@ export default function createGraph(container, width, height) {
     optimizeThreshold: 5,
     layout: {
       type: 'force',
-      onLayoutEnd: (graph) => {
-        console.log('force layout done');
-      },
       linkDistance: (d) => {
         return Math.max(400 / parseInt(d.label), 200);
       },
@@ -45,7 +42,7 @@ export default function createGraph(container, width, height) {
     },
 
     defaultEdge: {
-      type: 'circle-running',
+      type: 'synapse',
     },
 
     modes: {

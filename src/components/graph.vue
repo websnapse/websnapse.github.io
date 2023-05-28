@@ -6,6 +6,14 @@
         :closeModal="() => (createNeuronDialogOpen = false)"
       />
     </TransitionRoot>
+    <TransitionRoot appear :show="chooseRuleDialogOpen" as="template">
+      <ChooseRuleDialog
+        :isOpen="chooseRuleDialogOpen"
+        :closeModal="() => (chooseRuleDialogOpen = false)"
+        :details="dialogDetails"
+        :socket="ws"
+      />
+    </TransitionRoot>
     <TransitionRoot appear :show="editNeuronDialogOpen" as="template">
       <EditNeuronDialog
         :isOpen="editNeuronDialogOpen"
@@ -96,6 +104,7 @@ import { TransitionRoot } from '@headlessui/vue';
 import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
 import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
 import EditSynapseDialog from '@/components/EditSynapseDialog.vue';
+import ChooseRuleDialog from '@/components/ChooseRuleDialog.vue';
 
 import createGraph from '@/graph/graph';
 import simulateSystem from '@/services/simulator';
@@ -107,10 +116,12 @@ import {
   editSynapseDialogOpen,
   editNeuronDialogOpen,
   dialogDetails,
+  chooseRuleDialogOpen,
 } from '@/stores/dialog';
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
 import initializeRegisters from '@/graph/registers';
+import parseSystem from '@/graph/utils/parse-system';
 
 const props = defineProps(['graph_mode', 'clear_all']);
 
@@ -149,39 +160,39 @@ const toggleInterval = () => {
 
 /** @type {WebSocket} */
 let ws = null;
-
-const resetSimulation = () => {
-  navbar.running = false;
-  graph.value.read(original.value);
-};
+let resetSimulation = null;
 
 const stopSimulate = () => {
   ws.close();
   graph.value.getNodes().forEach((node) => {
-    node.clearStates(['default', 'animate', 'closed']);
+    node.clearStates(['default', 'spiking', 'closed']);
     node.setState('default', true);
   });
   graph.value.getEdges().forEach((edge) => {
-    edge.clearStates(['default', 'animate', 'closed']);
+    edge.clearStates(['default', 'spiking', 'closed']);
     edge.setState('default', true);
   });
   navbar.running = false;
 };
 
 const startSimulate = async () => {
-  ws = new WebSocket('ws://localhost:8000/simulate/ws');
+  ws = new WebSocket('ws://localhost:8000/ws/simulate/guided');
   original.value = system.data;
   ws.onopen = function () {
     ws.send(JSON.stringify(system.data));
   };
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
+    if (data.type === 'prompt') {
+      chooseRuleDialogOpen.value = true;
+      dialogDetails.value = data.choices;
+    } else {
+      status.value = data.states;
+      config.value = data.configurations;
 
-    status.value = data.states;
-    config.value = data.configurations;
-
-    if (data.halted === true) {
-      navbar.running = false;
+      if (data.halted === true) {
+        navbar.running = false;
+      }
     }
   };
   navbar.running = true;
@@ -199,7 +210,7 @@ const simulateNext = async () => {
     acc[key] = {
       value:
         res.states[index] === 1
-          ? 'animate'
+          ? 'spiking'
           : res.states[index] === 0
           ? 'default'
           : 'closed',
@@ -262,10 +273,18 @@ onMounted(() => {
 
   const g = createGraph('mountNode', vw, vh);
 
-  g.data(system.data);
+  const data = parseSystem(system.data);
+
+  g.data(data);
   g.render();
 
   graph.value = g;
+
+  resetSimulation = () => {
+    navbar.running = false;
+    const data = parseSystem(original.value);
+    g.read(data);
+  };
 
   watch(status, (newValue, oldValue) => {
     for (const key in newValue) {
@@ -275,10 +294,10 @@ onMounted(() => {
       });
 
       for (const edge of edges) {
-        g.setItemState(edge, 'animate', false);
-        g.setItemState(edge, 'animate', newValue[key] === 'animate');
+        g.setItemState(edge, 'spiking', false);
+        g.setItemState(edge, 'spiking', newValue[key] === 'spiking');
       }
-      node.clearStates(['default', 'animate', 'closed']);
+      node.clearStates(['default', 'spiking', 'closed']);
       node.setState(newValue[key], true);
       node.setState('running', true);
     }
@@ -288,9 +307,12 @@ onMounted(() => {
     for (const key in newValue) {
       const node = g.findById(key);
       const model = node.getModel();
-      node.update({
-        content: newValue[key],
-      });
+
+      if (model.content !== newValue[key]) {
+        node.update({
+          content: newValue[key],
+        });
+      }
     }
   });
 

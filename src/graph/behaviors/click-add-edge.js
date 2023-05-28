@@ -55,7 +55,6 @@ export default function clickAddEdge() {
           this.edge = graph.addItem('edge', {
             source: model.id,
             target: point,
-            label: 1,
           });
           this.addingEdge = true;
         }
