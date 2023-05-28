@@ -9,6 +9,7 @@ const styles = reactive({
   primary: fullConfig.theme.colors.primary,
   error: fullConfig.theme.colors.error,
   base: fullConfig.theme.colors.base,
+  dark: fullConfig.theme.colors.dark,
   lineDash: [4, 2, 1, 2],
   r: 30,
   m: 20,

@@ -2,8 +2,6 @@ import { updateNeuron, updateSynapse } from '../utils/dialog';
 import { navbar } from '../stores/navbar';
 
 export default function interact(graph) {
-  graph.on('canvas:click', (evt) => {});
-
   graph.on('edge:mouseenter', (evt) => {
     const { item } = evt;
     item.setState('hover', true);
@@ -25,40 +23,14 @@ export default function interact(graph) {
     item.setState('selected', true);
   });
 
-  // graph.on('node:mouseenter', (evt) => {
-  //   const { item } = evt;
-  //   item.setState('hover', true);
-  // });
-
-  // graph.on('node:mouseleave', (evt) => {
-  //   const { item } = evt;
-  //   item.clearStates('hover');
-  // });
-
-  // graph.on('node:dblclick', async function (evt) {
-  //   const { item } = evt;
-  //   const model = item.getModel();
-  //   const updated = await updateNeuron(item);
-
-  //   if (!updated.success) return;
-
-  //   if (updated.type === 'regular') {
-  //     model.id = updated.id;
-  //     model.content = updated.content;
-  //     model.rules = updated.rules;
-  //   } else {
-  //     model.id = updated.id;
-  //     model.spiketrain = updated.spiketrain;
-  //   }
-
-  //   item.update(model);
-  // });
-
   graph.on('edge:dblclick', async function (evt) {
     const { item } = evt;
     const model = item.getModel();
     const updated = await updateSynapse(item);
+    model.weight = updated.weight;
     model.label = updated.weight;
+
+    console.log(updated);
     item.update(model);
   });
 

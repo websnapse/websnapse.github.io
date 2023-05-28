@@ -1,7 +1,7 @@
 import G6 from '@antv/g6';
 import { neuron } from '../../stores/neuron';
 import { createNeuron } from '../../utils/dialog';
-import addNode from '../utils/addNode';
+import addNode from '../utils/add-node';
 
 export default function clickAddNode() {
   G6.registerBehavior('click-add-node', {

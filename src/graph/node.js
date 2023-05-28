@@ -42,38 +42,6 @@ const drawRegular = (cfg, group) => {
     zIndex: 10,
   });
 
-  const animation1 = group.addShape('rect', {
-    attrs: {
-      x: start_x,
-      y: start_y,
-      width: node_width,
-      height: node_height,
-      radius: style.r,
-      fill: style.primary,
-      opacity: 0.6,
-    },
-    visible: false,
-    name: 'animation-1',
-    draggable: true,
-    zIndex: -3,
-  });
-
-  const animation2 = group.addShape('rect', {
-    attrs: {
-      x: start_x,
-      y: start_y,
-      width: node_width,
-      height: node_height,
-      radius: style.r,
-      fill: style.primary,
-      opacity: 0.6,
-    },
-    visible: false,
-    name: 'animation-2',
-    draggable: true,
-    zIndex: -2,
-  });
-
   const content = group.addShape('image', {
     attrs: {
       y: start_y + style.p,
@@ -130,7 +98,7 @@ const drawRegular = (cfg, group) => {
 
   const id = group.addShape('image', {
     attrs: {
-      x: start_x - 15,
+      x: start_x - 15 - node_id.width / 2,
       y: start_y - 15,
       width: node_id.width * 0.8,
       height: node_id.height * 0.8,
@@ -145,7 +113,7 @@ const drawRegular = (cfg, group) => {
 };
 
 const drawInput = (cfg, group) => {
-  const render = [latexToImg(foldString(`${cfg.spiketrain}`))];
+  const render = [latexToImg(foldString(`${cfg.content}`))];
 
   const mw = Math.max(
     Math.max(...render.map((item) => item.width)),
@@ -198,38 +166,6 @@ const drawInput = (cfg, group) => {
     zIndex: 10,
   });
 
-  const animation1 = group.addShape('rect', {
-    attrs: {
-      x: start_x,
-      y: start_y,
-      width: node_width,
-      height: node_height,
-      radius: style.r,
-      fill: style.primary,
-      opacity: 0.6,
-    },
-    visible: false,
-    name: 'animation-1',
-    draggable: true,
-    zIndex: -3,
-  });
-
-  const animation2 = group.addShape('rect', {
-    attrs: {
-      x: start_x,
-      y: start_y,
-      width: node_width,
-      height: node_height,
-      radius: style.r,
-      fill: style.primary,
-      opacity: 0.6,
-    },
-    visible: false,
-    name: 'animation-2',
-    draggable: true,
-    zIndex: -2,
-  });
-
   const content = group.addShape('image', {
     attrs: {
       y: -render[0].height / 2,
@@ -247,7 +183,7 @@ const drawInput = (cfg, group) => {
 
   const id = group.addShape('image', {
     attrs: {
-      x: start_x - 15,
+      x: start_x - 15 - node_id.width / 2,
       y: start_y - 15,
       width: node_id.width * 0.8,
       height: node_id.height * 0.8,
@@ -262,7 +198,7 @@ const drawInput = (cfg, group) => {
 };
 
 const drawOutput = (cfg, group) => {
-  const render = [latexToImg(foldString(`${cfg.spiketrain}`))];
+  const render = [latexToImg(foldString(`${cfg.content}`))];
 
   const mw = Math.max(
     Math.max(...render.map((item) => item.width)),
@@ -301,52 +237,20 @@ const drawOutput = (cfg, group) => {
 
   group.addShape('rect', {
     attrs: {
-      x: start_x - 5,
-      y: start_y - 5,
-      width: node_width + 10,
-      height: node_height + 10,
+      x: start_x + 5,
+      y: start_y + 5,
+      width: node_width - 10,
+      height: node_height - 10,
       stroke: style.black,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
-      radius: style.r + 5,
+      radius: style.r - 5,
       fill: style.base,
     },
     name: 'output-indicator',
     draggable: true,
-    zIndex: -3,
-  });
-
-  const animation1 = group.addShape('rect', {
-    attrs: {
-      x: start_x,
-      y: start_y,
-      width: node_width,
-      height: node_height,
-      radius: style.r,
-      fill: style.primary,
-      opacity: 0.6,
-    },
-    visible: false,
-    name: 'animation-1',
-    draggable: true,
-    zIndex: -3,
-  });
-
-  const animation2 = group.addShape('rect', {
-    attrs: {
-      x: start_x,
-      y: start_y,
-      width: node_width,
-      height: node_height,
-      radius: style.r,
-      fill: style.primary,
-      opacity: 0.6,
-    },
-    visible: false,
-    name: 'animation-2',
-    draggable: true,
-    zIndex: -2,
+    zIndex: 11,
   });
 
   const content = group.addShape('image', {
@@ -366,7 +270,7 @@ const drawOutput = (cfg, group) => {
 
   const id = group.addShape('image', {
     attrs: {
-      x: start_x - 15,
+      x: start_x - 15 - node_id.width / 2,
       y: start_y - 15,
       width: node_id.width * 0.8,
       height: node_id.height * 0.8,
@@ -456,63 +360,12 @@ const setStateRegular = (name, value, item) => {
     rules.forEach((rule) => {
       value ? rule.hide() : rule.show();
     });
-
-    animations.forEach((anim, index) => {
-      anim.attr('x', -shape.attr('width') / 2);
-      anim.attr('y', -shape.attr('height') / 2);
-      anim.attr('radius', value ? style.r / 2 : style.r);
-      // resize animations
-      anim.attr('width', value ? shape.attr('width') : shape.attr('width'));
-      anim.attr('height', value ? shape.attr('height') : shape.attr('height'));
-      anim.stopAnimate();
-      anim.animate(
-        {
-          x: -shape.attr('width') / 2 - 10,
-          y: -shape.attr('height') / 2 - 10,
-          width: value ? shape.attr('width') + 20 : shape.attr('width'),
-          height: value ? shape.attr('height') + 20 : shape.attr('height'),
-          opacity: 0,
-        },
-        {
-          duration: duration / 5 ?? 3000,
-          easing: 'easePolyInOut',
-          delay: index * 500,
-          repeat: true,
-        }
-      );
-      if (item.hasState('animate')) {
-        anim.show();
-      } else {
-        anim.hide();
-      }
-    });
   }
-  if (name === 'animate') {
+  if (name === 'spiking') {
     shape.attr('stroke', value ? style.primary : style.black);
     shape.attr('lineWidth', value ? 5 : 2);
     shape.attr('shadowBlur', value ? 10 : 0);
-
-    animations.forEach((anim, index) => {
-      value
-        ? anim.animate(
-            {
-              x: -shape.attr('width') / 2 - 10,
-              y: -shape.attr('height') / 2 - 10,
-              width: shape.attr('width') + 20,
-              height: shape.attr('height') + 20,
-              opacity: 0,
-            },
-            {
-              duration: duration / 5 ?? 3000,
-              easing: 'easePolyInOut',
-              delay: (index * duration) / 5,
-              repeat: true,
-            }
-          )
-        : anim.stopAnimate();
-      value ? anim.show() : anim.hide();
-    });
-  } else if (!['animate', 'simple'].includes(name)) {
+  } else if (!['spiking', 'simple'].includes(name)) {
     const shapes = item.getStateStyle(name);
 
     if (!shapes) return;
@@ -526,7 +379,7 @@ const setStateRegular = (name, value, item) => {
       Object.keys(attrs).forEach((attr) => {
         const attr_value = shapes[shapeName][attr];
         const orig_value = original_style[shapeName][attr];
-        shapeItem.attr(attr, value ? attr_value : orig_value);
+        shapeItem?.attr(attr, value ? attr_value : orig_value);
       });
     });
   }

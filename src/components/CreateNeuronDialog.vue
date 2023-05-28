@@ -123,34 +123,24 @@
                       </div>
                     </Listbox>
                   </div>
-                  <div
-                    class="relative flex flex-col gap-1"
-                    v-if="neuron.type === 'regular'"
-                  >
+                  <div class="relative flex flex-col gap-1">
                     <label
                       for="content"
                       class="mb-2 text-sm font-medium text-gray-900"
+                      v-if="neuron.type === 'regular'"
                     >
                       Content
                     </label>
-                    <MathEditor
-                      v-bind:model-value="neuron.content"
-                      @change="(value) => (neuron.rules[index] = value)"
-                    />
-                  </div>
-                  <div
-                    class="relative flex flex-col gap-1"
-                    v-if="neuron.type === 'input'"
-                  >
                     <label
-                      for="spiketrain"
+                      for="content"
                       class="mb-2 text-sm font-medium text-gray-900"
+                      v-else
                     >
                       Spike Train
                     </label>
                     <MathEditor
-                      v-bind:model-value="neuron.spiketrain"
-                      @change="(value) => (neuron.spiketrain = value)"
+                      v-bind:model-value="neuron.content"
+                      @change="(value) => (neuron.content = value)"
                     />
                   </div>
                   <div
@@ -196,8 +186,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/vue';
-import { neuron } from '../stores/neuron.js';
-import katex from 'katex';
+import { neuron } from '@/stores/neuron';
 
 import {
   Listbox,
@@ -212,12 +201,12 @@ const props = defineProps(['isOpen', 'closeModal']);
 const types = ['regular', 'input', 'output'];
 
 const addRule = (index) => {
-  if (neuron.value.rules[index] === '') {
+  if (neuron.rules[index] === '') {
     return;
   }
 
-  if (index == neuron.value.rules.length - 1) {
-    neuron.value.rules.push('');
+  if (index == neuron.rules.length - 1) {
+    neuron.rules.push('');
   }
   setTimeout(() => {
     const mathField = document.getElementsByClassName('math')[index + 1];
@@ -227,8 +216,8 @@ const addRule = (index) => {
 };
 
 const checkDetails = () => {
-  if (neuron.value.type === 'regular') {
-    neuron.value.rules.forEach((rule) => {
+  if (neuron.type === 'regular') {
+    neuron.rules.forEach((rule) => {
       if (rule === '') {
         alert('Please enter rules');
         return;
@@ -236,11 +225,11 @@ const checkDetails = () => {
     });
   }
 
-  if (neuron.value.type === 'output') {
-    neuron.value.spiketrain = '';
+  if (neuron.type === 'output') {
+    neuron.content = '';
   }
 
-  neuron.value.success = true;
+  neuron.success = true;
   props.closeModal();
 };
 </script>

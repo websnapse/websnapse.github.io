@@ -5,38 +5,46 @@
       "content": 2,
       "rules": ["a^2/a \\to a;2", "a \\to 0"],
       "type": "regular",
-      "x": 619.5586832412417,
-      "y": 603.4632821977207
+      "position": {
+        "x": 619.5586832412417,
+        "y": 603.4632821977207
+      }
     },
     {
       "id": "n2",
       "content": 1,
       "rules": ["a \\to a;2", "a \\to a;3"],
       "type": "regular",
-      "x": 731.452321086965,
-      "y": 219.4570322380728
+      "position": {
+        "x": 731.452321086965,
+        "y": 219.4570322380728
+      }
     },
     {
       "id": "n3",
       "content": 3,
       "rules": ["a^3 \\to a;0", "a \\to a;3", "a^2 \\to 0"],
       "type": "regular",
-      "x": 1008.0333727687399,
-      "y": 508.3520698579573
+      "position": {
+        "x": 1008.0333727687399,
+        "y": 508.3520698579573
+      }
     },
     {
       "id": "out",
       "type": "output",
-      "spiketrain": "",
-      "x": 1398.9588073176217,
-      "y": 592.7282797809784
+      "content": "",
+      "position": {
+        "x": 1398.9588073176217,
+        "y": 592.7282797809784
+      }
     }
   ],
-  "edges": [
-    { "source": "n1", "target": "n2", "label": 1 },
-    { "source": "n1", "target": "n3", "label": 1 },
-    { "source": "n2", "target": "n1", "label": 1 },
-    { "source": "n2", "target": "n3", "label": 1 },
-    { "source": "n3", "target": "out", "label": 1 }
+  "synapses": [
+    { "from": "n1", "to": "n2", "weight": 1 },
+    { "from": "n1", "to": "n3", "weight": 1 },
+    { "from": "n2", "to": "n1", "weight": 1 },
+    { "from": "n2", "to": "n3", "weight": 1 },
+    { "from": "n3", "to": "out", "weight": 1 }
   ]
 }

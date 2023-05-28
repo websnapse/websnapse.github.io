@@ -6,4 +6,6 @@ export const editSynapseDialogOpen = ref(false);
 
 export const editNeuronDialogOpen = ref(false);
 
+export const chooseRuleDialogOpen = ref(false);
+
 export const dialogDetails = ref(null);

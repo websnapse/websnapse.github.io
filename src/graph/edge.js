@@ -31,15 +31,6 @@ const options = {
       },
     },
   },
-  labelCfg: {
-    autoRotate: true,
-    style: {
-      fill: style.black,
-      fontSize: 20,
-      stroke: style.base,
-      lineWidth: 5,
-    },
-  },
   style: {
     shadowBlur: 0,
     shadowColor: style.primary,
@@ -51,48 +42,35 @@ const options = {
       fill: style.black,
     },
   },
+  labelCfg: {
+    style: {
+      fill: style.dark,
+      fontSize: 20,
+      stroke: style.base,
+      lineWidth: 20,
+      autorotate: true,
+    },
+  },
 };
 
 export default function initalizeEdge() {
   G6.registerEdge(
-    'circle-running',
+    'synapse',
     {
       options,
-      afterDraw(cfg, group) {
-        const startPoint = cfg.startPoint;
-
-        group.addShape('circle', {
-          attrs: {
-            x: startPoint.x,
-            y: startPoint.y,
-            fill: style.primary,
-            r: 8,
-            opacity: 1,
-          },
-          name: 'circle-shape',
-          visible: false,
-        });
-      },
       setState(name, value, item) {
         const shape = item.get('keyShape');
         const model = item.getModel();
 
-        const circle = item
-          .get('group')
-          .find((e) => e.get('name') === 'circle-shape');
-
-        if (name === 'animate') {
-          value ? circle.show() : circle.hide();
+        if (name === 'spiking') {
           shape.attr('stroke', value ? style.primary : style.black);
           shape.attr('lineWidth', value ? 5 : 2);
-          // change endarrow stroke color
           shape.attr('endArrow', {
             path: 'M 0,0 L 20,4 L 20,-4 Z',
             d: 5,
             fill: value ? style.primary : style.black,
             strokeOpacity: 0,
           });
-
           if (value) {
             let index = 0;
             shape.animate(
@@ -103,7 +81,7 @@ export default function initalizeEdge() {
                 }
                 const res = {
                   lineDash: style.lineDash,
-                  lineDashOffset: index,
+                  lineDashOffset: -index,
                 };
                 // return the params for this frame
                 return res;
@@ -113,25 +91,10 @@ export default function initalizeEdge() {
                 duration: model.duration ?? 1000,
               }
             );
-            circle.animate(
-              (ratio) => {
-                // the operations in each frame. Ratio ranges from 0 to 1 indicating the prograss of the animation. Returns the modified configurations
-                // get the position on the edge according to the ratio
-                const tmpPoint = shape.getPoint(ratio);
-                // returns the modified configurations here, x and y here
-                return {
-                  x: tmpPoint.x,
-                  y: tmpPoint.y,
-                };
-              },
-              {
-                duration: model.duration ?? 1000, // the duration for executing once
-              }
-            );
           } else {
             shape.stopAnimate();
-            circle.stopAnimate();
             shape.attr('lineDash', null);
+            shape.attr('lineDashOffset', null);
           }
         } else {
           const attrs = item.getStateStyle(name);

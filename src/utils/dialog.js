@@ -25,9 +25,9 @@ export const updateNeuron = (item) => {
 };
 
 export const updateSynapse = (item) => {
-  const { label } = item.getModel();
+  const { weight } = item.getModel();
   return new Promise((resolve, reject) => {
-    dialogDetails.value = { weight: label };
+    dialogDetails.value = { weight: weight };
     editSynapseDialogOpen.value = true;
 
     watch(editSynapseDialogOpen, (newVal, oldVal) => {

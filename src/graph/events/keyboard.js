@@ -1,5 +1,5 @@
 import deleteItems from '../utils/delete-items';
-import { redo, undo } from '../utils/actionStack';
+import { redo, undo } from '../utils/action-stack';
 
 import graph from '@/stores/graph';
 import { navbar } from '@/stores/navbar';

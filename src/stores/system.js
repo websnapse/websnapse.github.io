@@ -9,15 +9,17 @@ const system = reactive({
       const edges = graph.value?.save().edges;
 
       const parsed_nodes = nodes?.map((node) => {
-        const { id, content, rules, type, x, y, spiketrain } = node;
+        const { id, content, rules, type, x, y } = node;
 
         if (type === 'input' || type === 'output') {
           return {
             id,
             type,
-            spiketrain,
-            x,
-            y,
+            content,
+            position: {
+              x,
+              y,
+            },
           };
         }
 
@@ -26,21 +28,23 @@ const system = reactive({
           content,
           rules,
           type,
-          x,
-          y,
+          position: {
+            x,
+            y,
+          },
         };
       });
       const parsed_edges = edges?.map((edge) => {
         return {
-          source: edge.source,
-          target: edge.target,
-          label: edge.label,
+          from: edge.source,
+          to: edge.target,
+          weight: edge.label,
         };
       });
 
       const parsed_system = {
         nodes: parsed_nodes ?? sample.nodes,
-        edges: parsed_edges ?? sample.edges,
+        synapses: parsed_edges ?? sample.synapses,
       };
 
       return parsed_system;
