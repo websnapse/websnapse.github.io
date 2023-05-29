@@ -1,5 +1,6 @@
 import { ref, watch } from 'vue';
 import { navbar } from './navbar';
+import system from './system';
 
 const graph = ref(null);
 
@@ -11,6 +12,13 @@ watch(
         ? graph.value.setItemState(node, 'simple', true)
         : graph.value.clearItemStates(node);
     });
+    graph.value.refresh();
+  }
+);
+
+watch(
+  () => system.dark,
+  (val) => {
     graph.value.refresh();
   }
 );

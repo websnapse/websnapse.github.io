@@ -1,4 +1,5 @@
 import { watch, reactive, computed } from 'vue';
+import { useDark } from '@vueuse/core';
 import graph from './graph';
 import sample from '../data.json';
 
@@ -50,6 +51,7 @@ const system = reactive({
       return parsed_system;
     },
   }),
+  dark: useDark(),
   states: [],
   configuration: [],
   duration: 3000,
@@ -83,20 +85,6 @@ watch(
 );
 
 watch(
-  () => system.duration,
-  (newDuration) => {
-    if (navbar.running) {
-      if (tick.value < max_tick.value) {
-        clearInterval(intervalId);
-        intervalId = setInterval(() => {
-          tick.value++;
-        }, newDuration);
-      }
-    }
-  }
-);
-
-watch(
   () => system.configuration,
   (newValue, oldValue) => {
     for (const key in newValue) {
@@ -108,28 +96,6 @@ watch(
       }
     }
   }
-);
-
-watch(
-  () => system.duration,
-  (newDuration) => {
-    // get graph.value items
-    const nodes = graph.value?.getNodes();
-    const edges = graph.value?.getEdges();
-
-    // set the duration of each node and edge
-    nodes?.forEach((node) => {
-      const model = node.getModel();
-      model.duration = newDuration;
-      node.update(model);
-    });
-    edges?.forEach((edge) => {
-      const model = edge.getModel();
-      model.duration = newDuration;
-      edge.update(model);
-    });
-  },
-  { immediate: true }
 );
 
 watch(

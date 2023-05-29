@@ -31,12 +31,14 @@
     <div
       id="mountNode"
       class="flex items-start justify-center w-screen h-screen overflow-hidden"
-    />
+    >
+      <div class="back"></div>
+    </div>
     <div
       id="simulationControls"
-      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-base/40 backdrop-blur-sm"
+      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-base/40 dark:bg-dark/40 backdrop-blur-sm"
     >
-      <div class="flex items-center gap-1 text-dark/50">
+      <div class="flex items-center gap-1 text-dark/50 dark:text-base/50">
         <v-icon name="la-random-solid" class="mr-2" />
         <v-icon
           name="la-step-backward-solid"
@@ -44,7 +46,9 @@
           scale="1.5"
           class="cursor-pointer"
         />
-        <button class="p-1 text-base rounded-full bg-primary">
+        <button
+          class="p-1 text-base rounded-full bg-primary dark:bg-primary/20 dark:text-primary"
+        >
           <v-icon
             name="bi-play-fill"
             @click="startSimulate"
@@ -52,12 +56,7 @@
             scale="2"
             class="translate-x-[0.1rem]"
           />
-          <v-icon
-            name="bi-stop-fill"
-            v-if="navbar.running"
-            scale="2"
-            @click="stopSimulate"
-          />
+          <v-icon name="bi-stop-fill" v-else scale="2" @click="stopSimulate" />
         </button>
         <v-icon
           name="la-step-forward-solid"
@@ -83,7 +82,9 @@
           class="mt-4 slider"
         />
         <div>
-          <span class="text-xs text-dark/40">{{ duration / 2000 }}x</span>
+          <span class="text-xs text-dark/40 dark:text-base/40"
+            >{{ duration / 2000 }}x</span
+          >
         </div>
       </div>
     </div>
@@ -285,9 +286,10 @@ onMounted(() => {
       });
 
       for (const edge of edges) {
-        g.setItemState(edge, 'spiking', false);
-        g.setItemState(edge, 'spiking', newValue[key] === 'spiking');
+        g.clearItemStates(edge);
+        edge.setState('spiking', newValue[key] === 'spiking');
       }
+
       node.clearStates(['default', 'spiking', 'closed']);
       node.setState(newValue[key], true);
       node.setState('running', true);

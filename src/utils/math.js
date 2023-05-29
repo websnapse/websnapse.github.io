@@ -1,4 +1,5 @@
 import style from '@/stores/styles';
+import system from '@/stores/system';
 
 const MathJax = window.MathJax;
 
@@ -44,7 +45,7 @@ export const latexToImg = (formula) => {
   });
   let output = { svg: '', img: '' };
   let mjOut = wrapper.getElementsByTagName('svg')[0];
-  mjOut.style.color = style.dark;
+  mjOut.style.color = system.dark ? style.darkContent : style.dark;
   output.svg = mjOut.outerHTML;
   const width = mjOut.getAttribute('width');
   const height = mjOut.getAttribute('height');

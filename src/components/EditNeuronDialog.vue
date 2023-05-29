@@ -88,17 +88,13 @@
                       v-bind:model-value="rule"
                       @change="(value) => (props.details.rules[index] = value)"
                       @delete="props.details.rules.splice(index, 1)"
-                      @keydown.enter.prevent="
-                        () => {
-                          props.details.rules.push(''),
-                            $nextTick(() =>
-                              $refs.rules[
-                                props.details.rules.length - 1
-                              ].focus()
-                            );
-                        }
-                      "
                     />
+                    <button
+                      class="py-2 text-sm font-medium border-2 border-dashed rounded-md text-dark/50"
+                      @click.prevent="() => props.details.rules.push('')"
+                    >
+                      Add Rule
+                    </button>
                   </div>
                 </form>
               </div>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import Navbar from './components/navbar.vue';
-import Graph from './components/graph.vue';
+import Navbar from '@/components/Navbar.vue';
+import Graph from '@/components/Graph.vue';
 
 const clear = ref(false);
 

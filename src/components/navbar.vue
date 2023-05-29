@@ -1,6 +1,48 @@
+<script setup>
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+import { navbar } from '@/stores/navbar.js';
+import Logo from '@/assets/logo.vue';
+import graph from '@/stores/graph';
+import parseSystem from '@/graph/utils/parse-system';
+import { useDark, useToggle } from '@vueuse/core';
+import { undo, redo } from '@/graph/utils/action-stack';
+
+const isDark = useDark();
+const toggleDark = useToggle(isDark);
+
+const toggleDisplay = () => {
+  navbar.view = navbar.view == 'default' ? 'simple' : 'default';
+};
+
+const openFileInput = () => {
+  document.getElementById('fileInput').click();
+};
+
+const handleFileUpload = (e) => {
+  const file = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const contents = e.target.result;
+    const json = JSON.parse(contents);
+    graph.value.read(parseSystem(json));
+  };
+  reader.readAsText(file);
+};
+
+const emit = defineEmits(['clear']);
+
+const changeActiveMode = (newMode) => {
+  navbar.mode = newMode;
+};
+
+const clearAll = () => {
+  emit('clear');
+};
+</script>
+
 <template>
   <div
-    class="absolute left-0 right-0 flex items-center p-1 mx-auto rounded-md shadow-lg top-2 w-fit bg-base"
+    class="absolute left-0 right-0 flex items-center p-1 mx-auto rounded-md shadow-lg top-2 w-fit bg-base dark:bg-light"
   >
     <Menu as="div" class="relative h-full">
       <MenuButton
@@ -19,7 +61,7 @@
         leave-to-class="transform scale-95 opacity-0"
       >
         <MenuItems
-          class="absolute py-1 mt-2 text-base origin-top-left divide-y rounded-md shadow shadow-dark left-1 w-max divide-dark/10 bg-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
+          class="absolute py-1 mt-2 text-base origin-top-left divide-y rounded-md shadow shadow-dark left-1 w-max divide-dark/10 bg-dark dark:bg-light ring-1 ring-black ring-opacity-5 focus:outline-none"
         >
           <MenuItem v-slot="{ active }" ref="samples">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
@@ -47,6 +89,12 @@
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
               <v-icon name="la-save" class="mr-2" />
               Save
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }" ref="settings" @click="toggleDark()">
+            <button :class="active ? 'bg-primary' : ''" class="menu-button">
+              <v-icon name="la-cog-solid" class="mr-2" />
+              Settings
             </button>
           </MenuItem>
         </MenuItems>
@@ -131,7 +179,7 @@
             Undo
             <span class="ml-2 text-base/50">^z</span>
           </template>
-          <button class="tool-button">
+          <button class="tool-button" @click="undo">
             <v-icon name="la-undo-solid" />
           </button>
         </Popper>
@@ -141,7 +189,7 @@
             Redo
             <span class="ml-2 text-base/50">^Z</span>
           </template>
-          <button class="tool-button">
+          <button class="tool-button" @click="redo">
             <v-icon name="la-redo-solid" />
           </button>
         </Popper>
@@ -173,40 +221,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import { navbar } from '@/stores/navbar.js';
-import Logo from '@/assets/logo.vue';
-import graph from '@/stores/graph';
-import parseSystem from '@/graph/utils/parse-system';
-
-const toggleDisplay = () => {
-  navbar.view = navbar.view == 'default' ? 'simple' : 'default';
-};
-
-const openFileInput = () => {
-  document.getElementById('fileInput').click();
-};
-
-const handleFileUpload = (e) => {
-  const file = e.target.files[0];
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const contents = e.target.result;
-    const json = JSON.parse(contents);
-    graph.value.read(parseSystem(json));
-  };
-  reader.readAsText(file);
-};
-
-const emit = defineEmits(['clear']);
-
-const changeActiveMode = (newMode) => {
-  navbar.mode = newMode;
-};
-
-const clearAll = () => {
-  emit('clear');
-};
-</script>

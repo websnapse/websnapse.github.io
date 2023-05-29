@@ -37,6 +37,11 @@ const props = defineProps({
   },
 });
 
+const specialKeys = {
+  '/': '\\slash',
+  '*': '\\ast',
+};
+
 const mathField = ref(null);
 
 onMounted(() => {
@@ -53,12 +58,10 @@ onMounted(() => {
   });
 
   mathFieldInstance.el().addEventListener('keydown', function (e) {
-    // Only accept printable keys
-    if (e.key.length !== 1) return;
-    e.preventDefault();
-    if (e.key === '/') mathFieldInstance.cmd('\\slash');
-    else if (e.key === '*') mathFieldInstance.cmd('\\ast');
-    else mathFieldInstance.typedText(e.key);
+    if (e.key in specialKeys) {
+      mathFieldInstance.cmd(specialKeys[e.key]);
+      e.preventDefault();
+    }
   });
 
   mathFieldInstance.latex(props.modelValue);

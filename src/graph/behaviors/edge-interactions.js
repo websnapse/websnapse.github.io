@@ -28,7 +28,8 @@ export default function edgeInteractions() {
       const model = item.getModel();
       const updated = await updateSynapse(item);
       model.label = updated.label;
-      item.update(model);
+
+      this.graph.updateItem(item, model, true);
     },
   });
 }

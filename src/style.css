@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overflow: hidden;
+}
+
 body {
   font-family: 'Lexend', sans-serif;
 }
@@ -74,6 +78,10 @@ canvas {
   --popper-theme-border-radius: 0.5rem;
 }
 
+.back {
+  @apply absolute w-full h-full -z-10 bg-base dark:bg-dark;
+}
+
 .g6-grid {
-  @apply bg-base;
+  @apply dark:invert-[.9];
 }

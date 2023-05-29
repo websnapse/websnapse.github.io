@@ -2,6 +2,8 @@ import G6 from '@antv/g6';
 import interact from './interactions';
 import initializeContextMenu from './context-menu';
 import initializeRegisters from './registers';
+import style from '@/stores/styles';
+import system from '@/stores/system';
 
 export default function createGraph(container, width, height) {
   initializeRegisters();
@@ -43,6 +45,18 @@ export default function createGraph(container, width, height) {
 
     defaultEdge: {
       type: 'synapse',
+      labelCfg: {
+        autorotate: true,
+        style: {
+          fill: system.dark ? style.darkContent : style.content,
+          fontSize: 20,
+          background: {
+            fill: system.dark ? style.dark : style.base,
+            padding: [5, 5, 5, 5],
+            radius: 5,
+          },
+        },
+      },
     },
 
     modes: {

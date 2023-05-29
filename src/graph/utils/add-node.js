@@ -1,8 +1,12 @@
 import { createNeuron } from '@/utils/dialog';
 import { neuron } from '../../stores/neuron';
+import { computed } from 'vue';
 
 export default async function addNode(ev, graph) {
-  await createNeuron();
+  (neuron.id = computed(() => {
+    return Math.random().toString(36).substr(2, 5);
+  })),
+    await createNeuron();
 
   if (!neuron.success) return;
 

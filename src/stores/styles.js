@@ -5,7 +5,8 @@ import { reactive } from 'vue';
 const fullConfig = resolveConfig(tailwindConfig);
 
 const styles = reactive({
-  black: '#0d0e0e',
+  content: '#0d0e0e',
+  darkContent: '#95899a',
   primary: fullConfig.theme.colors.primary,
   error: fullConfig.theme.colors.error,
   base: fullConfig.theme.colors.base,

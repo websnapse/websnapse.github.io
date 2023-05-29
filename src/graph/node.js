@@ -1,6 +1,7 @@
 import G6 from '@antv/g6';
 import { foldString, latexToImg } from '@/utils/math';
 import style from '@/stores/styles';
+import system from '@/stores/system';
 
 const drawRegular = (cfg, group) => {
   const rendered_content = latexToImg(cfg.content);
@@ -30,12 +31,12 @@ const drawRegular = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: style.black,
+      stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: style.base,
+      fill: system.dark ? style.dark : style.base,
     },
     name: 'neuron',
     draggable: true,
@@ -138,12 +139,12 @@ const drawInput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: style.black,
+      stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: style.base,
+      fill: system.dark ? style.dark : style.base,
     },
     name: 'neuron',
     draggable: true,
@@ -158,7 +159,7 @@ const drawInput = (cfg, group) => {
         [start_x + node_width / 2 - 10, start_y - 15],
       ],
       fill: style.base,
-      stroke: style.black,
+      stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
     },
     name: 'input-indicator',
@@ -223,12 +224,12 @@ const drawOutput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: style.black,
+      stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: style.base,
+      fill: system.dark ? style.dark : style.base,
     },
     name: 'neuron',
     draggable: true,
@@ -241,12 +242,12 @@ const drawOutput = (cfg, group) => {
       y: start_y + 5,
       width: node_width - 10,
       height: node_height - 10,
-      stroke: style.black,
+      stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
       radius: style.r - 5,
-      fill: style.base,
+      fill: system.dark ? style.dark : style.base,
     },
     name: 'output-indicator',
     draggable: true,
@@ -362,7 +363,7 @@ const setStateRegular = (name, value, item) => {
     });
   }
   if (name === 'spiking') {
-    shape.attr('stroke', value ? style.primary : style.black);
+    shape.attr('stroke', value ? style.primary : style.content);
     shape.attr('lineWidth', value ? 5 : 2);
     shape.attr('shadowBlur', value ? 10 : 0);
   } else if (!['spiking', 'simple'].includes(name)) {
@@ -386,13 +387,6 @@ const setStateRegular = (name, value, item) => {
 };
 
 const options = {
-  labelCfg: {
-    style: {
-      fill: style.black,
-      fontSize: 20,
-      fontFamily: 'Cambria Math',
-    },
-  },
   stateStyles: {
     hover: {
       neuron: {
@@ -420,7 +414,7 @@ const options = {
         shadowBlur: 0,
         shadowColor: style.primary,
         lineWidth: style.lineInactive,
-        stroke: style.black,
+        stroke: system.dark ? style.darkContent : style.content,
       },
     },
   },

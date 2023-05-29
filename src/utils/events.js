@@ -51,10 +51,10 @@ export const handleKeydown = (evt) => {
   }
 
   if (evt.ctrlKey && evt.key === 'z') {
-    undo(graph.value);
+    undo();
   }
 
   if (evt.ctrlKey && evt.shiftKey && evt.key === 'Z') {
-    redo(graph.value);
+    redo();
   }
 };
