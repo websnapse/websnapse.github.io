@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-import Navbar from '@/components/Navbar.vue';
-import Graph from '@/components/Graph.vue';
+import Toolbar from '@/components/Toolbar.vue';
+import Canvas from '@/components/Canvas.vue';
 
 const clear = ref(false);
 
@@ -15,8 +15,8 @@ const clearAll = () => {
 
 <template>
   <main class="flex flex-col h-screen">
-    <navbar @clear="clearAll" />
-    <graph :graph_mode="mode" :clear_all="clear" />
+    <Toolbar @clear="clearAll" />
+    <Canvas :graph_mode="mode" :clear_all="clear" />
   </main>
 </template>
 

@@ -36,14 +36,14 @@
     </div>
     <div
       id="simulationControls"
-      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-base/40 dark:bg-dark/40 backdrop-blur-sm"
+      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-base/40 dark:bg-light backdrop-blur-sm"
     >
-      <div class="flex items-center gap-1 text-dark/50 dark:text-base/50">
+      <div class="flex items-center gap-1 text-dark/50 dark:text-dark-50">
         <v-icon name="la-random-solid" class="mr-2" />
         <v-icon
           name="la-step-backward-solid"
           @click="changeTick(-1)"
-          scale="1.5"
+          scale="1.25"
           class="cursor-pointer"
         />
         <button
@@ -61,7 +61,7 @@
         <v-icon
           name="la-step-forward-solid"
           @click="simulateNext"
-          scale="1.5"
+          scale="1.25"
           class="cursor-pointer"
         />
         <v-icon
