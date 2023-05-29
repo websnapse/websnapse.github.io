@@ -36,10 +36,10 @@ export default function nodeInteractions() {
         model.rules = updated.rules;
       } else {
         model.id = updated.id;
-        model.spiketrain = updated.spiketrain;
+        model.content = updated.content;
       }
 
-      item.update(model);
+      this.graph.updateItem(item, model, true);
     },
   });
 }

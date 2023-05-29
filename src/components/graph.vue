@@ -28,14 +28,6 @@
         :details="dialogDetails"
       />
     </TransitionRoot>
-    <div>
-      <button
-        class="absolute p-2 text-base rounded-lg top-2 right-2 bg-primary"
-        @click="startSimulate"
-      >
-        <v-icon name="bi-play-fill" scale="1.5" />
-      </button>
-    </div>
     <div
       id="mountNode"
       class="flex items-start justify-center w-screen h-screen overflow-hidden"
@@ -107,7 +99,6 @@ import EditSynapseDialog from '@/components/EditSynapseDialog.vue';
 import ChooseRuleDialog from '@/components/ChooseRuleDialog.vue';
 
 import createGraph from '@/graph/graph';
-import simulateSystem from '@/services/simulator';
 import system from '@/stores/system';
 import { navbar } from '@/stores/navbar';
 import graph from '@/stores/graph';

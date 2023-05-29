@@ -158,8 +158,13 @@
                       v-bind:model-value="rule"
                       @change="(value) => (neuron.rules[index] = value)"
                       @delete="neuron.rules.splice(index, 1)"
-                      @keydown.enter.prevent="addRule(index)"
                     />
+                    <button
+                      class="py-2 text-sm font-medium border-2 border-dashed rounded-md text-dark/50"
+                      @click.prevent="addRule"
+                    >
+                      Add Rule
+                    </button>
                   </div>
                   <button
                     type="submit"
@@ -200,18 +205,11 @@ const props = defineProps(['isOpen', 'closeModal']);
 
 const types = ['regular', 'input', 'output'];
 
-const addRule = (index) => {
-  if (neuron.rules[index] === '') {
-    return;
-  }
-
-  if (index == neuron.rules.length - 1) {
-    neuron.rules.push('');
-  }
+const addRule = () => {
+  neuron.rules.push('');
   setTimeout(() => {
     const mathField = document.getElementsByClassName('math')[index + 1];
     mathField.children[0].children[0].children[0].focus();
-    console.log(mathField.children[0].children[0].children[0]);
   }, 0);
 };
 

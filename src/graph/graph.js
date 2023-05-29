@@ -67,10 +67,16 @@ export default function createGraph(container, width, height) {
           optimizeZoom: 0.2,
         },
         'node-interactions',
+        'edge-interactions',
         'drag-node',
       ],
 
-      node: ['click-add-node', 'drag-node', 'node-interactions'],
+      node: [
+        'click-add-node',
+        'drag-node',
+        'node-interactions',
+        'edge-interactions',
+      ],
 
       edge: ['drag-add-edge'],
 
@@ -78,7 +84,12 @@ export default function createGraph(container, width, height) {
 
       pan: ['drag-canvas', 'zoom-canvas'],
 
-      delete: ['click-select', 'remove-item'],
+      delete: [
+        'click-select',
+        'remove-item',
+        'node-interactions',
+        'edge-interactions',
+      ],
     },
   });
 

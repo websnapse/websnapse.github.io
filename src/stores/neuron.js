@@ -1,10 +1,12 @@
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 
 export const neuron = reactive({
   count: 0,
-  id: null,
+  id: computed(() => {
+    return Math.random().toString(36).substr(2, 9);
+  }),
   content: '1',
-  rules: ['a/a \\to a; 0', 'a/a \\to 0'],
+  rules: [],
   type: 'regular',
   success: false,
 });
