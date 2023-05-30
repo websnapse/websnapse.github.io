@@ -36,7 +36,7 @@
     </div>
     <div
       id="simulationControls"
-      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-base/40 dark:bg-light backdrop-blur-sm"
+      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-light/40 dark:bg-neutral backdrop-blur-sm"
     >
       <div class="flex items-center gap-1 text-dark/50 dark:text-dark-50">
         <v-icon name="la-random-solid" class="mr-2" />
@@ -47,7 +47,7 @@
           class="cursor-pointer"
         />
         <button
-          class="p-1 text-base rounded-full bg-primary dark:bg-primary/20 dark:text-primary"
+          class="p-1 rounded-full text-light bg-primary dark:bg-primary/20 dark:text-primary"
         >
           <v-icon
             name="bi-play-fill"
@@ -82,7 +82,7 @@
           class="mt-4 slider"
         />
         <div>
-          <span class="text-xs text-dark/40 dark:text-base/40"
+          <span class="text-xs text-dark/40 dark:text-light/40"
             >{{ duration / 2000 }}x</span
           >
         </div>
@@ -101,7 +101,7 @@ import ChooseRuleDialog from '@/components/ChooseRuleDialog.vue';
 
 import createGraph from '@/graph/graph';
 import system from '@/stores/system';
-import { navbar } from '@/stores/navbar';
+import navbar from '@/stores/navbar';
 import graph from '@/stores/graph';
 import {
   createNeuronDialogOpen,
@@ -112,7 +112,6 @@ import {
 } from '@/stores/dialog';
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
-import initializeRegisters from '@/graph/registers';
 import parseSystem from '@/graph/utils/parse-system';
 
 const props = defineProps(['graph_mode', 'clear_all']);
@@ -176,8 +175,9 @@ const startSimulate = async () => {
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
     if (data.type === 'prompt') {
-      chooseRuleDialogOpen.value = true;
       dialogDetails.value = data.choices;
+      console.log(dialogDetails.value);
+      chooseRuleDialogOpen.value = true;
     } else {
       status.value = data.states;
       config.value = data.configurations;
@@ -251,17 +251,9 @@ watch(tick, (newTick) => {
   config.value = config_list.value[newTick];
 });
 
-watch(
-  () => props.clear_all,
-  () => {
-    if (props.clear_all) graph.value.clear();
-  }
-);
-
 onMounted(() => {
   const vh = document.getElementById('mountNode').offsetHeight;
   const vw = document.getElementById('mountNode').offsetWidth;
-  initializeRegisters();
 
   const g = createGraph('mountNode', vw, vh);
 
@@ -269,7 +261,6 @@ onMounted(() => {
 
   g.data(data);
   g.render();
-
   graph.value = g;
 
   resetSimulation = () => {

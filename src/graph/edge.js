@@ -6,6 +6,7 @@ const options = {
   stateStyles: {
     hover: {
       shadowBlur: 10,
+      shadowColor: style.primary,
     },
     default: {
       shadowBlur: 0,
@@ -57,7 +58,9 @@ export default function initalizeEdge() {
         );
 
         // update the colors of the path and the arrow
-        path.attr('stroke', system.dark ? style.darkContent : style.content);
+        path.attr({
+          stroke: system.dark ? style.darkContent : style.content,
+        });
         path.attr('endArrow', {
           path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
           fill: system.dark ? style.darkContent : style.content,
@@ -65,7 +68,7 @@ export default function initalizeEdge() {
 
         label.attr('fill', system.dark ? style.darkContent : style.content);
         labelBg.attr({
-          fill: system.dark ? style.dark : style.base,
+          fill: system.dark ? style.dark : style.light,
           radius: 5,
           padding: [5, 5, 5, 5],
         });
@@ -138,7 +141,11 @@ export default function initalizeEdge() {
           const attrs = item.getStateStyle(name);
           const original_style = item.getStateStyle('default');
 
-          shape.attr(value ? attrs : original_style);
+          Object.keys(attrs).forEach((attr) => {
+            const attr_value = attrs[attr];
+            const orig_value = original_style[attr];
+            shape.attr(attr, value ? attr_value : orig_value);
+          });
         }
       },
     },

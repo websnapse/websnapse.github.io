@@ -6,10 +6,10 @@ export default {
     extend: {
       colors: {
         primary: '#9B7AA0',
-        light: '#362240',
+        neutral: '#262627',
         dark: '#210B2C',
         'dark-50': '#877f90',
-        base: '#EDF2F4',
+        light: '#EDF2F4',
         error: '#D90429',
       },
     },

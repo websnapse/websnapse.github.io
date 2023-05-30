@@ -4,17 +4,17 @@ import initializeContextMenu from './context-menu';
 import initializeRegisters from './registers';
 import style from '@/stores/styles';
 import system from '@/stores/system';
+import grid from './grid';
 
 export default function createGraph(container, width, height) {
   initializeRegisters();
-  const grid = new G6.Grid();
 
   const graph = new G6.Graph({
-    container: container, // Specify mount container
-    plugins: [grid], // Configure Grid and Minimap to the graph
+    container: container,
+    plugins: [grid],
     width: width,
     height: height,
-    fitViewPadding: [200, 0, 230, 0],
+    fitViewPadding: [120, 0, 180, 0],
     linkCenter: false,
     pixelRatio: 0.5,
     optimizeThreshold: 5,
@@ -51,7 +51,7 @@ export default function createGraph(container, width, height) {
           fill: system.dark ? style.darkContent : style.content,
           fontSize: 20,
           background: {
-            fill: system.dark ? style.dark : style.base,
+            fill: system.dark ? style.dark : style.light,
             padding: [5, 5, 5, 5],
             radius: 5,
           },

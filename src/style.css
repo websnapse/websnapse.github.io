@@ -12,15 +12,15 @@ body {
 }
 
 .nav-button {
-  @apply flex items-center px-4 py-2 text-sm text-base font-medium rounded-md shadow-md bg-primary hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-base focus-visible:ring-opacity-75;
+  @apply flex items-center px-4 py-2 text-sm font-medium rounded-md shadow-md bg-primary hover:bg-opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-light focus-visible:ring-opacity-75;
 }
 
 .tool-button {
-  @apply p-3 text-sm font-medium leading-none rounded-xl text-dark-50 hover:bg-dark hover:text-base hover:leading-none;
+  @apply p-3 text-sm font-medium leading-none rounded-xl text-dark-50 hover:bg-dark hover:text-light hover:leading-none;
 }
 
 .tool-active {
-  @apply text-base leading-none hover:leading-none bg-primary/20 hover:bg-primary/20;
+  @apply leading-none text-light hover:leading-none bg-primary/20 hover:bg-primary/20;
 }
 
 .tool-active > svg {
@@ -63,23 +63,27 @@ canvas {
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
 }
 
+.g6-component-contextmenu {
+  @apply bg-white dark:bg-neutral dark:border-neutral dark:shadow-white/10 dark:shadow-lg;
+}
+
 .context-menu-item {
-  @apply flex items-center px-3 py-2 font-semibold cursor-pointer text-dark hover:bg-primary/20 hover:text-dark;
+  @apply flex items-center px-3 py-2 font-semibold cursor-pointer text-dark hover:bg-primary/20 hover:text-dark dark:text-white;
 }
 
 .context-menu-icon {
-  @apply w-5 h-5 mr-2;
+  @apply w-5 h-5 mr-2 dark:invert-[1];
 }
 
 .tooltip {
   --popper-theme-background-color: theme('colors.dark');
-  --popper-theme-text-color: theme('colors.base');
+  --popper-theme-text-color: theme('colors.light');
   --popper-theme-padding: 0.5rem 1rem;
   --popper-theme-border-radius: 0.5rem;
 }
 
 .back {
-  @apply absolute w-full h-full -z-10 bg-base dark:bg-dark;
+  @apply absolute w-full h-full -z-10 bg-light dark:bg-[#1e1e1e];
 }
 
 .g6-grid {

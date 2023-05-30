@@ -185,14 +185,15 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+import { neuron } from '@/stores/neuron';
+
 import {
   TransitionChild,
   Dialog,
   DialogPanel,
   DialogTitle,
 } from '@headlessui/vue';
-import { neuron } from '@/stores/neuron';
-
 import {
   Listbox,
   ListboxButton,
@@ -208,7 +209,8 @@ const types = ['regular', 'input', 'output'];
 const addRule = () => {
   neuron.rules.push('');
   setTimeout(() => {
-    const mathField = document.getElementsByClassName('math')[index + 1];
+    const mathField =
+      document.getElementsByClassName('math')[neuron.rules.length];
     mathField.children[0].children[0].children[0].focus();
   }, 0);
 };

@@ -36,7 +36,7 @@ const drawRegular = (cfg, group) => {
       shadowColor: style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: system.dark ? style.dark : style.base,
+      fill: system.dark ? style.dark : style.light,
     },
     name: 'neuron',
     draggable: true,
@@ -141,10 +141,10 @@ const drawInput = (cfg, group) => {
       height: node_height,
       stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
-      shadowColor: style.primary,
+      shadowColor: system.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: system.dark ? style.dark : style.base,
+      fill: system.dark ? style.dark : style.light,
     },
     name: 'neuron',
     draggable: true,
@@ -158,7 +158,7 @@ const drawInput = (cfg, group) => {
         [start_x + node_width / 2 + 10, start_y - 15],
         [start_x + node_width / 2 - 10, start_y - 15],
       ],
-      fill: style.base,
+      fill: style.light,
       stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
     },
@@ -226,10 +226,10 @@ const drawOutput = (cfg, group) => {
       height: node_height,
       stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
-      shadowColor: style.primary,
+      shadowColor: system.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: system.dark ? style.dark : style.base,
+      fill: system.dark ? style.dark : style.light,
     },
     name: 'neuron',
     draggable: true,
@@ -244,10 +244,10 @@ const drawOutput = (cfg, group) => {
       height: node_height - 10,
       stroke: system.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
-      shadowColor: style.primary,
+      shadowColor: system.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
       radius: style.r - 5,
-      fill: system.dark ? style.dark : style.base,
+      fill: system.dark ? style.dark : style.light,
     },
     name: 'output-indicator',
     draggable: true,
@@ -364,7 +364,6 @@ const setStateRegular = (name, value, item) => {
   }
   if (name === 'spiking') {
     shape.attr('stroke', value ? style.primary : style.content);
-    shape.attr('lineWidth', value ? 5 : 2);
     shape.attr('shadowBlur', value ? 10 : 0);
   } else if (!['spiking', 'simple'].includes(name)) {
     const shapes = item.getStateStyle(name);

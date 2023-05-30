@@ -44,7 +44,7 @@ const system = reactive({
       });
 
       const parsed_system = {
-        nodes: parsed_nodes ?? sample.nodes,
+        neurons: parsed_nodes ?? sample.neurons,
         synapses: parsed_edges ?? sample.synapses,
       };
 

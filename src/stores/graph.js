@@ -1,5 +1,5 @@
 import { ref, watch } from 'vue';
-import { navbar } from './navbar';
+import navbar from './navbar';
 import system from './system';
 
 const graph = ref(null);

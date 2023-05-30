@@ -2,7 +2,7 @@ import deleteItems from '../utils/delete-items';
 import { redo, undo } from '../utils/action-stack';
 
 import graph from '@/stores/graph';
-import { navbar } from '@/stores/navbar';
+import navbar from '@/stores/navbar';
 
 export const handleKeyup = (evt) => {
   const { key } = evt;

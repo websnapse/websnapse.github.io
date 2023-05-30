@@ -27,6 +27,7 @@
         >
           <DialogPanel
             class="relative w-full max-w-sm p-6 text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
+            ref="choices"
           >
             <form class="relative">
               <table class="relative w-full border-separate border-spacing-y-2">
@@ -75,10 +76,10 @@
                         leave-to-class="opacity-0"
                       >
                         <ListboxOptions
-                          class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                          class="absolute z-10 w-full py-1 mt-1 overflow-auto bg-white rounded-md shadow-lg text-light max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                         >
                           <ListboxOption
-                            v-slot="{ active, selected }"
+                            v-slot="{ active }"
                             v-for="index in props.details[neuron]"
                             :key="index"
                             :value="index"
@@ -129,15 +130,13 @@
 </style>
 
 <script setup>
+import { computed, unref } from 'vue';
 import {
   TransitionChild,
   Dialog,
   DialogPanel,
   DialogTitle,
 } from '@headlessui/vue';
-import katex from 'katex';
-import { computed } from 'vue';
-
 import {
   Listbox,
   ListboxButton,
@@ -145,6 +144,7 @@ import {
   ListboxOption,
 } from '@headlessui/vue';
 import system from '@/stores/system';
+import katex from 'katex';
 
 const props = defineProps(['isOpen', 'closeModal', 'details', 'socket']);
 
@@ -155,9 +155,6 @@ const getKatex = (rule) => {
   });
 };
 
-// selected rules from details
-// if details is an array, then selected_rules sets the first element as the default
-// else selected_rules sets the default to the value
 const selected_rules = computed(() => {
   const rules = {};
   for (const neuron in props.details) {
@@ -171,11 +168,10 @@ const selected_rules = computed(() => {
 });
 
 const getNode = (id) => {
-  return system.data.nodes.find((node) => node.id === id);
+  return system.data.neurons.find((neuron) => neuron.id === id);
 };
 
 const checkDetails = () => {
-  console.log(selected_rules.value);
   props.socket.send(JSON.stringify(selected_rules.value));
   props.closeModal();
 };

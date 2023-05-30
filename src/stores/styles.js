@@ -6,11 +6,12 @@ const fullConfig = resolveConfig(tailwindConfig);
 
 const styles = reactive({
   content: '#0d0e0e',
-  darkContent: '#95899a',
+  darkContent: '#9f96a0',
   primary: fullConfig.theme.colors.primary,
+  darkPrimary: fullConfig.theme.colors.light,
   error: fullConfig.theme.colors.error,
-  base: fullConfig.theme.colors.base,
-  dark: fullConfig.theme.colors.dark,
+  light: fullConfig.theme.colors.light,
+  dark: '#1e1e1e',
   lineDash: [4, 2, 1, 2],
   r: 30,
   m: 20,

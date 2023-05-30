@@ -1,7 +1,7 @@
 export default function parseSystem(system) {
-  const { nodes, synapses } = system;
+  const { neurons, synapses } = system;
 
-  const graph_nodes = nodes.map((node) => {
+  const graph_nodes = neurons.map((node) => {
     const { id, content, rules, type, position } = node;
 
     return {

@@ -29,7 +29,7 @@
           leave-to="opacity-0 scale-95"
         >
           <DialogPanel
-            class="w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
+            class="w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl dark:bg-neutral dark:text-light rounded-2xl"
           >
             <DialogTitle
               as="h3"
@@ -69,7 +69,7 @@
                       id="default-search"
                       v-model="props.details.content"
                       class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="a"
+                      placeholder="1"
                       required
                     />
                   </div>

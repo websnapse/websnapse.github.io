@@ -1,4 +1,4 @@
-import { navbar } from '../stores/navbar';
+import navbar from '../stores/navbar';
 
 export default function interact(graph) {
   graph.on('afteradditem', (evt) => {

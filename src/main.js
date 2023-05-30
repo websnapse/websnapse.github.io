@@ -13,6 +13,8 @@ import { MdMinimizeOutlined } from 'oh-vue-icons/icons/md';
 
 import Popper from 'vue3-popper';
 import VueKatex from '@hsorby/vue3-katex';
+import 'vue-toast-notification/dist/theme-sugar.css';
+import 'katex/dist/katex.min.css';
 
 const Bi = Object.values({ ...BiIcons });
 addIcons(...Bi);

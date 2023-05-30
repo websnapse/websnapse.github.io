@@ -1,6 +1,5 @@
 import G6 from '@antv/g6';
-import { neuron } from '../stores/neuron';
-import system from '../stores/system';
+import system from '@/stores/system';
 import addNode from './utils/add-node';
 import deleteItems from './utils/delete-items';
 
@@ -82,6 +81,7 @@ export default function initializeContextMenu(graph) {
           break;
         case 'Auto layout':
           graph.layout();
+          graph.fitView();
           break;
         case 'Focus node':
           graph.focusItem(item);
