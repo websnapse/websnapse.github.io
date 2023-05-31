@@ -65,8 +65,6 @@ export default function dragAddEdge() {
 
       if (this.edge == currentEdge) {
         this.graph.removeItem(this.edge, false);
-        this.edge = null;
-        this.addingEdge = false;
       } else if (this.edge.getSource() !== currentEdge) {
         this.graph.updateItem(
           this.edge,
@@ -75,11 +73,11 @@ export default function dragAddEdge() {
           },
           false
         );
-        this.edge = null;
-        this.addingEdge = false;
       } else {
         this.graph.removeItem(this.edge, false);
       }
+      this.edge = null;
+      this.addingEdge = false;
     },
   });
 }

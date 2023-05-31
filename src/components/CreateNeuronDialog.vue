@@ -134,12 +134,13 @@
                     <label
                       for="content"
                       class="mb-2 text-sm font-medium text-gray-900"
-                      v-else
+                      v-else-if="neuron.type === 'input'"
                     >
                       Spike Train
                     </label>
                     <MathEditor
                       v-bind:model-value="neuron.content"
+                      v-if="neuron.type !== 'output'"
                       @change="(value) => (neuron.content = value)"
                     />
                   </div>

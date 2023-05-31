@@ -39,8 +39,21 @@
       id="simulationControls"
       class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-light/40 dark:bg-neutral backdrop-blur-sm"
     >
-      <div class="flex items-center gap-1 text-dark/50 dark:text-dark-50">
-        <v-icon name="la-random-solid" class="mr-2" />
+      <div class="flex items-center gap-2 text-dark/50 dark:text-dark-50">
+        <button
+          class="toggle"
+          @click="toggleMode"
+          :class="
+            system.mode === 'pseudorandom'
+              ? `after:content-['']`
+              : `after:content-none`
+          "
+        >
+          <v-icon
+            name="la-random-solid"
+            :class="system.mode === 'pseudorandom' ? 'active-toggle' : ''"
+          />
+        </button>
         <v-icon
           name="la-step-backward-solid"
           @click="changeTick(-1)"
@@ -113,9 +126,9 @@ import {
 } from '@/stores/dialog';
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
-import parseSystem from '@/graph/utils/parse-system';
+import { importSystem } from '@/graph/utils/parse-system';
 import Toolbar from './Toolbar.vue';
-import { reactifyObject, toReactive, toRef, toRefs } from '@vueuse/core';
+import { exportSytem } from '@/graph/utils/parse-system';
 
 const original = ref();
 const status = ref();
@@ -158,20 +171,20 @@ const stopSimulate = () => {
   navbar.running = false;
   ws.close();
   graph.value.getNodes().forEach((node) => {
-    node.clearStates(['default', 'spiking', 'closed']);
-    node.setState('default', true);
+    node?.clearStates(['default', 'spiking', 'closed']);
+    node?.setState('default', true);
   });
   graph.value.getEdges().forEach((edge) => {
-    edge.clearStates(['default', 'spiking', 'closed']);
-    edge.setState('default', true);
+    edge?.clearStates(['default', 'spiking', 'closed']);
+    edge?.setState('default', true);
   });
 };
 
 const startSimulate = async () => {
   ws = new WebSocket(`ws://localhost:8000/ws/simulate/${system.mode}`);
-  original.value = system.data;
+  original.value = exportSytem(graph.value);
   ws.onopen = function () {
-    ws.send(JSON.stringify(system.data));
+    ws.send(JSON.stringify(exportSytem(graph.value)));
   };
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
@@ -251,6 +264,10 @@ watch(tick, (newTick) => {
   config.value = config_list.value[newTick];
 });
 
+const toggleMode = () => {
+  system.mode = system.mode === 'pseudorandom' ? 'guided' : 'pseudorandom';
+};
+
 const loadData = ref(null);
 const clearAll = ref(null);
 
@@ -258,35 +275,42 @@ onMounted(() => {
   const vh = document.getElementById('mountNode').offsetHeight;
   const vw = document.getElementById('mountNode').offsetWidth;
 
-  const g = reactifyObject({ core: createGraph('mountNode', vw, vh) });
-  const data = parseSystem(system.data);
+  const g = createGraph('mountNode', vw, vh);
+  const data = importSystem(system.data);
 
-  g.core.read(data);
-  graph.value = toReactive(g.core);
+  g.read(data);
+  graph.value = g;
 
   loadData.value = (data) => {
-    g.read(parseSystem(data));
+    g.read(importSystem(data));
+    graph.value = g;
   };
 
   clearAll.value = () => {
     g.clear();
+    graph.value = g;
   };
 
   resetSimulation = () => {
     navbar.running = false;
-    const data = parseSystem(original.value);
-    g.core.changeData(data);
+    const data = importSystem(original.value);
+    g.changeData(data);
+    graph.value = g;
   };
 
   watch(status, (newValue, oldValue) => {
     for (const key in newValue) {
-      const node = g.core.findById(key);
-      const edges = g.core.getEdges().filter((edge) => {
+      const node = g.findById(key);
+      const edges = g.getEdges().filter((edge) => {
         return edge.getSource().getID() === key;
       });
 
       for (const edge of edges) {
-        g.core.clearItemStates(edge);
+        edge.getStates().forEach((state) => {
+          if (state !== newValue[key]) {
+            edge.clearStates(state);
+          }
+        });
         edge.setState('spiking', newValue[key] === 'spiking');
       }
 
@@ -298,7 +322,7 @@ onMounted(() => {
 
   watch(config, (newValue, oldValue) => {
     for (const key in newValue) {
-      const node = g.core.findById(key);
+      const node = g.findById(key);
       const model = node.getModel();
 
       if (model.content !== newValue[key]) {
@@ -314,8 +338,8 @@ onMounted(() => {
 
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
-    g.core.changeSize(width, height);
-    g.core.fitView();
+    g.changeSize(width, height);
+    g.fitView();
   });
 
   resizeObserver.observe(document.getElementById('mountNode'));

@@ -1,4 +1,4 @@
-export default function parseSystem(system) {
+export const importSystem = (system) => {
   const { neurons, synapses } = system;
 
   const graph_nodes = neurons.map((node) => {
@@ -27,4 +27,51 @@ export default function parseSystem(system) {
   };
 
   return graph_system;
-}
+};
+
+export const exportSytem = (graph) => {
+  const nodes = graph.save().nodes;
+  const edges = graph.save().edges;
+
+  const parsed_nodes = nodes?.map((node) => {
+    const { id, content, rules, type, x, y } = node;
+
+    if (type === 'input' || type === 'output') {
+      return {
+        id,
+        type,
+        content,
+        position: {
+          x,
+          y,
+        },
+      };
+    }
+
+    return {
+      id,
+      content,
+      rules,
+      type,
+      position: {
+        x,
+        y,
+      },
+    };
+  });
+
+  const parsed_edges = edges?.map((edge) => {
+    return {
+      from: edge.source,
+      to: edge.target,
+      weight: edge.label,
+    };
+  });
+
+  const parsed_system = {
+    neurons: parsed_nodes,
+    synapses: parsed_edges,
+  };
+
+  return parsed_system;
+};

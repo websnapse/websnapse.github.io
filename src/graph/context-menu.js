@@ -2,6 +2,8 @@ import G6 from '@antv/g6';
 import system from '@/stores/system';
 import addNode from './utils/add-node';
 import deleteItems from './utils/delete-items';
+import graph_ref from '@/stores/graph';
+import { exportSytem } from './utils/parse-system';
 
 export default function initializeContextMenu(graph) {
   const contextMenu = new G6.Menu({
@@ -63,7 +65,9 @@ export default function initializeContextMenu(graph) {
           graph.fitView();
           break;
         case 'Save':
-          console.log(system.data);
+          console.log(graph.save().nodes);
+          console.log(graph_ref.value.save().nodes);
+          console.log(exportSytem(graph_ref.value));
           // const a = document.createElement('a');
           // const file = new Blob([JSON.stringify(system.data)], {
           //   type: 'text/plain',

@@ -51,6 +51,7 @@
                     <input
                       type="search"
                       id="default-search"
+                      disabled
                       v-model="props.details.id"
                       class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="n1"

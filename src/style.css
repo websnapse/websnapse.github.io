@@ -89,3 +89,16 @@ canvas {
 .g6-grid {
   @apply dark:invert-[.9];
 }
+
+.active-toggle {
+  @apply relative text-primary;
+}
+
+.toggle {
+  @apply relative;
+}
+
+.toggle::after {
+  content: '';
+  @apply absolute bottom-0 left-0 right-0 w-1 h-1 mx-auto rounded-full bg-primary;
+}
