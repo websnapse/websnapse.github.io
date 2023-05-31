@@ -91,13 +91,13 @@
           min="500"
           max="3500"
           step="500"
-          :value="duration"
-          @mouseup="(e) => (duration = e.target.value)"
+          :value="system.duration"
+          @mouseup="(e) => (system.duration = e.target.value)"
           class="mt-4 slider"
         />
         <div>
           <span class="text-xs text-dark/40 dark:text-light/40"
-            >{{ duration / 2000 }}x</span
+            >{{ system.duration / 2000 }}x</span
           >
         </div>
       </div>
@@ -106,7 +106,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, reactive } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { TransitionRoot } from '@headlessui/vue';
 import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
 import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
@@ -138,7 +138,6 @@ const status_list = ref([]);
 const config_list = ref([]);
 const tick = ref(0);
 const max_tick = ref(0);
-const duration = ref(1000);
 
 const changeTick = (i) => {
   tick.value += i;
@@ -147,21 +146,6 @@ const changeTick = (i) => {
 };
 
 let intervalId = null;
-const toggleInterval = () => {
-  navbar.running = !navbar.running;
-  if (navbar.running) {
-    intervalId = setInterval(() => {
-      if (tick.value + 1 >= max_tick.value) {
-        clearInterval(intervalId);
-        navbar.running = false;
-      } else {
-        tick.value++;
-      }
-    }, duration.value);
-  } else {
-    clearInterval(intervalId);
-  }
-};
 
 /** @type {WebSocket} */
 let ws = null;
@@ -184,7 +168,12 @@ const startSimulate = async () => {
   ws = new WebSocket(`ws://localhost:8000/ws/simulate/${system.mode}`);
   original.value = exportSytem(graph.value);
   ws.onopen = function () {
-    ws.send(JSON.stringify(exportSytem(graph.value)));
+    ws.send(
+      JSON.stringify({
+        data: exportSytem(graph.value),
+        duration: system.duration,
+      })
+    );
   };
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
@@ -227,38 +216,6 @@ const simulateNext = async () => {
   config.value = configurations;
 };
 
-watch(duration, (newDuration) => {
-  if (navbar.running) {
-    if (tick.value < max_tick.value) {
-      clearInterval(intervalId);
-      intervalId = setInterval(() => {
-        tick.value++;
-      }, newDuration);
-    }
-  }
-});
-
-watch(
-  duration,
-  (newDuration) => {
-    // get graph.value items
-    const nodes = graph.value?.getNodes();
-    const edges = graph.value?.getEdges();
-
-    // set the duration of each node and edge
-    nodes?.forEach((node) => {
-      const model = node.getModel();
-      model.duration = newDuration;
-      node.update(model);
-    });
-    edges?.forEach((edge) => {
-      const model = edge.getModel();
-      model.duration = newDuration;
-      edge.update(model);
-    });
-  },
-  { immediate: true }
-);
 watch(tick, (newTick) => {
   status.value = status_list.value[newTick];
   config.value = config_list.value[newTick];
@@ -276,9 +233,8 @@ onMounted(() => {
   const vw = document.getElementById('mountNode').offsetWidth;
 
   const g = createGraph('mountNode', vw, vh);
-  const data = importSystem(system.data);
 
-  g.read(data);
+  g.read(system.data);
   graph.value = g;
 
   loadData.value = (data) => {
@@ -323,12 +279,13 @@ onMounted(() => {
   watch(config, (newValue, oldValue) => {
     for (const key in newValue) {
       const node = g.findById(key);
-      const model = node.getModel();
+      const model = {
+        content: node.getModel().content,
+        delay: node.getModel().delay,
+      };
 
-      if (model.content !== newValue[key]) {
-        node.update({
-          content: newValue[key],
-        });
+      if (model !== newValue[key]) {
+        node.update(newValue[key]);
       }
     }
   });

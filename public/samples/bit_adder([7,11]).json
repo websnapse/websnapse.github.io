@@ -1,0 +1,62 @@
+{
+  "neurons": [
+    {
+      "id": "in_{0}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "111"
+    },
+    {
+      "id": "in_{1}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "1101"
+    },
+    {
+      "id": "add_{0,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}/a\\to\\lambda",
+        "a^{3}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "out",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    }
+  ],
+  "synapses": [
+    {
+      "from": "in_{0}",
+      "to": "add_{0,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "add_{0,1}",
+      "weight": 1
+    },
+    {
+      "from": "add_{0,1}",
+      "to": "out",
+      "weight": 1
+    }
+  ]
+}

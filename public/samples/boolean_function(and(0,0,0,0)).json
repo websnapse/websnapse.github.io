@@ -1,0 +1,554 @@
+{
+  "neurons": [
+    {
+      "id": "env_{in_{0}}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "00000"
+    },
+    {
+      "id": "env_{in_{1}}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "00000"
+    },
+    {
+      "id": "env_{in_{2}}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "00000"
+    },
+    {
+      "id": "env_{in_{3}}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "00000"
+    },
+    {
+      "id": "in_{0}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "0,0",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "1,0",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "1,1",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "2,0",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "2,1",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "2,2",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "2,3",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,0",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,1",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,2",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,3",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,4",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,5",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,6",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "3,7",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "aux_{0}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "aux_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "aux_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "aux_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "out",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to\\lambda",
+        "a^{2}\\to\\lambda",
+        "a^{3}\\to\\lambda",
+        "a^{4}\\to\\lambda",
+        "a^{5}\\to\\lambda",
+        "a^{6}\\to\\lambda",
+        "a^{7}\\to\\lambda",
+        "a^{8}\\to\\lambda",
+        "a^{9}\\to\\lambda",
+        "a^{10}\\to\\lambda",
+        "a^{11}\\to\\lambda",
+        "a^{12}\\to\\lambda",
+        "a^{13}\\to\\lambda",
+        "a^{14}\\to\\lambda",
+        "a^{15}\\to\\lambda",
+        "a^{16}\\to a;0"
+      ]
+    },
+    {
+      "id": "env_{out}",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    }
+  ],
+  "synapses": [
+    {
+      "from": "env_{in_{0}}",
+      "to": "in_{0}",
+      "weight": 1
+    },
+    {
+      "from": "env_{in_{1}}",
+      "to": "in_{1}",
+      "weight": 1
+    },
+    {
+      "from": "env_{in_{2}}",
+      "to": "in_{2}",
+      "weight": 1
+    },
+    {
+      "from": "env_{in_{3}}",
+      "to": "in_{3}",
+      "weight": 1
+    },
+    {
+      "from": "in_{0}",
+      "to": "0,0",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "1,0",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "1,1",
+      "weight": 1
+    },
+    {
+      "from": "in_{2}",
+      "to": "2,0",
+      "weight": 1
+    },
+    {
+      "from": "in_{2}",
+      "to": "2,1",
+      "weight": 1
+    },
+    {
+      "from": "in_{2}",
+      "to": "2,2",
+      "weight": 1
+    },
+    {
+      "from": "in_{2}",
+      "to": "2,3",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,0",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,1",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,2",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,3",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,4",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,5",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,6",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "3,7",
+      "weight": 1
+    },
+    {
+      "from": "0,0",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "1,0",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "1,1",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "2,0",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "2,1",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "2,2",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "2,3",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,0",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,1",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,2",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,3",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,4",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,5",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,6",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "3,7",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "aux_{0}",
+      "to": "aux_{1}",
+      "weight": 1
+    },
+    {
+      "from": "aux_{1}",
+      "to": "aux_{0}",
+      "weight": 1
+    },
+    {
+      "from": "aux_{1}",
+      "to": "aux_{2}",
+      "weight": 1
+    },
+    {
+      "from": "aux_{2}",
+      "to": "aux_{3}",
+      "weight": 1
+    },
+    {
+      "from": "aux_{3}",
+      "to": "out",
+      "weight": 1
+    },
+    {
+      "from": "out",
+      "to": "env_{out}",
+      "weight": 1
+    }
+  ]
+}

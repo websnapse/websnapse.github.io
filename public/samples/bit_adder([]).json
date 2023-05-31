@@ -1,0 +1,30 @@
+{
+  "neurons": [
+    {
+      "id": "out",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    }
+  ],
+  "synapses": [
+    {
+      "from": "in_{0}",
+      "to": "add_{0,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "add_{0,1}",
+      "weight": 1
+    },
+    {
+      "from": "add_{}",
+      "to": "out",
+      "weight": 1
+    }
+  ]
+}

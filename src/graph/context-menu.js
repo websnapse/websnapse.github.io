@@ -4,6 +4,7 @@ import addNode from './utils/add-node';
 import deleteItems from './utils/delete-items';
 import graph_ref from '@/stores/graph';
 import { exportSytem } from './utils/parse-system';
+import { updateNeuron, updateSynapse } from '@/utils/dialog';
 
 export default function initializeContextMenu(graph) {
   const contextMenu = new G6.Menu({
@@ -22,8 +23,7 @@ export default function initializeContextMenu(graph) {
         switch (itemType) {
           case 'node':
             content = [
-              { img: '/content.svg', text: 'Edit content' },
-              { img: '/rule.svg', text: 'Edit rules' },
+              { img: '/rule.svg', text: 'Edit node' },
               { img: '/focus.svg', text: 'Focus node' },
               { img: '/delete.svg', text: 'Delete' },
             ];
@@ -53,28 +53,28 @@ export default function initializeContextMenu(graph) {
       .join('')}
   </ul>`;
     },
-    handleMenuClick: (target, item) => {
+    async handleMenuClick(target, item) {
       const command = target.innerText;
       const point = target.getBoundingClientRect();
       const model = item?.getModel();
       switch (command) {
         case 'New Node':
-          addNode(point, graph);
+          await addNode(point, graph);
           break;
         case 'Fit View':
           graph.fitView();
           break;
         case 'Save':
-          console.log(graph.save().nodes);
-          console.log(graph_ref.value.save().nodes);
-          console.log(exportSytem(graph_ref.value));
-          // const a = document.createElement('a');
-          // const file = new Blob([JSON.stringify(system.data)], {
-          //   type: 'text/plain',
-          // });
-          // a.href = URL.createObjectURL(file);
-          // a.download = 'system.json';
-          // a.click();
+          const a = document.createElement('a');
+          const file = new Blob(
+            [JSON.stringify(exportSytem(graph_ref.value))],
+            {
+              type: 'text/plain',
+            }
+          );
+          a.href = URL.createObjectURL(file);
+          a.download = 'system.json';
+          a.click();
           break;
         case 'Clear':
           graph.clear();
@@ -86,28 +86,26 @@ export default function initializeContextMenu(graph) {
         case 'Focus node':
           graph.focusItem(item);
           break;
-        case 'Edit content':
-          // get item config
-          const content = model.content.split('^');
-          model.content =
-            content[0] + '^{' + String(Number(content[1] ?? 1) + 1) + '}';
-          item.update(model);
-          item.refresh();
-          break;
-        case 'Edit rules':
-          // get item config
-          model.rules = ['a \\to a;0'];
-          item.update(model);
-          item.refresh();
+        case 'Edit node':
+          const updated_node = await updateNeuron(item);
+
+          if (!updated_node.success) return;
+
+          if (updated_node.type === 'regular') {
+            model.id = updated_node.id;
+            model.content = updated_node.content;
+            model.rules = updated_node.rules;
+          } else {
+            model.id = updated_node.id;
+            model.content = updated_node.content;
+          }
+
+          graph.updateItem(item, model, true);
           break;
         case 'Edit weight':
-          // get item config
-          async function update() {
-            const updated = await updateEdge(item);
-            model.label = updated.weight;
-            item.update(model);
-          }
-          update();
+          const updated_synapse = await updateSynapse(item);
+          model.label = updated_synapse.label;
+          item.update(model);
           break;
         case 'Delete':
           deleteItems(graph);

@@ -1,60 +1,21 @@
 import { watch, reactive, computed } from 'vue';
 import graph from './graph';
 import sample from '../data.json';
+import { exportSytem, importSystem } from '@/graph/utils/parse-system';
 
 const system = reactive({
-  data: computed({
-    get() {
-      const nodes = graph.value?.save().nodes;
-      const edges = graph.value?.save().edges;
-
-      const parsed_nodes = nodes?.map((node) => {
-        const { id, content, rules, type, x, y } = node;
-
-        if (type === 'input' || type === 'output') {
-          return {
-            id,
-            type,
-            content,
-            position: {
-              x,
-              y,
-            },
-          };
-        }
-
-        return {
-          id,
-          content,
-          rules,
-          type,
-          position: {
-            x,
-            y,
-          },
-        };
-      });
-      const parsed_edges = edges?.map((edge) => {
-        return {
-          from: edge.source,
-          to: edge.target,
-          weight: edge.label,
-        };
-      });
-
-      const parsed_system = {
-        neurons: parsed_nodes ?? sample.neurons,
-        synapses: parsed_edges ?? sample.synapses,
-      };
-
-      return parsed_system;
-    },
-  }),
+  data: computed(() =>
+    graph.value ? exportSytem(graph.value) : importSystem(sample)
+  ),
   mode: 'pseudorandom',
   states: [],
   configuration: [],
   duration: 3000,
   tick: 0,
+});
+
+watch(graph.value, (newValue) => {
+  system.data = exportSytem(newValue);
 });
 
 watch(

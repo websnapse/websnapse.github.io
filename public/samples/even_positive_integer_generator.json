@@ -1,0 +1,169 @@
+{
+  "neurons": [
+    {
+      "id": "1",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 2,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "2",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 2,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "3",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 2,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "4",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a\\to a;1"
+      ]
+    },
+    {
+      "id": "5",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "6",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "7",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 2,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a^{3}\\to\\lambda"
+      ]
+    },
+    {
+      "id": "env_{out}",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    }
+  ],
+  "synapses": [
+    {
+      "from": "1",
+      "to": "4",
+      "weight": 1
+    },
+    {
+      "from": "2",
+      "to": "5",
+      "weight": 1
+    },
+    {
+      "from": "3",
+      "to": "6",
+      "weight": 1
+    },
+    {
+      "from": "4",
+      "to": "1",
+      "weight": 1
+    },
+    {
+      "from": "4",
+      "to": "2",
+      "weight": 1
+    },
+    {
+      "from": "4",
+      "to": "3",
+      "weight": 1
+    },
+    {
+      "from": "4",
+      "to": "7",
+      "weight": 1
+    },
+    {
+      "from": "5",
+      "to": "1",
+      "weight": 1
+    },
+    {
+      "from": "5",
+      "to": "2",
+      "weight": 1
+    },
+    {
+      "from": "5",
+      "to": "7",
+      "weight": 1
+    },
+    {
+      "from": "6",
+      "to": "3",
+      "weight": 1
+    },
+    {
+      "from": "6",
+      "to": "7",
+      "weight": 1
+    },
+    {
+      "from": "7",
+      "to": "env_{out}",
+      "weight": 1
+    }
+  ]
+}

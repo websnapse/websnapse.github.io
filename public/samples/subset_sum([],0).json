@@ -1,0 +1,255 @@
+{
+  "neurons": [
+    {
+      "id": "c_{0}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{4}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{5}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "g_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to\\lambda",
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "g_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "g_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "t_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "t_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "acc",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    }
+  ],
+  "synapses": [
+    {
+      "from": "h_{1}",
+      "to": "h_{2}",
+      "weight": 1
+    },
+    {
+      "from": "h_{2}",
+      "to": "h_{3}",
+      "weight": 1
+    },
+    {
+      "from": "h_{3}",
+      "to": "h_{4}",
+      "weight": 1
+    },
+    {
+      "from": "h_{3}",
+      "to": "h_{5}",
+      "weight": 1
+    },
+    {
+      "from": "h_{4}",
+      "to": "h_{5}",
+      "weight": 1
+    },
+    {
+      "from": "h_{5}",
+      "to": "h_{4}",
+      "weight": 1
+    },
+    {
+      "from": "t_{1}",
+      "to": "t_{2}",
+      "weight": 1
+    },
+    {
+      "from": "g_{1}",
+      "to": "g_{2}",
+      "weight": 1
+    },
+    {
+      "from": "g_{1}",
+      "to": "g_{3}",
+      "weight": 1
+    },
+    {
+      "from": "g_{2}",
+      "to": "g_{3}",
+      "weight": 1
+    },
+    {
+      "from": "g_{3}",
+      "to": "g_{2}",
+      "weight": 1
+    },
+    {
+      "from": "h_{4}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "t_{1}",
+      "to": "h_{4}",
+      "weight": 1
+    },
+    {
+      "from": "t_{1}",
+      "to": "h_{5}",
+      "weight": 1
+    },
+    {
+      "from": "t_{2}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "t_{2}",
+      "to": "in_{1}",
+      "weight": 1
+    },
+    {
+      "from": "acc",
+      "to": "g_{1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "g_{1}",
+      "weight": 1
+    }
+  ]
+}

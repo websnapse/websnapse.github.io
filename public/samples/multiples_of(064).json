@@ -1,0 +1,80 @@
+{
+  "neurons": [
+    {
+      "id": "1",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 2,
+      "rules": [
+        "a^{2}/a\\to a;63",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "2",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;63",
+        "a\\to a;64"
+      ]
+    },
+    {
+      "id": "3",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 3,
+      "rules": [
+        "a^{3}\\to a;0",
+        "a\\to a;64",
+        "a^{2}\\to\\lambda"
+      ]
+    },
+    {
+      "id": "env_{out}",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    }
+  ],
+  "synapses": [
+    {
+      "from": "1",
+      "to": "2",
+      "weight": 1
+    },
+    {
+      "from": "1",
+      "to": "3",
+      "weight": 1
+    },
+    {
+      "from": "2",
+      "to": "1",
+      "weight": 1
+    },
+    {
+      "from": "2",
+      "to": "3",
+      "weight": 1
+    },
+    {
+      "from": "3",
+      "to": "env_{out}",
+      "weight": 1
+    }
+  ]
+}

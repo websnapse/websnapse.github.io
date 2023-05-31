@@ -1,0 +1,687 @@
+{
+  "neurons": [
+    {
+      "id": "c_{0}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "c_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0",
+        "a\\to a;1"
+      ]
+    },
+    {
+      "id": "c_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0",
+        "a\\to a;1"
+      ]
+    },
+    {
+      "id": "c_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0",
+        "a\\to a;1"
+      ]
+    },
+    {
+      "id": "c_{4}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0",
+        "a\\to a;1"
+      ]
+    },
+    {
+      "id": "d_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "d_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "d_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "d_{4}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "in_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 2,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 4,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 8,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{4}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 16,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "in_{5}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 30,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{1,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{1,2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{2,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{2,2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{3,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{3,2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{4,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "e_{4,2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{4}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "h_{5}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "g_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to\\lambda",
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "g_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "g_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "t_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{3}\\to\\lambda",
+        "a^{5}\\to\\lambda",
+        "a^{7}\\to\\lambda",
+        "a^{9}\\to\\lambda",
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "t_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "acc",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a(aa)^{+}/a^{2}\\to a;0"
+      ]
+    }
+  ],
+  "synapses": [
+    {
+      "from": "c_{1}",
+      "to": "d_{1}",
+      "weight": 1
+    },
+    {
+      "from": "c_{2}",
+      "to": "d_{2}",
+      "weight": 1
+    },
+    {
+      "from": "c_{3}",
+      "to": "d_{3}",
+      "weight": 1
+    },
+    {
+      "from": "c_{4}",
+      "to": "d_{4}",
+      "weight": 1
+    },
+    {
+      "from": "c_{0}",
+      "to": "d_{1}",
+      "weight": 1
+    },
+    {
+      "from": "c_{0}",
+      "to": "d_{2}",
+      "weight": 1
+    },
+    {
+      "from": "c_{0}",
+      "to": "d_{3}",
+      "weight": 1
+    },
+    {
+      "from": "c_{0}",
+      "to": "d_{4}",
+      "weight": 1
+    },
+    {
+      "from": "d_{1}",
+      "to": "in_{1}",
+      "weight": 1
+    },
+    {
+      "from": "d_{2}",
+      "to": "in_{2}",
+      "weight": 1
+    },
+    {
+      "from": "d_{3}",
+      "to": "in_{3}",
+      "weight": 1
+    },
+    {
+      "from": "d_{4}",
+      "to": "in_{4}",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "e_{1,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "e_{1,2}",
+      "weight": 1
+    },
+    {
+      "from": "in_{2}",
+      "to": "e_{2,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{2}",
+      "to": "e_{2,2}",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "e_{3,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "e_{3,2}",
+      "weight": 1
+    },
+    {
+      "from": "in_{4}",
+      "to": "e_{4,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{4}",
+      "to": "e_{4,2}",
+      "weight": 1
+    },
+    {
+      "from": "e_{1,1}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{1,2}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{2,1}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{2,2}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{3,1}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{3,2}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{4,1}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{4,2}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "e_{1,1}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "e_{1,2}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "e_{2,1}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "e_{2,2}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "e_{3,1}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "e_{3,2}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "e_{4,1}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "e_{4,2}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "h_{1}",
+      "to": "h_{2}",
+      "weight": 1
+    },
+    {
+      "from": "h_{2}",
+      "to": "h_{3}",
+      "weight": 1
+    },
+    {
+      "from": "h_{3}",
+      "to": "h_{4}",
+      "weight": 1
+    },
+    {
+      "from": "h_{3}",
+      "to": "h_{5}",
+      "weight": 1
+    },
+    {
+      "from": "h_{4}",
+      "to": "h_{5}",
+      "weight": 1
+    },
+    {
+      "from": "h_{5}",
+      "to": "h_{4}",
+      "weight": 1
+    },
+    {
+      "from": "t_{1}",
+      "to": "t_{2}",
+      "weight": 1
+    },
+    {
+      "from": "g_{1}",
+      "to": "g_{2}",
+      "weight": 1
+    },
+    {
+      "from": "g_{1}",
+      "to": "g_{3}",
+      "weight": 1
+    },
+    {
+      "from": "g_{2}",
+      "to": "g_{3}",
+      "weight": 1
+    },
+    {
+      "from": "g_{3}",
+      "to": "g_{2}",
+      "weight": 1
+    },
+    {
+      "from": "h_{4}",
+      "to": "t_{1}",
+      "weight": 1
+    },
+    {
+      "from": "t_{1}",
+      "to": "h_{4}",
+      "weight": 1
+    },
+    {
+      "from": "t_{1}",
+      "to": "h_{5}",
+      "weight": 1
+    },
+    {
+      "from": "t_{2}",
+      "to": "acc",
+      "weight": 1
+    },
+    {
+      "from": "t_{2}",
+      "to": "in_{5}",
+      "weight": 1
+    },
+    {
+      "from": "acc",
+      "to": "g_{1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{5}",
+      "to": "g_{1}",
+      "weight": 1
+    }
+  ]
+}

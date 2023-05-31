@@ -1,0 +1,103 @@
+{
+  "neurons": [
+    {
+      "id": "a",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    },
+    {
+      "id": "b",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "11111"
+    },
+    {
+      "id": "both",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "one",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to\\lambda",
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "min",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    },
+    {
+      "id": "max",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    }
+  ],
+  "synapses": [
+    {
+      "from": "a",
+      "to": "one",
+      "weight": 1
+    },
+    {
+      "from": "a",
+      "to": "both",
+      "weight": 1
+    },
+    {
+      "from": "b",
+      "to": "one",
+      "weight": 1
+    },
+    {
+      "from": "b",
+      "to": "both",
+      "weight": 1
+    },
+    {
+      "from": "one",
+      "to": "max",
+      "weight": 1
+    },
+    {
+      "from": "both",
+      "to": "min",
+      "weight": 1
+    },
+    {
+      "from": "both",
+      "to": "max",
+      "weight": 1
+    }
+  ]
+}

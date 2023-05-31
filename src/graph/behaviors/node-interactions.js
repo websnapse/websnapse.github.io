@@ -41,7 +41,6 @@ export default function nodeInteractions() {
       }
 
       this.graph.updateItem(item, model, true);
-      graph_ref.value = this.graph;
     },
   });
 }

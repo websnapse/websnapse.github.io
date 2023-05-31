@@ -1,0 +1,179 @@
+{
+  "neurons": [
+    {
+      "id": "in_{0}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "01111"
+    },
+    {
+      "id": "in_{1}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "11111"
+    },
+    {
+      "id": "in_{2}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "000001"
+    },
+    {
+      "id": "in_{3}",
+      "type": "input",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": "100001"
+    },
+    {
+      "id": "stall_{2,0}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "stall_{3,0}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "stall_{3,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "add_{0,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}/a\\to\\lambda",
+        "a^{3}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "add_{0,1,2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}/a\\to\\lambda",
+        "a^{3}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "add_{0,1,2,3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a^{2}/a\\to\\lambda",
+        "a^{3}/a^{2}\\to a;0"
+      ]
+    },
+    {
+      "id": "out",
+      "type": "output",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": ""
+    }
+  ],
+  "synapses": [
+    {
+      "from": "in_{0}",
+      "to": "add_{0,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{1}",
+      "to": "add_{0,1}",
+      "weight": 1
+    },
+    {
+      "from": "in_{2}",
+      "to": "stall_{2,0}",
+      "weight": 1
+    },
+    {
+      "from": "in_{3}",
+      "to": "stall_{3,0}",
+      "weight": 1
+    },
+    {
+      "from": "stall_{3,0}",
+      "to": "stall_{3,1}",
+      "weight": 1
+    },
+    {
+      "from": "stall_{2,0}",
+      "to": "add_{0,1,2}",
+      "weight": 1
+    },
+    {
+      "from": "stall_{3,1}",
+      "to": "add_{0,1,2,3}",
+      "weight": 1
+    },
+    {
+      "from": "add_{0,1}",
+      "to": "add_{0,1,2}",
+      "weight": 1
+    },
+    {
+      "from": "add_{0,1,2}",
+      "to": "add_{0,1,2,3}",
+      "weight": 1
+    },
+    {
+      "from": "add_{0,1,2,3}",
+      "to": "out",
+      "weight": 1
+    }
+  ]
+}

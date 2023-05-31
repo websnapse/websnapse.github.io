@@ -1,0 +1,157 @@
+{
+  "neurons": [
+    {
+      "id": "L_{i}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 2,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "L_{i,1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;1"
+      ]
+    },
+    {
+      "id": "L_{i,2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0",
+        "a\\to a;1"
+      ]
+    },
+    {
+      "id": "L_{i,3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "L_{i,4}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a\\to a;0"
+      ]
+    },
+    {
+      "id": "L_{j}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "L_{k}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 0,
+      "rules": [
+        "a^{2}\\to a;0",
+        "a\\to\\lambda"
+      ]
+    },
+    {
+      "id": "r",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 40,
+      "rules": [
+        "a(aa)^{+}/a^{3}\\to a;0",
+        "a\\to a;1"
+      ]
+    }
+  ],
+  "synapses": [
+    {
+      "from": "L_{i}",
+      "to": "L_{i,1}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i}",
+      "to": "L_{i,2}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i}",
+      "to": "L_{i,3}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i}",
+      "to": "L_{i,4}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i,1}",
+      "to": "L_{j}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i,2}",
+      "to": "L_{j}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i,2}",
+      "to": "L_{k}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i,3}",
+      "to": "L_{k}",
+      "weight": 1
+    },
+    {
+      "from": "L_{i,3}",
+      "to": "r",
+      "weight": 1
+    },
+    {
+      "from": "L_{i,4}",
+      "to": "r",
+      "weight": 1
+    }
+  ]
+}
