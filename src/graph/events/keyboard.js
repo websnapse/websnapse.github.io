@@ -26,9 +26,6 @@ export const handleKeyup = (evt) => {
     case 'Delete':
       deleteItems(graph.value);
       break;
-    case 'Control':
-      navbar.mode = 'default';
-      break;
     default:
       break;
   }

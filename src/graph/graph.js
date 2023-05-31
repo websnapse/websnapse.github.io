@@ -3,13 +3,17 @@ import interact from './interactions';
 import initializeContextMenu from './context-menu';
 import initializeRegisters from './registers';
 import style from '@/stores/styles';
-import system from '@/stores/system';
-import grid from './grid';
+import settings from '@/stores/settings';
 
 export default function createGraph(container, width, height) {
   initializeRegisters();
 
+  const grid = new G6.Grid({
+    img: settings.gridImage,
+  });
+
   const graph = new G6.Graph({
+    minZoom: 0.5,
     container: container,
     plugins: [grid],
     width: width,
@@ -34,6 +38,7 @@ export default function createGraph(container, width, height) {
       maxIteration: 100,
       preventOverlap: true,
     },
+    directed: true,
 
     enabledStack: true,
 
@@ -48,10 +53,10 @@ export default function createGraph(container, width, height) {
       labelCfg: {
         autorotate: true,
         style: {
-          fill: system.dark ? style.darkContent : style.content,
+          fill: settings.dark ? style.darkContent : style.content,
           fontSize: 20,
           background: {
-            fill: system.dark ? style.dark : style.light,
+            fill: settings.dark ? style.dark : style.light,
             padding: [5, 5, 5, 5],
             radius: 5,
           },
@@ -75,11 +80,7 @@ export default function createGraph(container, width, height) {
             cursor: 'crosshair',
           },
         },
-        {
-          type: 'zoom-canvas',
-          enableOptimize: true,
-          optimizeZoom: 0.2,
-        },
+        'zoom-canvas',
         'node-interactions',
         'edge-interactions',
         'drag-node',

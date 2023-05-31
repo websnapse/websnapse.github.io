@@ -1,6 +1,6 @@
 import G6 from '@antv/g6';
 import style from '@/stores/styles';
-import system from '@/stores/system';
+import settings from '@/stores/settings';
 
 const options = {
   stateStyles: {
@@ -12,10 +12,10 @@ const options = {
       shadowBlur: 0,
       shadowColor: style.primary,
       lineWidth: 2,
-      stroke: system.dark ? style.darkContent : style.content,
+      stroke: settings.dark ? style.darkContent : style.content,
       endArrow: {
         path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-        fill: system.dark ? style.darkContent : style.content,
+        fill: settings.dark ? style.darkContent : style.content,
       },
     },
     selected: {
@@ -31,10 +31,10 @@ const options = {
     shadowBlur: 0,
     shadowColor: style.primary,
     lineWidth: 2,
-    stroke: system.dark ? style.darkContent : style.content,
+    stroke: settings.dark ? style.darkContent : style.content,
     endArrow: {
       path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-      fill: system.dark ? style.darkContent : style.content,
+      fill: settings.dark ? style.darkContent : style.content,
     },
   },
 };
@@ -59,16 +59,16 @@ export default function initalizeEdge() {
 
         // update the colors of the path and the arrow
         path.attr({
-          stroke: system.dark ? style.darkContent : style.content,
+          stroke: settings.dark ? style.darkContent : style.content,
         });
         path.attr('endArrow', {
           path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-          fill: system.dark ? style.darkContent : style.content,
+          fill: settings.dark ? style.darkContent : style.content,
         });
 
-        label.attr('fill', system.dark ? style.darkContent : style.content);
+        label.attr('fill', settings.dark ? style.darkContent : style.content);
         labelBg.attr({
-          fill: system.dark ? style.dark : style.light,
+          fill: settings.dark ? style.dark : style.light,
           radius: 5,
           padding: [5, 5, 5, 5],
         });
@@ -77,11 +77,11 @@ export default function initalizeEdge() {
         const { startPoint, endPoint } = cfg;
         const shape = group.addShape('path', {
           attrs: {
-            stroke: system.dark ? style.darkContent : style.content,
+            stroke: settings.dark ? style.darkContent : style.content,
             lineWidth: 2,
             endArrow: {
               path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-              fill: system.dark ? style.darkContent : style.content,
+              fill: settings.dark ? style.darkContent : style.content,
             },
             path: [
               ['M', startPoint.x, startPoint.y],
@@ -100,8 +100,7 @@ export default function initalizeEdge() {
           shape.attr('stroke', value ? style.primary : style.content);
           shape.attr('lineWidth', value ? 5 : 2);
           shape.attr('endArrow', {
-            path: 'M 0,0 L 20,4 L 20,-4 Z',
-            d: 5,
+            path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
             fill: value ? style.primary : style.content,
             strokeOpacity: 0,
           });
@@ -130,10 +129,10 @@ export default function initalizeEdge() {
             shape.attr('lineDash', null);
             shape.attr('lineDashOffset', null);
             shape.attr({
-              stroke: system.dark ? style.darkContent : style.content,
+              stroke: settings.dark ? style.darkContent : style.content,
               endArrow: {
                 path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-                fill: system.dark ? style.darkContent : style.content,
+                fill: settings.dark ? style.darkContent : style.content,
               },
             });
           }

@@ -2,39 +2,38 @@
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
 import navbar from '@/stores/navbar.js';
 import Logo from '@/assets/logo.vue';
-import graph from '@/stores/graph';
-import parseSystem from '@/graph/utils/parse-system';
 import { useDark, useToggle } from '@vueuse/core';
 import { undo, redo } from '@/graph/utils/action-stack';
+import settings from '@/stores/settings';
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 const toggleDisplay = () => {
-  navbar.view = navbar.view == 'default' ? 'simple' : 'default';
+  settings.view = settings.view === 'default' ? 'simple' : 'default';
 };
 
 const openFileInput = () => {
   document.getElementById('fileInput').click();
 };
 
+// define emit load with an object containing the file contents
+// and the file name
+const emit = defineEmits(['load', 'clear']);
+
 const handleFileUpload = (e) => {
   const file = e.target.files[0];
   const reader = new FileReader();
   reader.onload = (e) => {
     const contents = e.target.result;
-    const json = JSON.parse(contents);
-    graph.value.read(parseSystem(json));
+    const data = JSON.parse(contents);
+    emit('load', data);
   };
   reader.readAsText(file);
 };
 
 const changeActiveMode = (newMode) => {
   navbar.mode = newMode;
-};
-
-const clearAll = () => {
-  graph.value.clear();
 };
 </script>
 
@@ -89,7 +88,7 @@ const clearAll = () => {
               Save
             </button>
           </MenuItem>
-          <MenuItem v-slot="{ active }" ref="settings" @click="toggleDark()">
+          <MenuItem v-slot="{ active }" ref="setting" @click="toggleDark()">
             <button :class="active ? 'bg-primary' : ''" class="menu-button">
               <v-icon name="la-cog-solid" class="mr-2" />
               Settings
@@ -196,7 +195,7 @@ const clearAll = () => {
             Clear
             <span class="ml-2 text-light/50">Q</span>
           </template>
-          <button @click="clearAll" class="tool-button">
+          <button @click="$emit('clear')" class="tool-button">
             <v-icon name="la-trash-alt-solid" />
           </button>
         </Popper>
@@ -208,7 +207,7 @@ const clearAll = () => {
           <button type="button" @click="toggleDisplay" class="tool-button">
             <v-icon
               :name="
-                navbar.view === 'default'
+                settings.view === 'default'
                   ? 'pr-window-maximize'
                   : 'pr-window-minimize'
               "

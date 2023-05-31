@@ -39,11 +39,10 @@
                 </DialogTitle>
                 <tr v-for="neuron in Object.keys(props.details)">
                   <td
-                    class="text-sm font-medium text-gray-900 w-fit"
+                    class="text-sm font-medium text-gray-900 equation w-fit"
                     v-if="props.details[neuron].length"
-                  >
-                    {{ neuron }}
-                  </td>
+                    v-html="getKatex(neuron)"
+                  />
                   <Listbox
                     v-model="selected_rules[neuron]"
                     v-if="props.details[neuron].length"
@@ -148,8 +147,8 @@ import katex from 'katex';
 
 const props = defineProps(['isOpen', 'closeModal', 'details', 'socket']);
 
-const getKatex = (rule) => {
-  return katex.renderToString(String(rule), {
+const getKatex = (text) => {
+  return katex.renderToString(String(text), {
     throwOnError: false,
     displayMode: true,
   });

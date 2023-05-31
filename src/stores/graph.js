@@ -1,14 +1,14 @@
 import { ref, watch } from 'vue';
 import navbar from './navbar';
-import system from './system';
+import settings from './settings';
 
 const graph = ref(null);
 
 watch(
-  () => navbar.view,
-  (newView) => {
+  () => settings.view,
+  (value) => {
     graph.value.getNodes().forEach((node) => {
-      newView !== 'simple'
+      value === 'simple'
         ? graph.value.setItemState(node, 'simple', true)
         : graph.value.clearItemStates(node);
     });
@@ -17,7 +17,7 @@ watch(
 );
 
 watch(
-  () => system.dark,
+  () => settings.dark,
   (val) => {
     graph.value.refresh();
   }

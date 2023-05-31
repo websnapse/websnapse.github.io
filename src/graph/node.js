@@ -1,7 +1,7 @@
 import G6 from '@antv/g6';
 import { foldString, latexToImg } from '@/utils/math';
 import style from '@/stores/styles';
-import system from '@/stores/system';
+import settings from '@/stores/settings';
 
 const drawRegular = (cfg, group) => {
   const rendered_content = latexToImg(cfg.content);
@@ -31,12 +31,12 @@ const drawRegular = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: system.dark ? style.darkContent : style.content,
+      stroke: settings.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: system.dark ? style.dark : style.light,
+      fill: settings.dark ? style.dark : style.light,
     },
     name: 'neuron',
     draggable: true,
@@ -108,6 +108,20 @@ const drawRegular = (cfg, group) => {
     name: 'label',
   });
 
+  const delay = latexToImg(cfg.delay ?? 0);
+
+  const delay_shape = group.addShape('image', {
+    attrs: {
+      x: -delay.width / 2,
+      y: node_height + start_y + 10,
+      width: delay.width * 0.8,
+      height: delay.height * 0.8,
+      img: delay.dom,
+    },
+    name: 'delay',
+    zIndex: 20,
+  });
+
   group.sort();
 
   return shape;
@@ -139,12 +153,12 @@ const drawInput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: system.dark ? style.darkContent : style.content,
+      stroke: settings.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
-      shadowColor: system.dark ? style.darkPrimary : style.primary,
+      shadowColor: settings.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: system.dark ? style.dark : style.light,
+      fill: settings.dark ? style.dark : style.light,
     },
     name: 'neuron',
     draggable: true,
@@ -159,7 +173,7 @@ const drawInput = (cfg, group) => {
         [start_x + node_width / 2 - 10, start_y - 15],
       ],
       fill: style.light,
-      stroke: system.dark ? style.darkContent : style.content,
+      stroke: settings.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
     },
     name: 'input-indicator',
@@ -224,12 +238,12 @@ const drawOutput = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
-      stroke: system.dark ? style.darkContent : style.content,
+      stroke: settings.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
-      shadowColor: system.dark ? style.darkPrimary : style.primary,
+      shadowColor: settings.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
       radius: style.r,
-      fill: system.dark ? style.dark : style.light,
+      fill: settings.dark ? style.dark : style.light,
     },
     name: 'neuron',
     draggable: true,
@@ -242,12 +256,12 @@ const drawOutput = (cfg, group) => {
       y: start_y + 5,
       width: node_width - 10,
       height: node_height - 10,
-      stroke: system.dark ? style.darkContent : style.content,
+      stroke: settings.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
-      shadowColor: system.dark ? style.darkPrimary : style.primary,
+      shadowColor: settings.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
       radius: style.r - 5,
-      fill: system.dark ? style.dark : style.light,
+      fill: settings.dark ? style.dark : style.light,
     },
     name: 'output-indicator',
     draggable: true,
@@ -317,6 +331,17 @@ const setStateRegular = (name, value, item) => {
     shape.attr('x', -shape.attr('width') / 2);
     shape.attr('y', -shape.attr('height') / 2);
 
+    if (type === 'regular') {
+      const delay = item.getContainer().find((ele) => {
+        return ele.get('name') === 'delay';
+      });
+
+      delay.attr(
+        'y',
+        value ? shape.attr('height') / 2 + delay.attr('height') : 0
+      );
+    }
+
     if (type === 'input') {
       const indicator = item.getContainer().find((ele) => {
         return ele.get('name') === 'input-indicator';
@@ -343,11 +368,11 @@ const setStateRegular = (name, value, item) => {
       const indicator = item.getContainer().find((ele) => {
         return ele.get('name') === 'output-indicator';
       });
-      indicator.attr('radius', value ? style.r / 2 + 5 : style.r + 5);
-      indicator.attr('x', shape.attr('x') - 5);
-      indicator.attr('y', shape.attr('y') - 5);
-      indicator.attr('width', shape.attr('width') + 10);
-      indicator.attr('height', shape.attr('height') + 10);
+      indicator.attr('radius', value ? style.r / 2 - 5 : style.r - 5);
+      indicator.attr('x', shape.attr('x') + 5);
+      indicator.attr('y', shape.attr('y') + 5);
+      indicator.attr('width', shape.attr('width') - 10);
+      indicator.attr('height', shape.attr('height') - 10);
     }
 
     // recenter the label
@@ -355,8 +380,9 @@ const setStateRegular = (name, value, item) => {
       return ele.get('name') === 'label';
     });
 
-    label.attr('x', -shape.attr('width') / 2 - 15);
-    label.attr('y', -shape.attr('height') / 2 - 15);
+    // center the label on the x axis
+    label.attr('x', -label.attr('width') / 2);
+    label.attr('y', -shape.attr('height') / 2 - 20);
 
     rules.forEach((rule) => {
       value ? rule.hide() : rule.show();
@@ -413,7 +439,7 @@ const options = {
         shadowBlur: 0,
         shadowColor: style.primary,
         lineWidth: style.lineInactive,
-        stroke: system.dark ? style.darkContent : style.content,
+        stroke: settings.dark ? style.darkContent : style.content,
       },
     },
   },

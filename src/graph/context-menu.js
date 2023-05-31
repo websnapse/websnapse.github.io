@@ -54,10 +54,6 @@ export default function initializeContextMenu(graph) {
     handleMenuClick: (target, item) => {
       const command = target.innerText;
       const point = target.getBoundingClientRect();
-      // point.x = (point.x + point.width) / 2;
-      // point.y = (point.y + point.height) / 2;
-      console.log(item);
-
       const model = item?.getModel();
       switch (command) {
         case 'New Node':

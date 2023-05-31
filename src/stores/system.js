@@ -1,5 +1,5 @@
 import { watch, reactive, computed } from 'vue';
-import { useDark } from '@vueuse/core';
+import { useToggle } from '@vueuse/core';
 import graph from './graph';
 import sample from '../data.json';
 
@@ -51,7 +51,7 @@ const system = reactive({
       return parsed_system;
     },
   }),
-  dark: useDark(),
+  mode: 'pseudorandom',
   states: [],
   configuration: [],
   duration: 3000,

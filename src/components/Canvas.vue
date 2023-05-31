@@ -1,4 +1,5 @@
 <template>
+  <Toolbar @load="loadData" @clear="clearAll" />
   <div class="flex flex-col">
     <TransitionRoot appear :show="createNeuronDialogOpen" as="template">
       <CreateNeuronDialog
@@ -92,7 +93,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, reactive } from 'vue';
 import { TransitionRoot } from '@headlessui/vue';
 import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
 import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
@@ -113,8 +114,8 @@ import {
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
 import parseSystem from '@/graph/utils/parse-system';
-
-const props = defineProps(['graph_mode', 'clear_all']);
+import Toolbar from './Toolbar.vue';
+import { reactifyObject, toReactive, toRef, toRefs } from '@vueuse/core';
 
 const original = ref();
 const status = ref();
@@ -154,6 +155,7 @@ let ws = null;
 let resetSimulation = null;
 
 const stopSimulate = () => {
+  navbar.running = false;
   ws.close();
   graph.value.getNodes().forEach((node) => {
     node.clearStates(['default', 'spiking', 'closed']);
@@ -163,11 +165,10 @@ const stopSimulate = () => {
     edge.clearStates(['default', 'spiking', 'closed']);
     edge.setState('default', true);
   });
-  navbar.running = false;
 };
 
 const startSimulate = async () => {
-  ws = new WebSocket('ws://localhost:8000/ws/simulate/guided');
+  ws = new WebSocket(`ws://localhost:8000/ws/simulate/${system.mode}`);
   original.value = system.data;
   ws.onopen = function () {
     ws.send(JSON.stringify(system.data));
@@ -176,7 +177,6 @@ const startSimulate = async () => {
     const data = JSON.parse(event.data);
     if (data.type === 'prompt') {
       dialogDetails.value = data.choices;
-      console.log(dialogDetails.value);
       chooseRuleDialogOpen.value = true;
     } else {
       status.value = data.states;
@@ -251,33 +251,42 @@ watch(tick, (newTick) => {
   config.value = config_list.value[newTick];
 });
 
+const loadData = ref(null);
+const clearAll = ref(null);
+
 onMounted(() => {
   const vh = document.getElementById('mountNode').offsetHeight;
   const vw = document.getElementById('mountNode').offsetWidth;
 
-  const g = createGraph('mountNode', vw, vh);
-
+  const g = reactifyObject({ core: createGraph('mountNode', vw, vh) });
   const data = parseSystem(system.data);
 
-  g.data(data);
-  g.render();
-  graph.value = g;
+  g.core.read(data);
+  graph.value = toReactive(g.core);
+
+  loadData.value = (data) => {
+    g.read(parseSystem(data));
+  };
+
+  clearAll.value = () => {
+    g.clear();
+  };
 
   resetSimulation = () => {
     navbar.running = false;
     const data = parseSystem(original.value);
-    g.read(data);
+    g.core.changeData(data);
   };
 
   watch(status, (newValue, oldValue) => {
     for (const key in newValue) {
-      const node = g.findById(key);
-      const edges = g.getEdges().filter((edge) => {
+      const node = g.core.findById(key);
+      const edges = g.core.getEdges().filter((edge) => {
         return edge.getSource().getID() === key;
       });
 
       for (const edge of edges) {
-        g.clearItemStates(edge);
+        g.core.clearItemStates(edge);
         edge.setState('spiking', newValue[key] === 'spiking');
       }
 
@@ -289,7 +298,7 @@ onMounted(() => {
 
   watch(config, (newValue, oldValue) => {
     for (const key in newValue) {
-      const node = g.findById(key);
+      const node = g.core.findById(key);
       const model = node.getModel();
 
       if (model.content !== newValue[key]) {
@@ -305,8 +314,8 @@ onMounted(() => {
 
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
-    g.changeSize(width, height);
-    g.fitView();
+    g.core.changeSize(width, height);
+    g.core.fitView();
   });
 
   resizeObserver.observe(document.getElementById('mountNode'));
