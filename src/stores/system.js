@@ -10,7 +10,7 @@ const system = reactive({
   mode: 'pseudorandom',
   states: [],
   configuration: [],
-  duration: 3000,
+  speed: 1.5,
   tick: 0,
 });
 

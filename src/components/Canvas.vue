@@ -56,7 +56,7 @@
         </button>
         <v-icon
           name="la-step-backward-solid"
-          @click="changeTick(-1)"
+          @click="getPrev"
           scale="1.25"
           class="cursor-pointer"
         />
@@ -74,7 +74,7 @@
         </button>
         <v-icon
           name="la-step-forward-solid"
-          @click="simulateNext"
+          @click="getNext"
           scale="1.25"
           class="cursor-pointer"
         />
@@ -88,16 +88,16 @@
         <input
           id="default-range"
           type="range"
-          min="500"
-          max="3500"
-          step="500"
-          :value="system.duration"
-          @mouseup="(e) => (system.duration = e.target.value)"
+          min="0.25"
+          max="2.75"
+          step="0.25"
+          :value="system.speed"
+          @input="(e) => (system.speed = e.target.value)"
           class="mt-4 slider"
         />
         <div>
           <span class="text-xs text-dark/40 dark:text-light/40"
-            >{{ system.duration / 2000 }}x</span
+            >{{ system.speed }}x</span
           >
         </div>
       </div>
@@ -152,72 +152,67 @@ let resetSimulation = null;
 
 const stopSimulate = () => {
   navbar.running = false;
-  ws.close();
-  graph.value.getNodes().forEach((node) => {
-    node?.clearStates(['default', 'spiking', 'closed']);
-    node?.setState('default', true);
-  });
-  graph.value.getEdges().forEach((edge) => {
-    edge?.clearStates(['default', 'spiking', 'closed']);
-    edge?.setState('default', true);
-  });
+  ws.send(JSON.stringify({ cmd: 'stop' }));
+  // graph.value.getNodes().forEach((node) => {
+  //   node?.clearStates(['default', 'spiking', 'closed']);
+  //   node?.setState('default', true);
+  // });
+  // graph.value.getEdges().forEach((edge) => {
+  //   edge?.clearStates(['default', 'spiking', 'closed']);
+  //   edge?.setState('default', true);
+  // });
 };
 
 const startSimulate = async () => {
-  ws = new WebSocket(
-    `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
-  );
   if (!original.value) {
-    original.value = exportSytem(graph.value);
-  }
-  ws.onopen = function () {
-    ws.send(
-      JSON.stringify({
-        data: exportSytem(graph.value),
-        duration: system.duration,
-      })
+    ws = new WebSocket(
+      `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
     );
-  };
-  ws.onmessage = function (event) {
-    const data = JSON.parse(event.data);
-    if (data.type === 'prompt') {
-      dialogDetails.value = data.choices;
-      chooseRuleDialogOpen.value = true;
-    } else {
-      status.value = data.states;
-      config.value = data.configurations;
+    original.value = exportSytem(graph.value);
+    ws.onopen = function () {
+      ws.send(
+        JSON.stringify({
+          data: exportSytem(graph.value),
+          speed: parseInt(system.speed),
+        })
+      );
+    };
+    ws.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+      if (data.type === 'prompt') {
+        dialogDetails.value = data.choices;
+        chooseRuleDialogOpen.value = true;
+      } else {
+        status.value = data.states;
+        config.value = data.configurations;
 
-      if (data.halted === true) {
-        navbar.running = false;
+        if (data.halted === true) {
+          navbar.running = false;
+        }
       }
-    }
-  };
+    };
+  } else {
+    ws.send(JSON.stringify({ cmd: 'continue' }));
+  }
   navbar.running = true;
 };
 
-const simulateNext = async () => {
-  const res = await simulateSystem(system.data);
-
-  const configurations = res.keys.reduce((acc, key, index) => {
-    acc[key] = res.configurations[index];
-    return acc;
-  }, {});
-
-  const states = res.keys.reduce((acc, key, index) => {
-    acc[key] = {
-      value:
-        res.states[index] === 1
-          ? 'spiking'
-          : res.states[index] === 0
-          ? 'default'
-          : 'closed',
-    };
-    return acc;
-  }, {});
-
-  status.value = states;
-  config.value = configurations;
+const getNext = async () => {
+  ws.send(JSON.stringify({ cmd: 'next', tick: tick.value }));
 };
+
+const getPrev = async () => {
+  ws.send(JSON.stringify({ cmd: 'prev', tick: tick.value }));
+};
+
+watch(
+  () => system.speed,
+  (newDuration) => {
+    if (ws) {
+      ws.send(JSON.stringify({ cmd: 'speed', speed: parseInt(newDuration) }));
+    }
+  }
+);
 
 watch(tick, (newTick) => {
   status.value = status_list.value[newTick];
@@ -255,7 +250,7 @@ onMounted(() => {
     const data = importSystem(original.value);
     g.changeData(data);
     original.value = null;
-    graph.value = g;
+    ws.close();
   };
 
   watch(status, (newValue, oldValue) => {

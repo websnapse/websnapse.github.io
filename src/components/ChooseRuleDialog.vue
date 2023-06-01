@@ -171,7 +171,12 @@ const getNode = (id) => {
 };
 
 const checkDetails = () => {
-  props.socket.send(JSON.stringify(selected_rules.value));
+  props.socket.send(
+    JSON.stringify({
+      cmd: 'choice',
+      choice: selected_rules.value,
+    })
+  );
   props.closeModal();
 };
 </script>
