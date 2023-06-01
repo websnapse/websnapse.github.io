@@ -164,7 +164,9 @@ const stopSimulate = () => {
 };
 
 const startSimulate = async () => {
-  ws = new WebSocket(`${import.meta.env.VITE_WS_API}/${system.mode}`);
+  ws = new WebSocket(
+    `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
+  );
   if (!original.value) {
     original.value = exportSytem(graph.value);
   }
