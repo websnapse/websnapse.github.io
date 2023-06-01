@@ -130,14 +130,13 @@ import { importSystem } from '@/graph/utils/parse-system';
 import Toolbar from './Toolbar.vue';
 import { exportSytem } from '@/graph/utils/parse-system';
 
-const original = ref();
+const original = ref(null);
 const status = ref();
 const config = ref();
 
 const status_list = ref([]);
 const config_list = ref([]);
 const tick = ref(0);
-const max_tick = ref(0);
 
 const changeTick = (i) => {
   tick.value += i;
@@ -165,8 +164,10 @@ const stopSimulate = () => {
 };
 
 const startSimulate = async () => {
-  ws = new WebSocket(`ws://localhost:8000/ws/simulate/${system.mode}`);
-  original.value = exportSytem(graph.value);
+  ws = new WebSocket(`${import.meta.env.VITE_WS_API}/${system.mode}`);
+  if (!original.value) {
+    original.value = exportSytem(graph.value);
+  }
   ws.onopen = function () {
     ws.send(
       JSON.stringify({
@@ -251,6 +252,7 @@ onMounted(() => {
     navbar.running = false;
     const data = importSystem(original.value);
     g.changeData(data);
+    original.value = null;
     graph.value = g;
   };
 

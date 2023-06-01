@@ -301,12 +301,9 @@ const drawOutput = (cfg, group) => {
 
 const setStateRegular = (name, value, item) => {
   const shape = item.get('keyShape');
-  const { type, duration } = item.getModel();
+  const { type } = item.getModel();
   const rules = item.getContainer().findAll((ele) => {
     return ele.get('name')?.includes('rule');
-  });
-  const animations = item.getContainer().findAll((ele) => {
-    return ele.get('name')?.includes('animation');
   });
   const content = item.getContainer().find((ele) => {
     return ele.get('name') === 'content';
