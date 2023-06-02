@@ -14,6 +14,16 @@ const system = reactive({
 });
 
 watch(
+  () => graph.value,
+  (value) => {
+    if (value) {
+      system.data = exportSytem(value);
+    }
+  },
+  { immediate: true, deep: true }
+);
+
+watch(
   () => system.states,
   (newValue, oldValue) => {
     for (const key in newValue) {

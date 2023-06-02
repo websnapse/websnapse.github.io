@@ -210,9 +210,7 @@ watch(
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
-  system.data = original.value
-    ? exportSytem(original.value)
-    : exportSytem(graph.value);
+  system.data = original.value ? original.value : exportSytem(graph.value);
 };
 
 onMounted(() => {

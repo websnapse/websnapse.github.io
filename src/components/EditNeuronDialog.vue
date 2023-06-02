@@ -66,13 +66,13 @@
                     <label
                       for="content"
                       class="mb-2 text-sm font-medium text-gray-900"
-                      v-else
+                      v-else-if="props.details.type === 'input'"
                     >
                       Spike Train
                     </label>
                     <MathEditor
                       v-bind:model-value="props.details.content"
-                      v-if="props.details.type !== 'regular'"
+                      v-if="props.details.type !== 'output'"
                       @change="(value) => (props.details.content = value)"
                     />
                   </div>
@@ -135,6 +135,10 @@ const checkDetails = () => {
         return;
       }
     });
+  }
+
+  if (props.details.type === 'output') {
+    props.details.content = '';
   }
 
   props.details.success = true;

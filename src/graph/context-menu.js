@@ -81,6 +81,10 @@ export default function initializeContextMenu(graph) {
               maxIteration: 100,
               damping: 0.01,
               preventOverlap: true,
+              onLayoutEnd: () => {
+                graph.fitView();
+                graph.destroyLayout();
+              },
             },
             'center'
           );

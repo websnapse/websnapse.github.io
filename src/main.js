@@ -12,7 +12,6 @@ import { PrWindowMaximize, PrWindowMinimize } from 'oh-vue-icons/icons/pr';
 import { MdMinimizeOutlined } from 'oh-vue-icons/icons/md';
 
 import Popper from 'vue3-popper';
-import VueKatex from '@hsorby/vue3-katex';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import 'katex/dist/katex.min.css';
 
@@ -34,18 +33,6 @@ addIcons(...La);
 addIcons(PrWindowMaximize, PrWindowMinimize, MdMinimizeOutlined);
 
 const app = createApp(App);
-app.use(VueKatex, {
-  globalOptions: {
-    //... Define globally applied KaTeX options here
-    delimiters: [
-      { left: '$$', right: '$$', display: true },
-      { left: '$', right: '$', display: false },
-    ],
-    macros: {
-      '\\': '\\to',
-    },
-  },
-});
 app.component('v-icon', OhVueIcon);
 app.component('Popper', Popper);
 app.mount('#app');
