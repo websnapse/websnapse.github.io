@@ -172,7 +172,7 @@ const drawInput = (cfg, group) => {
         [start_x + node_width / 2 + 10, start_y - 15],
         [start_x + node_width / 2 - 10, start_y - 15],
       ],
-      fill: style.light,
+      fill: settings.dark ? style.darkContent : style.content,
       stroke: settings.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
     },
@@ -308,9 +308,6 @@ const setStateRegular = (name, value, item) => {
   const content = item.getContainer().find((ele) => {
     return ele.get('name') === 'content';
   });
-  // get original style of item
-  const original_style = item._cfg.originStyle;
-
   if (name === 'simple') {
     content.attr('x', value ? -content.attr('width') / 2 : -60);
     content.attr('y', value ? -content.attr('height') / 2 : -60);
@@ -390,6 +387,7 @@ const setStateRegular = (name, value, item) => {
     shape.attr('shadowBlur', value ? 10 : 0);
   } else if (!['spiking', 'simple'].includes(name)) {
     const shapes = item.getStateStyle(name);
+    const original_style = item.getOriginStyle();
 
     if (!shapes) return;
 

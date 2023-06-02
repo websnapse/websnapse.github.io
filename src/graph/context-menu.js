@@ -70,8 +70,23 @@ export default function initializeContextMenu(graph) {
           graph.clear();
           break;
         case 'Auto layout':
-          graph.layout();
+          graph.updateLayout(
+            {
+              type: 'force',
+              linkDistance: 300,
+              nodeStrength: 10,
+              edgeStrength: 10,
+              nodeSpacing: 50,
+              minMovement: 0.01,
+              workerEnabled: import.meta.env.VITE_WORKER_ENABLED === 'true',
+              maxIteration: 100,
+              damping: 0.01,
+              preventOverlap: true,
+            },
+            false
+          );
           graph.fitView();
+
           break;
         case 'Focus node':
           graph.focusItem(item);

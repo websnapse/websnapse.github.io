@@ -13,37 +13,19 @@ export default function createGraph(container, width, height) {
   });
 
   const graph = new G6.Graph({
-    minZoom: 0.5,
     container: container,
     plugins: [grid],
     width: width,
     height: height,
     fitViewPadding: [120, 0, 180, 0],
     linkCenter: false,
-    pixelRatio: 0.5,
-    optimizeThreshold: 5,
-    layout: {
-      type: 'force',
-      linkDistance: (d) => {
-        return Math.max(400 / parseInt(d.label), 200);
-      },
-      nodeStrength: 10,
-      edgeStrength: (d) => {
-        return Math.min(parseInt(d.label), 10);
-      },
-      collideStrength: 1,
-      damping: 0.01,
-      nodeSpacing: 50,
-      minMovement: 0.01,
-      maxIteration: 100,
-      preventOverlap: true,
-    },
+    pixelRatio: 1.5,
+    fitCenter: true,
+    fitView: true,
+
     directed: true,
-
     enabledStack: true,
-
     maxStep: 20,
-
     defaultNode: {
       type: 'neuron',
     },

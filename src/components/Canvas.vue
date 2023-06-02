@@ -148,7 +148,7 @@ const config = ref();
 
 /** @type {WebSocket} */
 let ws = null;
-let reset = null;
+const reset = ref(null);
 const load = ref(null);
 const clear = ref(null);
 
@@ -210,7 +210,9 @@ watch(
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
-  system.data = exportSytem(graph.value);
+  system.data = original.value
+    ? exportSytem(original.value)
+    : exportSytem(graph.value);
 };
 
 onMounted(() => {
@@ -232,7 +234,7 @@ onMounted(() => {
     graph.value = g;
   };
 
-  reset = () => {
+  reset.value = () => {
     navbar.running = false;
     const data = importSystem(original.value);
     g.changeData(data);
@@ -256,7 +258,7 @@ onMounted(() => {
         edge.setState('spiking', newValue[key] === 'spiking');
       }
 
-      node.clearStates(['default', 'spiking', 'closed']);
+      node.clearStates(['spiking', 'closed']);
       node.setState(newValue[key], true);
       node.setState('running', true);
     }
