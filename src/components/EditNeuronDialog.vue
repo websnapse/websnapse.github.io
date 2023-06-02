@@ -57,18 +57,23 @@
                   </div>
                   <div class="relative flex flex-col gap-1">
                     <label
-                      for="default-search"
-                      class="mb-2 text-sm font-medium"
+                      for="content"
+                      class="mb-2 text-sm font-medium text-gray-900"
+                      v-if="props.details.type === 'regular'"
                     >
                       Content
                     </label>
-                    <input
-                      type="search"
-                      id="default-search"
-                      v-model="props.details.content"
-                      class="block w-full p-3 text-sm border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="1"
-                      required
+                    <label
+                      for="content"
+                      class="mb-2 text-sm font-medium text-gray-900"
+                      v-else
+                    >
+                      Spike Train
+                    </label>
+                    <MathEditor
+                      v-bind:model-value="props.details.content"
+                      v-if="props.details.type !== 'regular'"
+                      @change="(value) => (props.details.content = value)"
                     />
                   </div>
                   <div

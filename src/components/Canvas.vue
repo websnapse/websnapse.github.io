@@ -192,11 +192,11 @@ const play = async () => {
 };
 
 const next = async () => {
-  ws.send(JSON.stringify({ cmd: 'next', tick: tick.value }));
+  ws.send(JSON.stringify({ cmd: 'next' }));
 };
 
 const prev = async () => {
-  ws.send(JSON.stringify({ cmd: 'prev', tick: tick.value }));
+  ws.send(JSON.stringify({ cmd: 'prev' }));
 };
 
 watch(
@@ -241,6 +241,23 @@ onMounted(() => {
     original.value = null;
     ws.close();
   };
+
+  watch(
+    () => navbar.running,
+    (value) => {
+      value
+        ? g.removeBehaviors([
+            'node-interactions',
+            'edge-interactions',
+            'click-select',
+          ])
+        : g.addBehaviors([
+            'node-interactions',
+            'edge-interactions',
+            'click-select',
+          ]);
+    }
+  );
 
   watch(status, (newValue, oldValue) => {
     for (const key in newValue) {

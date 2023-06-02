@@ -9,6 +9,7 @@ const options = {
       shadowColor: style.primary,
     },
     default: {
+      lineAppendWidth: 20,
       shadowBlur: 0,
       shadowColor: style.primary,
       lineWidth: 2,
@@ -77,6 +78,7 @@ export default function initalizeEdge() {
         const { startPoint, endPoint } = cfg;
         const shape = group.addShape('path', {
           attrs: {
+            lineAppendWidth: 30,
             stroke: settings.dark ? style.darkContent : style.content,
             lineWidth: 2,
             endArrow: {
@@ -140,11 +142,7 @@ export default function initalizeEdge() {
           const attrs = item.getStateStyle(name);
           const original_style = item.getStateStyle('default');
 
-          Object.keys(attrs).forEach((attr) => {
-            const attr_value = attrs[attr];
-            const orig_value = original_style[attr];
-            shape.attr(attr, value ? attr_value : orig_value);
-          });
+          value ? shape.attr(attrs) : shape.attr(original_style);
         }
       },
     },

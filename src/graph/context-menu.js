@@ -82,7 +82,7 @@ export default function initializeContextMenu(graph) {
               damping: 0.01,
               preventOverlap: true,
             },
-            false
+            'center'
           );
           graph.fitView();
 

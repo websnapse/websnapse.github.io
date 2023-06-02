@@ -75,9 +75,9 @@ export default function createGraph(container, width, height) {
         'edge-interactions',
       ],
 
-      edge: ['drag-add-edge'],
+      edge: ['drag-add-edge', 'zoom-canvas'],
 
-      addEdge: ['drag-add-edge'],
+      addEdge: ['drag-add-edge', 'zoom-canvas'],
 
       pan: ['drag-canvas', 'zoom-canvas'],
 
@@ -87,6 +87,8 @@ export default function createGraph(container, width, height) {
         'node-interactions',
         'edge-interactions',
       ],
+
+      disabled: ['drag-canvas', 'zoom-canvas'],
     },
   });
 
