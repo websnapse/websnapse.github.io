@@ -1,5 +1,5 @@
 <template>
-  <Toolbar @load="loadData" @clear="clearAll" />
+  <Toolbar @load="load" @clear="clear" />
   <div class="flex flex-col">
     <TransitionRoot appear :show="createNeuronDialogOpen" as="template">
       <CreateNeuronDialog
@@ -46,7 +46,11 @@
           </template>
           <button
             class="toggle"
-            @click="toggleMode"
+            @click="
+              () =>
+                (system.mode =
+                  system.mode === 'pseudorandom' ? 'guided' : 'pseudorandom')
+            "
             :class="
               system.mode === 'pseudorandom'
                 ? `after:content-['']`
@@ -61,7 +65,7 @@
         </Popper>
         <v-icon
           name="la-step-backward-solid"
-          @click="getPrev"
+          @click="prev"
           scale="1.25"
           class="cursor-pointer"
         />
@@ -79,7 +83,7 @@
         </button>
         <v-icon
           name="la-step-forward-solid"
-          @click="getNext"
+          @click="next"
           scale="1.25"
           class="cursor-pointer"
         />
@@ -88,7 +92,7 @@
           <v-icon
             name="la-sync-solid"
             class="ml-2 cursor-pointer"
-            @click="resetSimulation"
+            @click="reset"
           />
         </Popper>
       </div>
@@ -114,12 +118,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue';
 import { TransitionRoot } from '@headlessui/vue';
 import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
 import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
 import EditSynapseDialog from '@/components/EditSynapseDialog.vue';
 import ChooseRuleDialog from '@/components/ChooseRuleDialog.vue';
+import Toolbar from './Toolbar.vue';
 
 import createGraph from '@/graph/graph';
 import system from '@/stores/system';
@@ -135,19 +140,17 @@ import {
 } from '@/stores/dialog';
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
-import { importSystem } from '@/graph/utils/parse-system';
-import Toolbar from './Toolbar.vue';
-import { exportSytem } from '@/graph/utils/parse-system';
+import { importSystem, exportSytem } from '@/graph/utils/parse-system';
 
 const original = ref(null);
 const status = ref();
 const config = ref();
 
-const tick = ref(0);
-
 /** @type {WebSocket} */
 let ws = null;
-let resetSimulation = null;
+let reset = null;
+const load = ref(null);
+const clear = ref(null);
 
 const stop = () => {
   navbar.running = false;
@@ -188,16 +191,12 @@ const play = async () => {
   navbar.running = true;
 };
 
-const getNext = async () => {
+const next = async () => {
   ws.send(JSON.stringify({ cmd: 'next', tick: tick.value }));
 };
 
-const getPrev = async () => {
+const prev = async () => {
   ws.send(JSON.stringify({ cmd: 'prev', tick: tick.value }));
-};
-
-const toggleMode = () => {
-  system.mode = system.mode === 'pseudorandom' ? 'guided' : 'pseudorandom';
 };
 
 watch(
@@ -209,8 +208,10 @@ watch(
   }
 );
 
-const loadData = ref(null);
-const clearAll = ref(null);
+const handleBeforeUnload = (event) => {
+  event.preventDefault();
+  system.data = exportSytem(graph.value);
+};
 
 onMounted(() => {
   const vh = document.getElementById('mountNode').offsetHeight;
@@ -218,20 +219,20 @@ onMounted(() => {
 
   const g = createGraph('mountNode', vw, vh);
 
-  g.read(system.data);
+  g.read(importSystem(system.data));
   graph.value = g;
 
-  loadData.value = (data) => {
+  load.value = (data) => {
     g.read(importSystem(data));
     graph.value = g;
   };
 
-  clearAll.value = () => {
+  clear.value = () => {
     g.clear();
     graph.value = g;
   };
 
-  resetSimulation = () => {
+  reset = () => {
     navbar.running = false;
     const data = importSystem(original.value);
     g.changeData(data);
@@ -280,6 +281,7 @@ onMounted(() => {
 
   window.addEventListener('keyup', keyupHandler);
   window.addEventListener('keydown', keydownHandler);
+  window.addEventListener('beforeunload', handleBeforeUnload);
 
   watch(
     () => hasDialog.value,
