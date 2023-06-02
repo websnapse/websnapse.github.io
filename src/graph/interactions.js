@@ -8,4 +8,6 @@ export default function interact(graph) {
       item.refresh();
     }
   });
+
+  graph.on('');
 }

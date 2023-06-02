@@ -224,6 +224,8 @@ onMounted(() => {
 
   load.value = (data) => {
     g.read(importSystem(data));
+    g.fitCenter();
+    g.fitView();
     graph.value = g;
   };
 
@@ -233,8 +235,12 @@ onMounted(() => {
   };
 
   reset.value = () => {
+    if (!original.value) return;
     navbar.running = false;
     const data = importSystem(original.value);
+    data.nodes.forEach((node) => {
+      node.delay = 0;
+    });
     g.changeData(data);
     original.value = null;
     ws.close();
@@ -257,40 +263,27 @@ onMounted(() => {
     }
   );
 
-  watch(status, (newValue, oldValue) => {
-    for (const key in newValue) {
-      const node = g.findById(key);
-      const edges = g.getEdges().filter((edge) => {
-        return edge.getSource().getID() === key;
-      });
+  watch(config, (newValue) => {
+    newValue.map((item) => {
+      const node = g.findById(item.id);
+      const content = node.getModel().content;
+      const delay = node.getModel().delay;
 
-      for (const edge of edges) {
-        edge.getStates().forEach((state) => {
-          if (state !== newValue[key]) {
-            edge.clearStates(state);
-          }
+      if (content !== item.content || delay !== item.delay) {
+        node.update({
+          content: item.content,
+          delay: item.delay,
         });
-        edge.setState('spiking', newValue[key] === 'spiking');
       }
 
-      node.clearStates(['spiking', 'closed']);
-      node.setState(newValue[key], true);
-      node.setState('running', true);
-    }
-  });
+      node.clearStates();
+      node.setState(item.state, true);
+      node.getEdges().forEach((edge) => {
+        if (edge.getSource().getID() !== item.id) return;
 
-  watch(config, (newValue, oldValue) => {
-    for (const key in newValue) {
-      const node = g.findById(key);
-      const model = {
-        content: node.getModel().content,
-        delay: node.getModel().delay,
-      };
-
-      if (model !== newValue[key]) {
-        node.update(newValue[key]);
-      }
-    }
+        edge.setState('spiking', item.state === 'spiking');
+      });
+    });
   });
 
   const keyupHandler = (e) => handleKeyup(e, g);

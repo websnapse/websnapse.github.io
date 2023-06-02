@@ -20,8 +20,6 @@ export default function createGraph(container, width, height) {
     fitViewPadding: [120, 0, 180, 0],
     linkCenter: false,
     pixelRatio: 1.5,
-    fitCenter: true,
-    fitView: true,
 
     directed: true,
     enabledStack: true,

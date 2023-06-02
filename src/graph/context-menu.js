@@ -72,7 +72,8 @@ export default function initializeContextMenu(graph) {
         case 'Auto layout':
           graph.updateLayout(
             {
-              type: 'force',
+              type: 'dagre',
+              rankdir: 'LR',
               linkDistance: 300,
               nodeStrength: 10,
               edgeStrength: 10,
