@@ -37,7 +37,7 @@
     </div>
     <div
       id="simulationControls"
-      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-light/40 dark:bg-neutral backdrop-blur-sm"
+      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto border rounded-3xl w-fit bottom-2 bg-light/40 border-dark/5 dark:border-light/5 dark:bg-neutral/40 backdrop-blur-sm"
     >
       <div class="flex items-center gap-2 text-dark/50 dark:text-dark-50">
         <Popper class="tooltip" hover placement="top">

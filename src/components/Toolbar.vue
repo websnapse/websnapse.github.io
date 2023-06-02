@@ -17,6 +17,8 @@ const toggleDisplay = () => {
   settings.view = settings.view === 'full' ? 'simple' : 'full';
 };
 
+const saveGraph = () => saveSystem(graph.value);
+
 const openFileInput = () => {
   document.getElementById('fileInput').click();
 };
@@ -43,7 +45,7 @@ const changeActiveMode = (newMode) => {
 
 <template>
   <div
-    class="absolute left-0 right-0 flex items-center p-1 mx-auto rounded-md shadow-lg top-2 w-fit bg-light dark:bg-neutral"
+    class="absolute left-0 right-0 flex items-center p-1 mx-auto border rounded-md shadow-sm top-2 w-fit bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
   >
     <Menu as="div" class="relative h-full">
       <MenuButton
@@ -90,7 +92,7 @@ const changeActiveMode = (newMode) => {
             <button
               :class="active ? 'bg-primary' : ''"
               class="menu-button"
-              @click="saveSystem(graph.value)"
+              @click="saveGraph"
             >
               <v-icon name="la-save" class="mr-2" />
               Save

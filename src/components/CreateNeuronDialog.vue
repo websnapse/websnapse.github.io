@@ -175,7 +175,6 @@
                     Create
                   </button>
                 </form>
-                <div></div>
               </div>
             </div>
           </DialogPanel>
