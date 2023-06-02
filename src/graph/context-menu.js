@@ -1,9 +1,8 @@
 import G6 from '@antv/g6';
-import system from '@/stores/system';
 import addNode from './utils/add-node';
 import deleteItems from './utils/delete-items';
 import graph_ref from '@/stores/graph';
-import { exportSytem } from './utils/parse-system';
+import { saveSystem } from './utils/parse-system';
 import { updateNeuron, updateSynapse } from '@/utils/dialog';
 
 export default function initializeContextMenu(graph) {
@@ -65,16 +64,7 @@ export default function initializeContextMenu(graph) {
           graph.fitView();
           break;
         case 'Save':
-          const a = document.createElement('a');
-          const file = new Blob(
-            [JSON.stringify(exportSytem(graph_ref.value))],
-            {
-              type: 'text/plain',
-            }
-          );
-          a.href = URL.createObjectURL(file);
-          a.download = 'system.json';
-          a.click();
+          saveSystem(graph_ref.value);
           break;
         case 'Clear':
           graph.clear();

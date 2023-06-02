@@ -1,16 +1,13 @@
 import deleteItems from '../utils/delete-items';
 import { redo, undo } from '../utils/action-stack';
 
-import graph from '@/stores/graph';
 import navbar from '@/stores/navbar';
+import settings from '@/stores/settings';
 
-export const handleKeyup = (evt) => {
+export const handleKeyup = (evt, graph) => {
   const { key } = evt;
 
   switch (key) {
-    case 'h':
-      navbar.mode = 'default';
-      break;
     case 'v':
       navbar.mode = 'default';
       break;
@@ -20,32 +17,38 @@ export const handleKeyup = (evt) => {
     case 'n':
       navbar.mode = 'node';
       break;
+    case 'h':
+      navbar.mode = 'pan';
+      break;
     case 'd':
       navbar.mode = 'delete';
       break;
+    case 'q':
+      graph.clear();
+      break;
+    case 'y':
+      settings.view = settings.view === 'full' ? 'simple' : 'full';
+      break;
     case 'Delete':
-      deleteItems(graph.value);
+      deleteItems(graph);
       break;
     default:
       break;
   }
 };
 
-export const handleKeydown = (evt) => {
+export const handleKeydown = (evt, graph) => {
   const { key } = evt;
 
   switch (key) {
-    case 'h':
-      navbar.mode = 'pan';
-      break;
     case 'z':
       if (evt.ctrlKey) {
-        undo(graph.value);
+        undo(graph);
       }
       break;
     case 'Z':
       if (evt.ctrlKey && evt.shiftKey) {
-        redo(graph.value);
+        redo(graph);
       }
       break;
     default:

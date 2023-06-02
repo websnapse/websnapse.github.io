@@ -186,7 +186,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { neuron } from '@/stores/neuron';
 
 import {
@@ -201,7 +200,7 @@ import {
   ListboxOptions,
   ListboxOption,
 } from '@headlessui/vue';
-import MathEditor from './MathEditor.vue';
+import MathEditor from '@/components/MathEditor.vue';
 
 const props = defineProps(['isOpen', 'closeModal']);
 

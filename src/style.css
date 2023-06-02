@@ -82,6 +82,11 @@ canvas {
   --popper-theme-border-radius: 0.5rem;
 }
 
+.dark .tooltip {
+  --popper-theme-background-color: theme('colors.light');
+  --popper-theme-text-color: theme('colors.dark');
+}
+
 .back {
   @apply absolute w-full h-full -z-10 bg-light dark:bg-[#1e1e1e];
 }

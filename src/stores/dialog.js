@@ -1,5 +1,6 @@
 import { handleKeydown, handleKeyup } from '@/graph/events/keyboard';
 import { computed, ref, watch } from 'vue';
+import graph from './graph';
 
 export const createNeuronDialogOpen = ref(false);
 
@@ -11,7 +12,7 @@ export const chooseRuleDialogOpen = ref(false);
 
 export const dialogDetails = ref(null);
 
-const hasDialog = computed(() => {
+export const hasDialog = computed(() => {
   return (
     createNeuronDialogOpen.value ||
     editSynapseDialogOpen.value ||
@@ -19,16 +20,3 @@ const hasDialog = computed(() => {
     chooseRuleDialogOpen.value
   );
 });
-
-watch(
-  () => hasDialog.value,
-  (value) => {
-    if (value) {
-      window.removeEventListener('keydown', handleKeydown);
-      window.removeEventListener('keyup', handleKeyup);
-    } else {
-      window.addEventListener('keydown', handleKeydown);
-      window.addEventListener('keyup', handleKeyup);
-    }
-  }
-);

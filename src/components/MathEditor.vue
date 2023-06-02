@@ -18,8 +18,8 @@
 </style>
 
 <script setup>
-import { ref, onMounted } from 'vue';
 import MathQuill from 'mathquill-node';
+import { ref, onMounted } from 'vue';
 import 'mathquill-node/lib/mathquill.css';
 
 const props = defineProps({

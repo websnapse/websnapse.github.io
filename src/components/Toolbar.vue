@@ -1,16 +1,20 @@
 <script setup>
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import navbar from '@/stores/navbar.js';
-import Logo from '@/assets/logo.vue';
 import { useDark, useToggle } from '@vueuse/core';
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+import Logo from '@/assets/logo.vue';
+
 import { undo, redo } from '@/graph/utils/action-stack';
+import { saveSystem } from '@/graph/utils/parse-system';
+
 import settings from '@/stores/settings';
+import navbar from '@/stores/navbar.js';
+import graph from '@/stores/graph';
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 const toggleDisplay = () => {
-  settings.view = settings.view === 'default' ? 'simple' : 'default';
+  settings.view = settings.view === 'full' ? 'simple' : 'full';
 };
 
 const openFileInput = () => {
@@ -83,7 +87,11 @@ const changeActiveMode = (newMode) => {
             </button>
           </MenuItem>
           <MenuItem v-slot="{ active }" ref="save">
-            <button :class="active ? 'bg-primary' : ''" class="menu-button">
+            <button
+              :class="active ? 'bg-primary' : ''"
+              class="menu-button"
+              @click="saveSystem(graph.value)"
+            >
               <v-icon name="la-save" class="mr-2" />
               Save
             </button>
@@ -103,7 +111,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Select
-            <span class="ml-2 text-light/50">V</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">V</span>
           </template>
           <button
             @click="changeActiveMode('default')"
@@ -116,7 +124,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Node
-            <span class="ml-2 text-light/50">N</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">N</span>
           </template>
           <button
             type="button"
@@ -130,7 +138,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Edge
-            <span class="ml-2 text-light/50">E</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">E</span>
           </template>
           <button
             @click="changeActiveMode('edge')"
@@ -143,7 +151,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Delete
-            <span class="ml-2 text-light/50">D</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">D</span>
           </template>
           <button
             @click="changeActiveMode('delete')"
@@ -160,7 +168,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Hand
-            <span class="ml-2 text-light/50">H</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">H</span>
           </template>
           <button
             @click="changeActiveMode('pan')"
@@ -174,7 +182,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Undo
-            <span class="ml-2 text-light/50">^z</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">^z</span>
           </template>
           <button class="tool-button" @click="undo">
             <v-icon name="la-undo-solid" />
@@ -184,7 +192,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Redo
-            <span class="ml-2 text-light/50">^Z</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">^Z</span>
           </template>
           <button class="tool-button" @click="redo">
             <v-icon name="la-redo-solid" />
@@ -193,7 +201,7 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             Clear
-            <span class="ml-2 text-light/50">Q</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">Q</span>
           </template>
           <button @click="$emit('clear')" class="tool-button">
             <v-icon name="la-trash-alt-solid" />
@@ -202,12 +210,12 @@ const changeActiveMode = (newMode) => {
         <Popper class="tooltip" hover>
           <template #content>
             View
-            <span class="ml-2 text-light/50">Y</span>
+            <span class="ml-2 text-light/50 dark:text-dark/50">Y</span>
           </template>
           <button type="button" @click="toggleDisplay" class="tool-button">
             <v-icon
               :name="
-                settings.view === 'default'
+                settings.view === 'full'
                   ? 'pr-window-maximize'
                   : 'pr-window-minimize'
               "

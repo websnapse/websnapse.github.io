@@ -40,20 +40,25 @@
       class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto rounded-3xl w-fit bottom-2 bg-light/40 dark:bg-neutral backdrop-blur-sm"
     >
       <div class="flex items-center gap-2 text-dark/50 dark:text-dark-50">
-        <button
-          class="toggle"
-          @click="toggleMode"
-          :class="
-            system.mode === 'pseudorandom'
-              ? `after:content-['']`
-              : `after:content-none`
-          "
-        >
-          <v-icon
-            name="la-random-solid"
-            :class="system.mode === 'pseudorandom' ? 'active-toggle' : ''"
-          />
-        </button>
+        <Popper class="tooltip" hover placement="top">
+          <template #content>
+            {{ system.mode.charAt(0).toUpperCase() + system.mode.slice(1) }}
+          </template>
+          <button
+            class="toggle"
+            @click="toggleMode"
+            :class="
+              system.mode === 'pseudorandom'
+                ? `after:content-['']`
+                : `after:content-none`
+            "
+          >
+            <v-icon
+              name="la-random-solid"
+              :class="system.mode === 'pseudorandom' ? 'active-toggle' : ''"
+            />
+          </button>
+        </Popper>
         <v-icon
           name="la-step-backward-solid"
           @click="getPrev"
@@ -65,12 +70,12 @@
         >
           <v-icon
             name="bi-play-fill"
-            @click="startSimulate"
+            @click="play"
             v-if="!navbar.running"
             scale="2"
             class="translate-x-[0.1rem]"
           />
-          <v-icon name="bi-stop-fill" v-else scale="2" @click="stopSimulate" />
+          <v-icon name="bi-stop-fill" v-else scale="2" @click="stop" />
         </button>
         <v-icon
           name="la-step-forward-solid"
@@ -78,11 +83,14 @@
           scale="1.25"
           class="cursor-pointer"
         />
-        <v-icon
-          name="la-sync-solid"
-          class="ml-2 cursor-pointer"
-          @click="resetSimulation"
-        />
+        <Popper class="tooltip" hover placement="top">
+          <template #content> Reset </template>
+          <v-icon
+            name="la-sync-solid"
+            class="ml-2 cursor-pointer"
+            @click="resetSimulation"
+          />
+        </Popper>
       </div>
       <div class="flex flex-col items-center justify-center gap-1">
         <input
@@ -123,6 +131,7 @@ import {
   editNeuronDialogOpen,
   dialogDetails,
   chooseRuleDialogOpen,
+  hasDialog,
 } from '@/stores/dialog';
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
@@ -134,36 +143,18 @@ const original = ref(null);
 const status = ref();
 const config = ref();
 
-const status_list = ref([]);
-const config_list = ref([]);
 const tick = ref(0);
-
-const changeTick = (i) => {
-  tick.value += i;
-  clearInterval(intervalId);
-  navbar.running = false;
-};
-
-let intervalId = null;
 
 /** @type {WebSocket} */
 let ws = null;
 let resetSimulation = null;
 
-const stopSimulate = () => {
+const stop = () => {
   navbar.running = false;
   ws.send(JSON.stringify({ cmd: 'stop' }));
-  // graph.value.getNodes().forEach((node) => {
-  //   node?.clearStates(['default', 'spiking', 'closed']);
-  //   node?.setState('default', true);
-  // });
-  // graph.value.getEdges().forEach((edge) => {
-  //   edge?.clearStates(['default', 'spiking', 'closed']);
-  //   edge?.setState('default', true);
-  // });
 };
 
-const startSimulate = async () => {
+const play = async () => {
   if (!original.value) {
     ws = new WebSocket(
       `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
@@ -205,6 +196,10 @@ const getPrev = async () => {
   ws.send(JSON.stringify({ cmd: 'prev', tick: tick.value }));
 };
 
+const toggleMode = () => {
+  system.mode = system.mode === 'pseudorandom' ? 'guided' : 'pseudorandom';
+};
+
 watch(
   () => system.speed,
   (newDuration) => {
@@ -213,15 +208,6 @@ watch(
     }
   }
 );
-
-watch(tick, (newTick) => {
-  status.value = status_list.value[newTick];
-  config.value = config_list.value[newTick];
-});
-
-const toggleMode = () => {
-  system.mode = system.mode === 'pseudorandom' ? 'guided' : 'pseudorandom';
-};
 
 const loadData = ref(null);
 const clearAll = ref(null);
@@ -289,8 +275,24 @@ onMounted(() => {
     }
   });
 
-  window.addEventListener('keyup', handleKeyup);
-  window.addEventListener('keydown', handleKeydown);
+  const keyupHandler = (e) => handleKeyup(e, g);
+  const keydownHandler = (e) => handleKeydown(e, g);
+
+  window.addEventListener('keyup', keyupHandler);
+  window.addEventListener('keydown', keydownHandler);
+
+  watch(
+    () => hasDialog.value,
+    (value) => {
+      if (value) {
+        window.removeEventListener('keyup', keyupHandler);
+        window.removeEventListener('keydown', keydownHandler);
+      } else {
+        window.addEventListener('keyup', keyupHandler);
+        window.addEventListener('keydown', keydownHandler);
+      }
+    }
+  );
 
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;

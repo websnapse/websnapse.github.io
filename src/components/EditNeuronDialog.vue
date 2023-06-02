@@ -29,12 +29,9 @@
           leave-to="opacity-0 scale-95"
         >
           <DialogPanel
-            class="w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl dark:bg-neutral dark:text-light rounded-2xl"
+            class="w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
           >
-            <DialogTitle
-              as="h3"
-              class="text-lg font-medium leading-6 text-gray-900"
-            >
+            <DialogTitle as="h3" class="text-lg font-medium leading-6">
               Node Properties
             </DialogTitle>
 
@@ -44,7 +41,7 @@
                   <div class="relative flex flex-col gap-1">
                     <label
                       for="default-search"
-                      class="mb-2 text-sm font-medium text-gray-900"
+                      class="mb-2 text-sm font-medium"
                     >
                       ID
                     </label>
@@ -53,7 +50,7 @@
                       id="default-search"
                       disabled
                       v-model="props.details.id"
-                      class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                      class="block w-full p-3 text-sm border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="n1"
                       required
                     />
@@ -61,7 +58,7 @@
                   <div class="relative flex flex-col gap-1">
                     <label
                       for="default-search"
-                      class="mb-2 text-sm font-medium text-gray-900"
+                      class="mb-2 text-sm font-medium"
                     >
                       Content
                     </label>
@@ -69,7 +66,7 @@
                       type="search"
                       id="default-search"
                       v-model="props.details.content"
-                      class="block w-full p-3 text-sm text-gray-900 border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                      class="block w-full p-3 text-sm border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="1"
                       required
                     />
@@ -78,10 +75,7 @@
                     class="relative flex flex-col gap-1"
                     v-if="props.details.type === 'regular'"
                   >
-                    <label
-                      for="message"
-                      class="block mb-2 text-sm font-medium text-gray-900"
-                    >
+                    <label for="message" class="block mb-2 text-sm font-medium">
                       Rules
                     </label>
                     <MathEditor
@@ -124,7 +118,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from '@headlessui/vue';
-import MathEditor from './MathEditor.vue';
+import MathEditor from '@/components/MathEditor.vue';
 
 const props = defineProps(['isOpen', 'closeModal', 'details']);
 

@@ -75,3 +75,13 @@ export const exportSytem = (graph) => {
 
   return parsed_system;
 };
+
+export const saveSystem = (graph) => {
+  const a = document.createElement('a');
+  const file = new Blob([JSON.stringify(exportSytem(graph))], {
+    type: 'text/plain',
+  });
+  a.href = URL.createObjectURL(file);
+  a.download = 'system.json';
+  a.click();
+};

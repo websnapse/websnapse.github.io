@@ -129,7 +129,9 @@
 </style>
 
 <script setup>
-import { computed, unref } from 'vue';
+import katex from 'katex';
+
+import { computed } from 'vue';
 import {
   TransitionChild,
   Dialog,
@@ -143,7 +145,6 @@ import {
   ListboxOption,
 } from '@headlessui/vue';
 import system from '@/stores/system';
-import katex from 'katex';
 
 const props = defineProps(['isOpen', 'closeModal', 'details', 'socket']);
 
