@@ -78,7 +78,6 @@ export default function initializeContextMenu(graph) {
               edgeStrength: 10,
               nodeSpacing: 50,
               minMovement: 0.01,
-              workerEnabled: import.meta.env.VITE_WORKER_ENABLED === 'true',
               maxIteration: 100,
               damping: 0.01,
               preventOverlap: true,
