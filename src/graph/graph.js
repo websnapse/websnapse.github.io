@@ -95,7 +95,6 @@ export default function createGraph(container, width, height) {
 
   const contextMenu = initializeContextMenu(graph);
 
-  graph.addPlugin(contextMenu);
   interact(graph);
 
   return graph;
