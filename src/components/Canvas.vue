@@ -141,10 +141,11 @@ import {
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
 import { importSystem, exportSytem } from '@/graph/utils/parse-system';
+import { useToast } from 'vue-toast-notification';
 
 const original = ref(null);
-const status = ref();
 const config = ref();
+const $toast = useToast();
 
 /** @type {WebSocket} */
 let ws = null;
@@ -158,6 +159,7 @@ const stop = () => {
 };
 
 const play = async () => {
+  navbar.running = true;
   if (!original.value) {
     ws = new WebSocket(
       `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
@@ -177,10 +179,10 @@ const play = async () => {
         dialogDetails.value = data.choices;
         chooseRuleDialogOpen.value = true;
       } else {
-        status.value = data.states;
         config.value = data.configurations;
 
         if (data.halted === true) {
+          $toast.success('Simulation completed successfully');
           navbar.running = false;
         }
       }
@@ -188,7 +190,6 @@ const play = async () => {
   } else {
     ws.send(JSON.stringify({ cmd: 'continue' }));
   }
-  navbar.running = true;
 };
 
 const next = async () => {
@@ -236,6 +237,7 @@ onMounted(() => {
 
   reset.value = () => {
     if (!original.value) return;
+
     navbar.running = false;
     const data = importSystem(original.value);
     data.nodes.forEach((node) => {
@@ -243,6 +245,7 @@ onMounted(() => {
     });
     g.changeData(data);
     original.value = null;
+
     ws.close();
   };
 
@@ -276,7 +279,7 @@ onMounted(() => {
         });
       }
 
-      node.clearStates();
+      node.clearStates(['spiking', 'closed']);
       node.setState(item.state, true);
       node.getEdges().forEach((edge) => {
         if (edge.getSource().getID() !== item.id) return;
