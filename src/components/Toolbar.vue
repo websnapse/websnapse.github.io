@@ -82,6 +82,7 @@ const changeActiveMode = (newMode) => {
                 type="file"
                 id="fileInput"
                 style="display: none"
+                accept=".json"
                 @change="handleFileUpload"
               />
               <v-icon name="la-project-diagram-solid" class="mr-2" />

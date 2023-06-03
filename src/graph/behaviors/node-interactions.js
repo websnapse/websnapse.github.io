@@ -1,5 +1,4 @@
 import { updateNeuron } from '@/utils/dialog';
-import graph_ref from '@/stores/graph';
 import G6 from '@antv/g6';
 
 export default function nodeInteractions() {

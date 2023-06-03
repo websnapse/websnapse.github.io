@@ -243,7 +243,6 @@ watch(
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
-  // system.data = original.value ? original.value : exportSytem(graph.value);
 };
 
 onMounted(() => {
@@ -252,12 +251,12 @@ onMounted(() => {
 
   const g = createGraph('mountNode', vw, vh);
 
-  console.log(system.data());
-
   g.read(importSystem(system.data()));
   graph.value = g;
 
   load.value = (data) => {
+    original.value = null;
+    g.destroyLayout();
     g.read(importSystem(data), true);
     g.fitCenter();
   };
@@ -276,9 +275,11 @@ onMounted(() => {
       node.delay = 0;
     });
     g.changeData(data);
-    g.getNodes().forEach((node) => {
-      node.setState('simple', settings.view === 'simple');
-    });
+    if (settings.view === 'simple') {
+      g.getNodes().forEach((node) => {
+        node.setState('simple', true);
+      });
+    }
     original.value = null;
 
     ws.close();

@@ -40,7 +40,7 @@ export const exportSytem = (graph) => {
       return {
         id,
         type,
-        content,
+        content: String(content),
         position: {
           x,
           y,

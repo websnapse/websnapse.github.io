@@ -59,7 +59,11 @@ export default function createGraph(container, width, height) {
             cursor: 'crosshair',
           },
         },
-        'zoom-canvas',
+        {
+          type: 'zoom-canvas',
+          enableOptimize: true,
+          optimizeZoom: 0.5,
+        },
         'node-interactions',
         'edge-interactions',
         'drag-node',
