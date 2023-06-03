@@ -61,7 +61,7 @@ export default function initializeContextMenu(graph) {
           await addNode(point, graph);
           break;
         case 'Fit View':
-          graph.fitView();
+          graph.fitView([120, 0, 180, 0], null, true);
           break;
         case 'Save':
           saveSystem(graph_ref.value);
@@ -70,7 +70,7 @@ export default function initializeContextMenu(graph) {
           graph.clear();
           break;
         case 'Auto layout':
-          graph.updateLayout(
+          await graph.updateLayout(
             {
               type: 'dagre',
               rankdir: 'LR',
@@ -82,18 +82,16 @@ export default function initializeContextMenu(graph) {
               maxIteration: 100,
               damping: 0.01,
               preventOverlap: true,
-              onLayoutEnd: () => {
-                graph.fitView();
-                graph.destroyLayout();
-              },
             },
             'center'
           );
-          graph.fitView();
 
           break;
         case 'Focus node':
-          graph.focusItem(item);
+          graph.focusItem(item, true, {
+            easing: 'easeCubic',
+            duration: 500,
+          });
           break;
         case 'Edit node':
           const updated_node = await updateNeuron(item);

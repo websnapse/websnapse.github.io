@@ -168,9 +168,9 @@ const drawInput = (cfg, group) => {
   group.addShape('polygon', {
     attrs: {
       points: [
-        [start_x + node_width / 2, start_y - 2],
-        [start_x + node_width / 2 + 10, start_y - 15],
-        [start_x + node_width / 2 - 10, start_y - 15],
+        [start_x - 2, start_y + node_height / 2],
+        [start_x - 15, start_y + node_height / 2 + 10],
+        [start_x - 15, start_y + node_height / 2 - 10],
       ],
       fill: settings.dark ? style.darkContent : style.content,
       stroke: settings.dark ? style.darkContent : style.content,
@@ -344,14 +344,14 @@ const setStateRegular = (name, value, item) => {
         'points',
         value
           ? [
-              [shape.attr('x') + shape.attr('width') / 2, shape.attr('y') - 2],
+              [shape.attr('x') - 2, shape.attr('y') + shape.attr('width') / 2],
               [
-                shape.attr('x') + shape.attr('width') / 2 + 10,
-                shape.attr('y') - 15,
+                shape.attr('x') - 15,
+                shape.attr('y') + shape.attr('width') / 2 + 10,
               ],
               [
-                shape.attr('x') + shape.attr('width') / 2 - 10,
-                shape.attr('y') - 15,
+                shape.attr('x') - 15,
+                shape.attr('y') + shape.attr('width') / 2 - 10,
               ],
             ]
           : []

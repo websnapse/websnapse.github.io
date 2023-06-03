@@ -17,7 +17,6 @@ export default function createGraph(container, width, height) {
     plugins: [grid],
     width: width,
     height: height,
-    fitViewPadding: [120, 0, 180, 0],
     linkCenter: false,
     pixelRatio: 1.5,
 

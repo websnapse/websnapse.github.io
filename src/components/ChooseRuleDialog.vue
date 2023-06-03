@@ -168,7 +168,7 @@ const selected_rules = computed(() => {
 });
 
 const getNode = (id) => {
-  return system.data.neurons.find((neuron) => neuron.id === id);
+  return system.data().neurons.find((neuron) => neuron.id === id);
 };
 
 const checkDetails = () => {

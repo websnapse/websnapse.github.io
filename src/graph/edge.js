@@ -140,7 +140,17 @@ export default function initalizeEdge() {
           }
         } else {
           const attrs = item.getStateStyle(name);
-          const original_style = item.getStateStyle('default');
+          const original_style = {
+            lineAppendWidth: 20,
+            shadowBlur: 0,
+            shadowColor: style.primary,
+            lineWidth: 2,
+            stroke: settings.dark ? style.darkContent : style.content,
+            endArrow: {
+              path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+              fill: settings.dark ? style.darkContent : style.content,
+            },
+          };
 
           value ? shape.attr(attrs) : shape.attr(original_style);
         }

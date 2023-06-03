@@ -10,6 +10,8 @@ export const editNeuronDialogOpen = ref(false);
 
 export const chooseRuleDialogOpen = ref(false);
 
+export const choiceHistoryDialogOpen = ref(false);
+
 export const dialogDetails = ref(null);
 
 export const hasDialog = computed(() => {
@@ -17,6 +19,7 @@ export const hasDialog = computed(() => {
     createNeuronDialogOpen.value ||
     editSynapseDialogOpen.value ||
     editNeuronDialogOpen.value ||
-    chooseRuleDialogOpen.value
+    chooseRuleDialogOpen.value ||
+    choiceHistoryDialogOpen.value
   );
 });

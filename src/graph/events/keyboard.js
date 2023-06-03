@@ -27,7 +27,8 @@ export const handleKeyup = (evt, graph) => {
       graph.clear();
       break;
     case 'y':
-      settings.view = settings.view === 'full' ? 'simple' : 'full';
+      settings.view = settings.view === 'simple' ? 'full' : 'simple';
+      console.log(settings.view);
       break;
     case 'Delete':
       deleteItems(graph);

@@ -1,27 +1,20 @@
-import { watch, reactive, computed } from 'vue';
+import { watch, reactive } from 'vue';
 import graph from './graph';
 import sample from '../data.json';
-import { exportSytem, importSystem } from '@/graph/utils/parse-system';
-import { useStorage } from '@vueuse/core';
+import { exportSytem } from '@/graph/utils/parse-system';
 
 const system = reactive({
-  data: useStorage('system', sample),
   mode: 'pseudorandom',
   states: [],
   configuration: [],
   speed: 1.5,
   tick: 0,
-});
+  history: [],
 
-watch(
-  () => graph.value,
-  (value) => {
-    if (value) {
-      system.data = exportSytem(value);
-    }
+  data() {
+    return graph.value ? exportSytem(graph.value) : sample;
   },
-  { immediate: true, deep: true }
-);
+});
 
 watch(
   () => system.states,

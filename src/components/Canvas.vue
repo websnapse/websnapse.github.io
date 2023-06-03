@@ -1,5 +1,15 @@
 <template>
   <Toolbar @load="load" @clear="clear" />
+
+  <button
+    @click="getHistory"
+    class="absolute p-1 border rounded-md shadow-sm tool-button top-2 right-2 bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
+  >
+    <Popper class="tooltip" hover>
+      <template #content> History </template>
+      <v-icon name="la-history-solid" />
+    </Popper>
+  </button>
   <div class="flex flex-col">
     <TransitionRoot appear :show="createNeuronDialogOpen" as="template">
       <CreateNeuronDialog
@@ -7,12 +17,10 @@
         :closeModal="() => (createNeuronDialogOpen = false)"
       />
     </TransitionRoot>
-    <TransitionRoot appear :show="chooseRuleDialogOpen" as="template">
-      <ChooseRuleDialog
-        :isOpen="chooseRuleDialogOpen"
-        :closeModal="() => (chooseRuleDialogOpen = false)"
-        :details="dialogDetails"
-        :socket="ws"
+    <TransitionRoot appear :show="choiceHistoryDialogOpen" as="template">
+      <ChoiceHistoryDialog
+        :isOpen="choiceHistoryDialogOpen"
+        :closeModal="() => (choiceHistoryDialogOpen = false)"
       />
     </TransitionRoot>
     <TransitionRoot appear :show="editNeuronDialogOpen" as="template">
@@ -27,6 +35,14 @@
         :isOpen="editSynapseDialogOpen"
         :closeModal="() => (editSynapseDialogOpen = false)"
         :details="dialogDetails"
+      />
+    </TransitionRoot>
+    <TransitionRoot appear :show="chooseRuleDialogOpen" as="template">
+      <ChooseRuleDialog
+        :isOpen="chooseRuleDialogOpen"
+        :closeModal="() => (chooseRuleDialogOpen = false)"
+        :details="dialogDetails"
+        :socket="ws"
       />
     </TransitionRoot>
     <div
@@ -137,11 +153,14 @@ import {
   dialogDetails,
   chooseRuleDialogOpen,
   hasDialog,
+  choiceHistoryDialogOpen,
 } from '@/stores/dialog';
 
 import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
 import { importSystem, exportSytem } from '@/graph/utils/parse-system';
 import { useToast } from 'vue-toast-notification';
+import ChoiceHistoryDialog from './ChoiceHistoryDialog.vue';
+import settings from '@/stores/settings';
 
 const original = ref(null);
 const config = ref();
@@ -152,6 +171,12 @@ let ws = null;
 const reset = ref(null);
 const load = ref(null);
 const clear = ref(null);
+const history = ref(null);
+
+const getHistory = () => {
+  choiceHistoryDialogOpen.value = true;
+  ws.send(JSON.stringify({ cmd: 'history' }));
+};
 
 const stop = () => {
   navbar.running = false;
@@ -164,27 +189,34 @@ const play = async () => {
     ws = new WebSocket(
       `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
     );
-    original.value = exportSytem(graph.value);
+    original.value = system.data();
     ws.onopen = function () {
       ws.send(
         JSON.stringify({
-          data: exportSytem(graph.value),
+          data: system.data(),
           speed: parseInt(system.speed),
         })
       );
     };
     ws.onmessage = function (event) {
       const data = JSON.parse(event.data);
-      if (data.type === 'prompt') {
-        dialogDetails.value = data.choices;
-        chooseRuleDialogOpen.value = true;
-      } else {
-        config.value = data.configurations;
-
-        if (data.halted === true) {
-          $toast.success('Simulation completed successfully');
-          navbar.running = false;
-        }
+      switch (data.type) {
+        case 'prompt':
+          dialogDetails.value = data.choices;
+          chooseRuleDialogOpen.value = true;
+          break;
+        case 'step':
+          config.value = data.configurations;
+          if (data.halted && navbar.running) {
+            $toast.success('Simulation completed successfully');
+            navbar.running = false;
+          }
+          break;
+        case 'history':
+          system.history = data.history;
+          break;
+        default:
+          break;
       }
     };
   } else {
@@ -211,7 +243,7 @@ watch(
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
-  system.data = original.value ? original.value : exportSytem(graph.value);
+  // system.data = original.value ? original.value : exportSytem(graph.value);
 };
 
 onMounted(() => {
@@ -220,14 +252,14 @@ onMounted(() => {
 
   const g = createGraph('mountNode', vw, vh);
 
-  g.read(importSystem(system.data));
+  console.log(system.data());
+
+  g.read(importSystem(system.data()));
   graph.value = g;
 
   load.value = (data) => {
-    g.read(importSystem(data));
+    g.read(importSystem(data), true);
     g.fitCenter();
-    g.fitView();
-    graph.value = g;
   };
 
   clear.value = () => {
@@ -235,7 +267,7 @@ onMounted(() => {
     graph.value = g;
   };
 
-  reset.value = () => {
+  reset.value = async () => {
     if (!original.value) return;
 
     navbar.running = false;
@@ -244,6 +276,9 @@ onMounted(() => {
       node.delay = 0;
     });
     g.changeData(data);
+    g.getNodes().forEach((node) => {
+      node.setState('simple', settings.view === 'simple');
+    });
     original.value = null;
 
     ws.close();
@@ -280,7 +315,9 @@ onMounted(() => {
       }
 
       node.clearStates(['spiking', 'closed']);
-      node.setState(item.state, true);
+      if (item.state !== 'default') {
+        node.setState(item.state, true);
+      }
       node.getEdges().forEach((edge) => {
         if (edge.getSource().getID() !== item.id) return;
 
