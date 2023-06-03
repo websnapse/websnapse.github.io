@@ -319,9 +319,7 @@ onMounted(() => {
       if (item.state !== 'default') {
         node.setState(item.state, true);
       }
-      node.getEdges().forEach((edge) => {
-        if (edge.getSource().getID() !== item.id) return;
-
+      node.getOutEdges().forEach((edge) => {
         edge.setState('spiking', item.state === 'spiking');
       });
     });

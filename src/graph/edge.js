@@ -99,11 +99,22 @@ export default function initalizeEdge() {
         const model = item.getModel();
 
         if (name === 'spiking') {
-          shape.attr('stroke', value ? style.primary : style.content);
+          shape.attr(
+            'stroke',
+            value
+              ? style.primary
+              : settings.dark
+              ? style.darkContent
+              : style.content
+          );
           shape.attr('lineWidth', value ? 5 : 2);
           shape.attr('endArrow', {
             path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-            fill: value ? style.primary : style.content,
+            fill: value
+              ? style.primary
+              : settings.dark
+              ? style.darkContent
+              : style.content,
             strokeOpacity: 0,
           });
           if (value) {
@@ -152,7 +163,9 @@ export default function initalizeEdge() {
             },
           };
 
-          value ? shape.attr(attrs) : shape.attr(original_style);
+          if (!item.hasState('spiking')) {
+            value ? shape.attr(attrs) : shape.attr(original_style);
+          }
         }
       },
     },
