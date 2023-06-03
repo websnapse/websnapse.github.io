@@ -5,7 +5,7 @@
     @click="getHistory"
     class="absolute p-1 border rounded-md shadow-sm tool-button top-2 right-2 bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
   >
-    <Popper class="tooltip" hover>
+    <Popper class="tooltip" hover placement="left">
       <template #content> History </template>
       <v-icon name="la-history-solid" />
     </Popper>
