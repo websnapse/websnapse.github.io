@@ -1,19 +1,16 @@
 import { clone } from '@antv/util';
-import graph from '@/stores/graph';
 
-export function undo() {
-  const g = graph.value;
-  let undoStack = g.getUndoStack();
+export function undo(graph) {
+  let undoStack = graph.getUndoStack();
 
   if (!undoStack || undoStack.length === 0) {
     return;
   }
 
   const currentData = undoStack.pop();
-  console.log('undo', currentData);
   if (currentData) {
     const { action } = currentData;
-    g.pushStack(action, clone(currentData.data), 'redo');
+    graph.pushStack(action, clone(currentData.data), 'redo');
     let data = currentData.data.before;
 
     if (['add', 'addItems'].includes(action)) {
@@ -26,11 +23,11 @@ export function undo() {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
-            const item = g.findById(model.id);
+            const item = graph.findById(model.id);
             if (model.visible) {
-              g.showItem(item, false);
+              graph.showItem(item, false);
             } else {
-              g.hideItem(item, false);
+              graph.hideItem(item, false);
             }
           });
         });
@@ -42,14 +39,15 @@ export function undo() {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
-            const item = g.findById(model.id);
+            const item = graph.findById(model.id);
             delete model.id;
-            g.updateItem(item, model, false);
+            graph.updateItem(item, model, false);
           });
         });
         break;
       case 'changedata':
-        g.read(data);
+        console.log('changedata', clone(currentData.data));
+        graph.read(data, false);
         break;
       case 'delete': {
         Object.keys(data).forEach((key) => {
@@ -58,7 +56,7 @@ export function undo() {
           array.forEach((model) => {
             const itemType = model.itemType;
             delete model.itemType;
-            g.addItem(itemType, model, false);
+            graph.addItem(itemType, model, false);
           });
         });
         break;
@@ -68,7 +66,7 @@ export function undo() {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
-            g.removeItem(model.id, false);
+            graph.removeItem(model.id, false);
           });
         });
         break;
@@ -77,61 +75,41 @@ export function undo() {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
-            g.removeItem(model.id, false);
+            graph.removeItem(model.id, false);
           });
         });
         break;
-      case 'updateComboTree':
-        Object.keys(data).forEach((key) => {
-          const array = data[key];
-          if (!array) return;
-          array.forEach((model) => {
-            g.updateComboTree(model.id, model.parentId, false);
-          });
-        });
-        break;
-      case 'createCombo':
-        const afterCombos = currentData.data.after.combos;
-        const createdCombo = afterCombos[afterCombos.length - 1];
-        Object.keys(data).forEach((key) => {
-          const array = data[key];
-          if (!array) return;
-          array.forEach((model) => {
-            g.updateComboTree(model.id, model.parentId, false);
-          });
-        });
-        g.removeItem(createdCombo.id, false);
-        break;
-      case 'uncombo':
         const targetCombo = data.combos[data.combos.length - 1];
         const childrenIds = data.nodes
           .concat(data.combos)
           .map((child) => child.id)
           .filter((id) => id !== targetCombo.id);
-        g.createCombo(targetCombo, childrenIds, false);
+        graph.createCombo(targetCombo, childrenIds, false);
         break;
       case 'layout':
-        g.updateLayout(data, undefined, undefined, false);
+        graph.updateLayout(data, undefined, undefined, false);
         break;
       default:
     }
-    g.refresh();
+    graph.refresh();
   }
 }
 
-export function redo() {
-  const g = graph.value;
-  const redoStack = g.getRedoStack();
+export function redo(graph) {
+  const redoStack = graph.getRedoStack();
+
+  console.log('redoStack', redoStack.length);
 
   if (!redoStack || redoStack.length === 0) {
     return;
   }
 
   const currentData = redoStack.pop();
+  console.log('redo', currentData);
   if (currentData) {
     const { action } = currentData;
     let data = currentData.data.after;
-    g.pushStack(action, clone(currentData.data));
+    graph.pushStack(action, clone(currentData.data));
     if (action === 'delete') {
       data = currentData.data.before;
     }
@@ -144,11 +122,11 @@ export function redo() {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
-            const item = g.findById(model.id);
+            const item = graph.findById(model.id);
             if (model.visible) {
-              g.showItem(item, false);
+              graph.showItem(item, false);
             } else {
-              g.hideItem(item, false);
+              graph.hideItem(item, false);
             }
           });
         });
@@ -160,69 +138,40 @@ export function redo() {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
-            const item = g.findById(model.id);
+            const item = graph.findById(model.id);
             delete model.id;
-            g.updateItem(item, model, false);
-            if (item.getType() === 'combo') g.updateCombo(item);
+            graph.updateItem(item, model, false);
+            if (item.getType() === 'combo') graph.updateCombo(item);
           });
         });
         break;
       case 'changedata':
-        g.changeData(data, false);
+        graph.read(data, false);
         break;
       case 'delete':
-        if (data.edges) {
-          data.edges.forEach((model) => {
-            g.removeItem(model.id, false);
-          });
-        }
-        if (data.nodes) {
-          data.nodes.forEach((model) => {
-            g.removeItem(model.id, false);
-          });
-        }
-        if (data.combos) {
-          data.combos.forEach((model) => {
-            g.removeItem(model.id, false);
-          });
-        }
-        break;
-      case 'add': {
         Object.keys(data).forEach((key) => {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
             const itemType = model.itemType;
             delete model.itemType;
-            g.addItem(itemType, model, false);
+            graph.addItem(itemType, model, false);
           });
         });
         break;
-      }
-      case 'updateComboTree':
+      case 'add':
         Object.keys(data).forEach((key) => {
           const array = data[key];
           if (!array) return;
           array.forEach((model) => {
-            g.updateComboTree(model.id, model.parentId, false);
+            const itemType = model.itemType;
+            delete model.itemType;
+            graph.addItem(itemType, model, false);
           });
         });
         break;
-      case 'createCombo':
-        const createdCombo = data.combos[data.combos.length - 1];
-        g.createCombo(
-          createdCombo,
-          createdCombo.children.map((child) => child.id),
-          false
-        );
-        break;
-      case 'uncombo':
-        const beforeCombos = currentData.data.before.combos;
-        const targertCombo = beforeCombos[beforeCombos.length - 1];
-        g.uncombo(targertCombo.id, false);
-        break;
       case 'layout':
-        g.updateLayout(data, undefined, undefined, false);
+        graph.updateLayout(data, undefined, undefined, false);
         break;
       default:
     }

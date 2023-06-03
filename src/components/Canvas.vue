@@ -150,14 +150,13 @@ import {
   createNeuronDialogOpen,
   editSynapseDialogOpen,
   editNeuronDialogOpen,
-  dialogDetails,
   chooseRuleDialogOpen,
-  hasDialog,
   choiceHistoryDialogOpen,
+  dialogDetails,
+  hasDialog,
 } from '@/stores/dialog';
 
-import { handleKeyup, handleKeydown } from '@/graph/events/keyboard';
-import { importSystem, exportSytem } from '@/graph/utils/parse-system';
+import { importSystem } from '@/graph/utils/parse-system';
 import { useToast } from 'vue-toast-notification';
 import ChoiceHistoryDialog from './ChoiceHistoryDialog.vue';
 import settings from '@/stores/settings';
@@ -325,22 +324,13 @@ onMounted(() => {
     });
   });
 
-  const keyupHandler = (e) => handleKeyup(e, g);
-  const keydownHandler = (e) => handleKeydown(e, g);
-
-  window.addEventListener('keyup', keyupHandler);
-  window.addEventListener('keydown', keydownHandler);
-  window.addEventListener('beforeunload', handleBeforeUnload);
-
   watch(
     () => hasDialog.value,
     (value) => {
       if (value) {
-        window.removeEventListener('keyup', keyupHandler);
-        window.removeEventListener('keydown', keydownHandler);
+        g.removeBehaviors('keyboard-interactions');
       } else {
-        window.addEventListener('keyup', keyupHandler);
-        window.addEventListener('keydown', keydownHandler);
+        g.addBehaviors('keyboard-interactions');
       }
     }
   );

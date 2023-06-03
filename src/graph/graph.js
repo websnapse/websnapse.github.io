@@ -46,6 +46,7 @@ export default function createGraph(container, width, height) {
     modes: {
       default: [
         'click-select',
+        'keyboard-interactions',
         {
           type: 'brush-select',
           trigger: 'drag',
@@ -74,22 +75,22 @@ export default function createGraph(container, width, height) {
         'drag-node',
         'node-interactions',
         'edge-interactions',
+        'keyboard-interactions',
       ],
 
-      edge: ['drag-add-edge', 'zoom-canvas'],
+      edge: ['keyboard-interactions', 'drag-add-edge', 'zoom-canvas'],
 
-      addEdge: ['drag-add-edge', 'zoom-canvas'],
-
-      pan: ['drag-canvas', 'zoom-canvas'],
+      pan: ['keyboard-interactions', 'drag-canvas', 'zoom-canvas'],
 
       delete: [
         'click-select',
         'remove-item',
         'node-interactions',
         'edge-interactions',
+        'keyboard-interactions',
       ],
 
-      disabled: ['drag-canvas', 'zoom-canvas'],
+      disabled: ['keyboard-interactions', 'drag-canvas', 'zoom-canvas'],
     },
   });
 

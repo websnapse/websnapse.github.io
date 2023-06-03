@@ -1,6 +1,7 @@
 import clickAddNode from './behaviors/click-add-node';
 import dragAddEdge from './behaviors/drag-add-edge';
 import edgeInteractions from './behaviors/edge-interactions';
+import keyboardInteractions from './behaviors/keyboard-interactions';
 import nodeInteractions from './behaviors/node-interactions';
 import removeNode from './behaviors/remove-item';
 import initalizeEdge from './edge';
@@ -14,4 +15,5 @@ export default function initializeRegisters() {
   removeNode();
   nodeInteractions();
   edgeInteractions();
+  keyboardInteractions();
 }
