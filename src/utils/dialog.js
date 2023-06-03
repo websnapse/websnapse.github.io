@@ -4,15 +4,16 @@ import {
   editSynapseDialogOpen,
   dialogDetails,
 } from '../stores/dialog';
+import { clone } from '@antv/util';
 
 import { watch } from 'vue';
 
 export const updateNeuron = (item) => {
-  const model = item.getModel();
+  const model = clone(item.getModel());
   return new Promise((resolve, reject) => {
-    const { id, content, rules, type, spiketrain } = model;
+    const { id, content, rules, type } = model;
     if (model.type !== 'regular') {
-      dialogDetails.value = { id, type, spiketrain };
+      dialogDetails.value = { id, type, content };
     } else {
       dialogDetails.value = { id, content, rules, type };
     }
@@ -25,7 +26,7 @@ export const updateNeuron = (item) => {
 };
 
 export const updateSynapse = (item) => {
-  const { label } = item.getModel();
+  const { label } = clone(item.getModel());
   return new Promise((resolve, reject) => {
     dialogDetails.value = { label: label };
     editSynapseDialogOpen.value = true;

@@ -3,6 +3,7 @@ import { redo, undo } from '../utils/action-stack';
 
 import navbar from '@/stores/navbar';
 import settings from '@/stores/settings';
+import duplicateItems from '../utils/duplicate-items';
 
 export const handleKeyup = (evt, graph) => {
   const { key } = evt;
@@ -21,6 +22,7 @@ export const handleKeyup = (evt, graph) => {
       navbar.mode = 'pan';
       break;
     case 'd':
+      if (evt.ctrlKey) break;
       navbar.mode = 'delete';
       break;
     case 'q':
@@ -52,6 +54,11 @@ export const handleKeydown = (evt, graph) => {
         redo(graph);
       }
       break;
+    case 'd':
+      if (evt.ctrlKey) {
+        evt.preventDefault();
+        duplicateItems(graph);
+      }
     default:
   }
 };

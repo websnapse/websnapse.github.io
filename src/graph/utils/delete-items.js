@@ -1,16 +1,12 @@
 export default function deleteItems(graph) {
-  graph.getNodes().forEach((node) => {
-    if (node.hasState('selected')) {
-      setTimeout(() => {
-        graph.removeItem(node);
-      }, 100);
-    }
+  graph.findAllByState('node', 'selected').forEach((node) => {
+    setTimeout(() => {
+      graph.removeItem(node);
+    }, 100);
   });
-  graph.getEdges().forEach((edge) => {
-    if (edge.hasState('selected')) {
-      setTimeout(() => {
-        graph.removeItem(edge);
-      }, 100);
-    }
+  graph.findAllByState('edge', 'selected').forEach((edge) => {
+    setTimeout(() => {
+      graph.removeItem(edge);
+    }, 100);
   });
 }

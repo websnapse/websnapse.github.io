@@ -1,4 +1,5 @@
 import { updateSynapse } from '@/utils/dialog';
+import { clone } from '@antv/util';
 import G6 from '@antv/g6';
 
 export default function edgeInteractions() {
@@ -25,7 +26,7 @@ export default function edgeInteractions() {
     },
     async onDblClick(evt) {
       const { item } = evt;
-      const model = item.getModel();
+      const model = clone(item.getModel());
       const updated = await updateSynapse(item);
       model.label = updated.label;
 

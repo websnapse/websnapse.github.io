@@ -1,4 +1,5 @@
 import { updateNeuron } from '@/utils/dialog';
+import { clone } from '@antv/util';
 import G6 from '@antv/g6';
 
 export default function nodeInteractions() {
@@ -26,7 +27,7 @@ export default function nodeInteractions() {
     },
     async onDblClick(evt) {
       const { item } = evt;
-      const model = item.getModel();
+      const model = clone(item.getModel());
       const updated = await updateNeuron(item);
 
       if (!updated.success) return;
@@ -39,7 +40,6 @@ export default function nodeInteractions() {
         model.id = updated.id;
         model.content = updated.content;
       }
-
       this.graph.updateItem(item, model, true);
     },
   });

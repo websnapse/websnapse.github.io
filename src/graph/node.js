@@ -344,15 +344,9 @@ const setStateRegular = (name, value, item) => {
         'points',
         value
           ? [
-              [shape.attr('x') - 2, shape.attr('y') + shape.attr('width') / 2],
-              [
-                shape.attr('x') - 15,
-                shape.attr('y') + shape.attr('width') / 2 + 10,
-              ],
-              [
-                shape.attr('x') - 15,
-                shape.attr('y') + shape.attr('width') / 2 - 10,
-              ],
+              [shape.attr('x') - 2, 0],
+              [shape.attr('x') - 15, 10],
+              [shape.attr('x') - 15, -10],
             ]
           : []
       );

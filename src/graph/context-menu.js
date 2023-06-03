@@ -4,6 +4,7 @@ import deleteItems from './utils/delete-items';
 import graph_ref from '@/stores/graph';
 import { saveSystem } from './utils/parse-system';
 import { updateNeuron, updateSynapse } from '@/utils/dialog';
+import duplicateItems from './utils/duplicate-items';
 
 export default function initializeContextMenu(graph) {
   const contextMenu = new G6.Menu({
@@ -24,6 +25,7 @@ export default function initializeContextMenu(graph) {
             content = [
               { img: '/rule.svg', text: 'Edit node' },
               { img: '/focus.svg', text: 'Focus node' },
+              { img: '/duplicate.svg', text: 'Duplicate' },
               { img: '/delete.svg', text: 'Delete' },
             ];
             break;
@@ -115,7 +117,12 @@ export default function initializeContextMenu(graph) {
           item.update(model);
           break;
         case 'Delete':
+          item.setState('selected', true);
           deleteItems(graph);
+          break;
+        case 'Duplicate':
+          item.setState('selected', true);
+          duplicateItems(graph);
           break;
       }
     },

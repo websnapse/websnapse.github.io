@@ -10,12 +10,13 @@ export function undo() {
   }
 
   const currentData = undoStack.pop();
+  console.log('undo', currentData);
   if (currentData) {
     const { action } = currentData;
     g.pushStack(action, clone(currentData.data), 'redo');
     let data = currentData.data.before;
 
-    if (action === 'add') {
+    if (['add', 'addItems'].includes(action)) {
       data = currentData.data.after;
     }
 
@@ -44,12 +45,11 @@ export function undo() {
             const item = g.findById(model.id);
             delete model.id;
             g.updateItem(item, model, false);
-            if (item.getType() === 'combo') g.updateCombo(item);
           });
         });
         break;
       case 'changedata':
-        g.changeData(data, false);
+        g.read(data);
         break;
       case 'delete': {
         Object.keys(data).forEach((key) => {
@@ -64,6 +64,15 @@ export function undo() {
         break;
       }
       case 'add':
+        Object.keys(data).forEach((key) => {
+          const array = data[key];
+          if (!array) return;
+          array.forEach((model) => {
+            g.removeItem(model.id, false);
+          });
+        });
+        break;
+      case 'addItems':
         Object.keys(data).forEach((key) => {
           const array = data[key];
           if (!array) return;

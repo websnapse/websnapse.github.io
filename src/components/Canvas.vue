@@ -257,7 +257,7 @@ onMounted(() => {
   load.value = (data) => {
     original.value = null;
     g.destroyLayout();
-    g.read(importSystem(data), true);
+    g.changeData(importSystem(data), true);
     g.fitCenter();
   };
 
