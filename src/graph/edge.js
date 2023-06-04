@@ -38,6 +38,18 @@ const options = {
       fill: settings.dark ? style.darkContent : style.content,
     },
   },
+  labelCfg: {
+    autorotate: true,
+    style: {
+      fill: settings.dark ? style.darkContent : style.content,
+      fontSize: 20,
+      background: {
+        fill: settings.dark ? style.dark : style.light,
+        padding: [5, 5, 5, 5],
+        radius: 5,
+      },
+    },
+  },
 };
 
 export default function initalizeEdge() {

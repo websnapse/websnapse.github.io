@@ -377,9 +377,18 @@ const setStateRegular = (name, value, item) => {
     });
   }
   if (name === 'spiking') {
-    shape.attr('stroke', value ? style.primary : style.content);
+    shape.attr(
+      'stroke',
+      value ? style.primary : settings.dark ? style.darkContent : style.content
+    );
     shape.attr('shadowBlur', value ? 10 : 0);
-  } else if (!['spiking', 'simple'].includes(name)) {
+  } else if (name === 'forgetting') {
+    shape.attr(
+      'stroke',
+      value ? style.primary : settings.dark ? style.darkContent : style.content
+    );
+    shape.attr('shadowBlur', value ? 10 : 0);
+  } else if (!['spiking', 'forgetting', 'simple'].includes(name)) {
     const shapes = item.getStateStyle(name);
     const original_style = item.getOriginStyle();
 

@@ -14,9 +14,12 @@ export const updateNeuron = (item) => {
     }
     dialog.editNeuron = true;
 
-    watch(dialog.editNeuron, (newVal, oldVal) => {
-      resolve(dialog.details);
-    });
+    watch(
+      () => dialog.editNeuron,
+      (newVal, oldVal) => {
+        resolve(dialog.details);
+      }
+    );
   });
 };
 
@@ -26,9 +29,12 @@ export const updateSynapse = (item) => {
     dialog.details = { label: label };
     dialog.editSynapse = true;
 
-    watch(dialog.editSynapse, (newVal, oldVal) => {
-      resolve(dialog.details);
-    });
+    watch(
+      () => dialog.editSynapse,
+      (newVal, oldVal) => {
+        resolve(dialog.details);
+      }
+    );
   });
 };
 
@@ -38,10 +44,13 @@ export const updateSynapse = (item) => {
  */
 export const createNeuron = () => {
   return new Promise((resolve, reject) => {
-    dialog.createNeuron.value = true;
+    dialog.createNeuron = true;
 
-    watch(dialog.createNeuron, (newVal, oldVal) => {
-      resolve();
-    });
+    watch(
+      () => dialog.createNeuron,
+      (newVal, oldVal) => {
+        resolve();
+      }
+    );
   });
 };

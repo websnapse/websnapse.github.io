@@ -266,34 +266,37 @@ onMounted(() => {
     }
   );
 
-  watch(config, (newValue) => {
-    console.log(newValue);
-    newValue.map((item) => {
-      const node = g.findById(item.id);
-      const { type, content, delay } = node.getModel();
+  watch(
+    config,
+    (newValue) => {
+      newValue?.map((item) => {
+        const node = g.findById(item.id);
+        const { type, content, delay } = node.getModel();
 
-      if (content !== item.content || delay !== item.delay) {
-        node.update({
-          content: item.content,
-          delay: item.delay,
+        if (content !== item.content || delay !== item.delay) {
+          node.update({
+            content: item.content,
+            delay: item.delay,
+          });
+        }
+
+        if (type === 'output') {
+          node.getInEdges().forEach((edge) => {
+            edge.refresh();
+          });
+        }
+
+        node.clearStates(['spiking', 'closed', 'forgetting']);
+        if (item.state !== 'default') {
+          node.setState(item.state, true);
+        }
+        node.getOutEdges().forEach((edge) => {
+          edge.setState('spiking', item.state === 'spiking');
         });
-      }
-
-      if (type === 'output') {
-        node.getInEdges().forEach((edge) => {
-          edge.refresh();
-        });
-      }
-
-      node.clearStates(['spiking', 'closed']);
-      if (item.state !== 'default') {
-        node.setState(item.state, true);
-      }
-      node.getOutEdges().forEach((edge) => {
-        edge.setState('spiking', item.state === 'spiking');
       });
-    });
-  });
+    },
+    { deep: true, immediate: true }
+  );
 
   watch(
     () => dialog.hasDialog(),
