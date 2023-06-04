@@ -3,14 +3,14 @@
     <div
       class="flex items-center border divide-x rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
     >
-      <div>
+      <div class="border-dark/5 dark:border-light/5">
         <Popper class="tooltip" hover>
           <button class="p-2 tool-button" @click="$emit('zoomIn')">
             <v-icon scale="0.8" name="la-plus-solid" />
           </button>
         </Popper>
       </div>
-      <div>
+      <div class="border-dark/5 dark:border-light/5">
         <Popper class="tooltip" hover>
           <button class="p-2 tool-button" @click="$emit('zoomOut')">
             <v-icon scale="0.8" name="la-minus-solid" />
@@ -21,7 +21,7 @@
     <div
       class="flex items-center border divide-x rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
     >
-      <div>
+      <div class="border-dark/5 dark:border-light/5">
         <Popper class="tooltip" hover>
           <template #content>
             Undo
@@ -32,7 +32,7 @@
           </button>
         </Popper>
       </div>
-      <div>
+      <div class="border-dark/5 dark:border-light/5">
         <Popper class="tooltip" hover>
           <template #content>
             Redo

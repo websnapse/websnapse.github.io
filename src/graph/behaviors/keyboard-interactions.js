@@ -94,7 +94,7 @@ export default function keyboardInteractions() {
                 this.graph.changeData(importSystem(data), true);
                 this.graph.fitCenter();
                 $toast.success('System imported successfully', {
-                  position: 'bottom-left',
+                  position: 'top-right',
                 });
               };
               reader.readAsText(file);
