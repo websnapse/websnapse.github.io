@@ -15,6 +15,7 @@ export default function initializeContextMenu(graph) {
           { img: '/node.svg', text: 'New Node' },
           { img: '/fit.svg', text: 'Fit View' },
           { img: '/layout.svg', text: 'Auto layout' },
+          { img: '/signal.svg', text: 'Radial layout' },
           { img: '/save.svg', text: 'Save' },
           { img: '/delete.svg', text: 'Clear' },
         ];
@@ -87,8 +88,21 @@ export default function initializeContextMenu(graph) {
             },
             'center'
           );
-          graph.destroyLayout();
+          break;
 
+        case 'Radial layout':
+          graph.updateLayout(
+            {
+              type: 'radial',
+              linkDistance: 1000,
+              maxIteration: 1000,
+              nodeSpacing: 100,
+              unitRadius: 20,
+              preventOverlap: true,
+              strictRadial: true,
+            },
+            'center'
+          );
           break;
         case 'Focus node':
           graph.focusItem(item, true, {

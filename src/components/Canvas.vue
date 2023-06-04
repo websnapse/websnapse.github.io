@@ -199,10 +199,9 @@ onMounted(() => {
     }
   );
 
-  watch(
-    config,
-    (newValue) => {
-      newValue?.map((item) => {
+  async function processItems(newValue) {
+    await Promise.all(
+      newValue?.map(async (item) => {
         const node = g.findById(item.id);
         const { type, content, delay } = node.getModel();
 
@@ -214,8 +213,8 @@ onMounted(() => {
         }
 
         if (type === 'output') {
-          node.getInEdges().forEach((edge) => {
-            edge.refresh();
+          node.getInEdges().forEach(async (edge) => {
+            await edge.refresh();
           });
         }
 
@@ -226,7 +225,15 @@ onMounted(() => {
         node.getOutEdges().forEach((edge) => {
           edge.setState('spiking', item.state === 'spiking');
         });
-      });
+      })
+    );
+  }
+
+  watch(
+    config,
+    (newValue) => {
+      if (!newValue) return;
+      processItems(newValue);
     },
     { deep: true, immediate: true }
   );

@@ -104,6 +104,43 @@ export default function keyboardInteractions() {
             document.body.removeChild(fileInput);
           }
           break;
+        case 'l':
+          if (evt.ctrlKey) {
+            evt.preventDefault();
+            this.graph.updateLayout(
+              {
+                type: 'dagre',
+                rankdir: 'LR',
+                linkDistance: 300,
+                nodeStrength: 10,
+                edgeStrength: 10,
+                nodeSpacing: 50,
+                minMovement: 0.01,
+                maxIteration: 100,
+                damping: 0.01,
+                preventOverlap: true,
+              },
+              'center'
+            );
+          }
+          break;
+        case 'L':
+          if (evt.ctrlKey && evt.shiftKey) {
+            evt.preventDefault();
+            this.graph.updateLayout(
+              {
+                type: 'radial',
+                linkDistance: 1000,
+                maxIteration: 1000,
+                nodeSpacing: 100,
+                unitRadius: 20,
+                preventOverlap: true,
+                strictRadial: true,
+              },
+              'center'
+            );
+          }
+          break;
         case 's':
           if (evt.ctrlKey) {
             evt.preventDefault();
