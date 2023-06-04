@@ -1,0 +1,382 @@
+{
+  "neurons": [
+    {
+      "id": "n_{0}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    },
+    {
+      "id": "n_{1}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    },
+    {
+      "id": "n_{2}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    },
+    {
+      "id": "n_{3}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    },
+    {
+      "id": "n_{4}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    },
+    {
+      "id": "n_{5}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    },
+    {
+      "id": "n_{6}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    },
+    {
+      "id": "n_{7}",
+      "type": "regular",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "content": 1,
+      "rules": [
+        "a^{*}/a\\to a;0"
+      ]
+    }
+  ],
+  "synapses": [
+    {
+      "from": "n_{0}",
+      "to": "n_{1}",
+      "weight": 1
+    },
+    {
+      "from": "n_{0}",
+      "to": "n_{2}",
+      "weight": 1
+    },
+    {
+      "from": "n_{0}",
+      "to": "n_{3}",
+      "weight": 1
+    },
+    {
+      "from": "n_{0}",
+      "to": "n_{4}",
+      "weight": 1
+    },
+    {
+      "from": "n_{0}",
+      "to": "n_{5}",
+      "weight": 1
+    },
+    {
+      "from": "n_{0}",
+      "to": "n_{6}",
+      "weight": 1
+    },
+    {
+      "from": "n_{0}",
+      "to": "n_{7}",
+      "weight": 1
+    },
+    {
+      "from": "n_{1}",
+      "to": "n_{0}",
+      "weight": 1
+    },
+    {
+      "from": "n_{1}",
+      "to": "n_{2}",
+      "weight": 1
+    },
+    {
+      "from": "n_{1}",
+      "to": "n_{3}",
+      "weight": 1
+    },
+    {
+      "from": "n_{1}",
+      "to": "n_{4}",
+      "weight": 1
+    },
+    {
+      "from": "n_{1}",
+      "to": "n_{5}",
+      "weight": 1
+    },
+    {
+      "from": "n_{1}",
+      "to": "n_{6}",
+      "weight": 1
+    },
+    {
+      "from": "n_{1}",
+      "to": "n_{7}",
+      "weight": 1
+    },
+    {
+      "from": "n_{2}",
+      "to": "n_{0}",
+      "weight": 1
+    },
+    {
+      "from": "n_{2}",
+      "to": "n_{1}",
+      "weight": 1
+    },
+    {
+      "from": "n_{2}",
+      "to": "n_{3}",
+      "weight": 1
+    },
+    {
+      "from": "n_{2}",
+      "to": "n_{4}",
+      "weight": 1
+    },
+    {
+      "from": "n_{2}",
+      "to": "n_{5}",
+      "weight": 1
+    },
+    {
+      "from": "n_{2}",
+      "to": "n_{6}",
+      "weight": 1
+    },
+    {
+      "from": "n_{2}",
+      "to": "n_{7}",
+      "weight": 1
+    },
+    {
+      "from": "n_{3}",
+      "to": "n_{0}",
+      "weight": 1
+    },
+    {
+      "from": "n_{3}",
+      "to": "n_{1}",
+      "weight": 1
+    },
+    {
+      "from": "n_{3}",
+      "to": "n_{2}",
+      "weight": 1
+    },
+    {
+      "from": "n_{3}",
+      "to": "n_{4}",
+      "weight": 1
+    },
+    {
+      "from": "n_{3}",
+      "to": "n_{5}",
+      "weight": 1
+    },
+    {
+      "from": "n_{3}",
+      "to": "n_{6}",
+      "weight": 1
+    },
+    {
+      "from": "n_{3}",
+      "to": "n_{7}",
+      "weight": 1
+    },
+    {
+      "from": "n_{4}",
+      "to": "n_{0}",
+      "weight": 1
+    },
+    {
+      "from": "n_{4}",
+      "to": "n_{1}",
+      "weight": 1
+    },
+    {
+      "from": "n_{4}",
+      "to": "n_{2}",
+      "weight": 1
+    },
+    {
+      "from": "n_{4}",
+      "to": "n_{3}",
+      "weight": 1
+    },
+    {
+      "from": "n_{4}",
+      "to": "n_{5}",
+      "weight": 1
+    },
+    {
+      "from": "n_{4}",
+      "to": "n_{6}",
+      "weight": 1
+    },
+    {
+      "from": "n_{4}",
+      "to": "n_{7}",
+      "weight": 1
+    },
+    {
+      "from": "n_{5}",
+      "to": "n_{0}",
+      "weight": 1
+    },
+    {
+      "from": "n_{5}",
+      "to": "n_{1}",
+      "weight": 1
+    },
+    {
+      "from": "n_{5}",
+      "to": "n_{2}",
+      "weight": 1
+    },
+    {
+      "from": "n_{5}",
+      "to": "n_{3}",
+      "weight": 1
+    },
+    {
+      "from": "n_{5}",
+      "to": "n_{4}",
+      "weight": 1
+    },
+    {
+      "from": "n_{5}",
+      "to": "n_{6}",
+      "weight": 1
+    },
+    {
+      "from": "n_{5}",
+      "to": "n_{7}",
+      "weight": 1
+    },
+    {
+      "from": "n_{6}",
+      "to": "n_{0}",
+      "weight": 1
+    },
+    {
+      "from": "n_{6}",
+      "to": "n_{1}",
+      "weight": 1
+    },
+    {
+      "from": "n_{6}",
+      "to": "n_{2}",
+      "weight": 1
+    },
+    {
+      "from": "n_{6}",
+      "to": "n_{3}",
+      "weight": 1
+    },
+    {
+      "from": "n_{6}",
+      "to": "n_{4}",
+      "weight": 1
+    },
+    {
+      "from": "n_{6}",
+      "to": "n_{5}",
+      "weight": 1
+    },
+    {
+      "from": "n_{6}",
+      "to": "n_{7}",
+      "weight": 1
+    },
+    {
+      "from": "n_{7}",
+      "to": "n_{0}",
+      "weight": 1
+    },
+    {
+      "from": "n_{7}",
+      "to": "n_{1}",
+      "weight": 1
+    },
+    {
+      "from": "n_{7}",
+      "to": "n_{2}",
+      "weight": 1
+    },
+    {
+      "from": "n_{7}",
+      "to": "n_{3}",
+      "weight": 1
+    },
+    {
+      "from": "n_{7}",
+      "to": "n_{4}",
+      "weight": 1
+    },
+    {
+      "from": "n_{7}",
+      "to": "n_{5}",
+      "weight": 1
+    },
+    {
+      "from": "n_{7}",
+      "to": "n_{6}",
+      "weight": 1
+    }
+  ]
+}

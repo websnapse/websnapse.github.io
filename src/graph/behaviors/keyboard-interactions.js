@@ -33,6 +33,13 @@ export default function keyboardInteractions() {
           navbar.mode = 'delete';
           break;
         case 'q':
+          this.graph.changeData(
+            {
+              nodes: [],
+              edges: [],
+            },
+            true
+          );
           this.graph.clear();
           break;
         case 'y':

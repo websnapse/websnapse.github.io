@@ -218,8 +218,14 @@ onMounted(() => {
   };
 
   clear.value = () => {
+    g.changeData(
+      {
+        nodes: [],
+        edges: [],
+      },
+      true
+    );
     g.clear();
-    graph.value = g;
   };
 
   reset.value = async () => {

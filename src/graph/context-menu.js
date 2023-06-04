@@ -85,7 +85,9 @@ export default function initializeContextMenu(graph) {
               damping: 0.01,
               preventOverlap: true,
             },
-            'center'
+            'center',
+            null,
+            true
           );
 
           break;

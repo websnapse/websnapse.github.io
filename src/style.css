@@ -96,7 +96,7 @@ canvas {
 }
 
 .minimap {
-  @apply absolute right-4 bottom-4;
+  @apply absolute border right-4 bottom-4 bg-light/40 border-dark/5 dark:border-light/5 dark:bg-neutral/40 backdrop-blur-sm;
 }
 
 .g6-minimap-viewport {
