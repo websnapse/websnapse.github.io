@@ -1,101 +1,26 @@
 <template>
-  <Toolbar @load="load" @clear="clear" @redo="redoAction" @undo="undoAction" />
+  <Toolbar @load="load" @clear="clear" />
   <Dialogs />
-  <button
-    @click="getHistory"
-    class="absolute p-1 border rounded-md shadow-sm tool-button top-2 right-2 bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
+  <ViewControls
+    @redo="redoAction"
+    @undo="undoAction"
+    @zoomIn="zoomIn"
+    @zoomOut="zoomOut"
+  />
+  <SimulationControls @reset="reset" />
+  <div class="absolute flex gap-4 top-2 left-2 w-fit">
+    <div
+      class="p-4 border rounded-md shadow-sm dark:text-light top-full w-fit bg-light -z-1 bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
+    >
+      <v-icon name="la-clock-solid" />
+      {{ 'Tick: ' + system.tick }}
+    </div>
+  </div>
+  <div
+    id="mountNode"
+    class="flex items-start justify-center w-screen h-screen overflow-hidden"
   >
-    <Popper class="tooltip" hover placement="left">
-      <template #content> History </template>
-      <v-icon name="la-history-solid" />
-    </Popper>
-  </button>
-  <div class="flex flex-col">
-    <div
-      id="mountNode"
-      class="flex items-start justify-center w-screen h-screen overflow-hidden"
-    >
-      <div class="back"></div>
-    </div>
-    <div
-      id="simulationControls"
-      class="absolute left-0 right-0 flex flex-col items-center justify-center px-8 py-4 mx-auto border rounded-3xl w-fit bottom-2 bg-light/40 border-dark/5 dark:border-light/5 dark:bg-neutral/40 backdrop-blur-sm"
-    >
-      <div class="flex items-center gap-2 text-dark/50 dark:text-dark-50">
-        <Popper class="tooltip" hover placement="top">
-          <template #content>
-            {{ system.mode.charAt(0).toUpperCase() + system.mode.slice(1) }}
-          </template>
-          <button
-            class="toggle"
-            @click="
-              () =>
-                (system.mode =
-                  system.mode === 'pseudorandom' ? 'guided' : 'pseudorandom')
-            "
-            :class="
-              system.mode === 'pseudorandom'
-                ? `after:content-['']`
-                : `after:content-none`
-            "
-          >
-            <v-icon
-              name="la-random-solid"
-              :class="system.mode === 'pseudorandom' ? 'active-toggle' : ''"
-            />
-          </button>
-        </Popper>
-        <v-icon
-          name="la-step-backward-solid"
-          @click="prev"
-          scale="1.25"
-          class="cursor-pointer"
-        />
-        <button
-          class="p-1 rounded-full text-light bg-primary dark:bg-primary/20 dark:text-primary"
-        >
-          <v-icon
-            name="bi-play-fill"
-            @click="play"
-            v-if="!navbar.running"
-            scale="2"
-            class="translate-x-[0.1rem]"
-          />
-          <v-icon name="bi-stop-fill" v-else scale="2" @click="stop" />
-        </button>
-        <v-icon
-          name="la-step-forward-solid"
-          @click="next"
-          scale="1.25"
-          class="cursor-pointer"
-        />
-        <Popper class="tooltip" hover placement="top">
-          <template #content> Reset </template>
-          <v-icon
-            name="la-sync-solid"
-            class="ml-2 cursor-pointer"
-            @click="reset"
-          />
-        </Popper>
-      </div>
-      <div class="flex flex-col items-center justify-center gap-1">
-        <input
-          id="default-range"
-          type="range"
-          min="0.25"
-          max="2.75"
-          step="0.25"
-          :value="system.speed"
-          @input="(e) => (system.speed = e.target.value)"
-          class="mt-4 slider"
-        />
-        <div>
-          <span class="text-xs text-dark/40 dark:text-light/40"
-            >{{ system.speed }}x</span
-          >
-        </div>
-      </div>
-    </div>
+    <div class="back"></div>
   </div>
 </template>
 
@@ -114,51 +39,25 @@ import settings from '@/stores/settings';
 import { importSystem } from '@/graph/utils/parse-system';
 import { useToast } from 'vue-toast-notification';
 import { redo, undo } from '@/graph/utils/action-stack';
+import ViewControls from './ViewControls.vue';
+import SimulationControls from './SimulationControls.vue';
 
-const original = ref(null);
-const config = ref(null);
 const $toast = useToast();
+
+const config = ref(null);
 
 const reset = ref(null);
 const load = ref(null);
 const clear = ref(null);
 const undoAction = ref(null);
 const redoAction = ref(null);
-
-const getHistory = () => {
-  dialog.choiceHistory = true;
-  system.ws.send(JSON.stringify({ cmd: 'history' }));
-};
-
-const stop = () => {
-  navbar.running = false;
-  system.ws.send(JSON.stringify({ cmd: 'stop' }));
-};
-
-const play = async () => {
-  navbar.running = true;
-  if (!original.value) {
-    system.ws = new WebSocket(
-      `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
-    );
-    original.value = system.data();
-  } else {
-    system.ws.send(JSON.stringify({ cmd: 'continue' }));
-  }
-};
-
-const next = async () => {
-  system.ws.send(JSON.stringify({ cmd: 'next' }));
-};
-
-const prev = async () => {
-  system.ws.send(JSON.stringify({ cmd: 'prev' }));
-};
+const zoomIn = ref(null);
+const zoomOut = ref(null);
 
 watch(
   () => system.speed,
   (newDuration) => {
-    if (system.ws) {
+    if (system.ws && system.ws.readyState === WebSocket.OPEN) {
       system.ws.send(
         JSON.stringify({ cmd: 'speed', speed: parseInt(newDuration) })
       );
@@ -168,6 +67,7 @@ watch(
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
+  system.backupSystem();
 };
 
 onMounted(() => {
@@ -180,12 +80,12 @@ onMounted(() => {
   graph.value = g;
 
   load.value = (data) => {
-    original.value = null;
+    system.reset = null;
     g.destroyLayout();
     g.clear();
     g.changeData(importSystem(data), true);
     g.fitCenter();
-    $toast.success('System imported successfully', { position: 'bottom-left' });
+    $toast.success('System imported successfully', { position: 'top-right' });
   };
 
   clear.value = () => {
@@ -200,10 +100,10 @@ onMounted(() => {
   };
 
   reset.value = async () => {
-    if (!original.value) return;
+    if (!system.reset) return;
 
     navbar.running = false;
-    const data = importSystem(original.value);
+    const data = importSystem(system.reset);
     data.nodes.forEach((node) => {
       node.delay = 0;
     });
@@ -213,7 +113,8 @@ onMounted(() => {
         node.setState('simple', true);
       });
     }
-    original.value = null;
+    system.reset = null;
+    system.tick = 0;
 
     system.ws.close();
   };
@@ -224,6 +125,22 @@ onMounted(() => {
 
   redoAction.value = () => {
     redo(g);
+  };
+
+  zoomIn.value = () => {
+    const zoom = g.getZoom();
+    const center = g.getGraphCenterPoint();
+    g.zoomTo(zoom + 0.4, center, true, {
+      duration: 100,
+    });
+  };
+
+  zoomOut.value = () => {
+    const zoom = g.getZoom();
+    const center = g.getGraphCenterPoint();
+    g.zoomTo(zoom - 0.4, center, true, {
+      duration: 100,
+    });
   };
 
   watch(
@@ -247,9 +164,12 @@ onMounted(() => {
           case 'step':
             config.value = data.configurations;
             if (data.halted && navbar.running) {
-              $toast.success('Simulation completed successfully');
+              $toast.success('Simulation completed successfully', {
+                position: 'top-right',
+              });
               navbar.running = false;
             }
+            system.tick = data.tick;
             break;
           case 'history':
             system.history = data.history;
@@ -320,6 +240,8 @@ onMounted(() => {
       }
     }
   );
+
+  window.addEventListener('beforeunload', handleBeforeUnload);
 
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;

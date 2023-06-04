@@ -3,6 +3,11 @@ import duplicateItems from '../utils/duplicate-items';
 import { redo, undo } from '../utils/action-stack';
 import navbar from '@/stores/navbar';
 import deleteItems from '../utils/delete-items';
+import settings from '@/stores/settings';
+import { importSystem, saveSystem } from '../utils/parse-system';
+import { useToast } from 'vue-toast-notification';
+
+const $toast = useToast();
 
 export default function keyboardInteractions() {
   G6.registerBehavior('keyboard-interactions', {
@@ -71,6 +76,40 @@ export default function keyboardInteractions() {
             evt.preventDefault();
             duplicateItems(this.graph);
           }
+        case 'o':
+          if (evt.ctrlKey) {
+            evt.preventDefault();
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json';
+            fileInput.id = 'fileInput';
+            fileInput.style.display = 'none';
+            fileInput.onchange = () => {
+              const file = fileInput.files[0];
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const data = JSON.parse(e.target.result);
+                this.graph.destroyLayout();
+                this.graph.clear();
+                this.graph.changeData(importSystem(data), true);
+                this.graph.fitCenter();
+                $toast.success('System imported successfully', {
+                  position: 'bottom-left',
+                });
+              };
+              reader.readAsText(file);
+            };
+            document.body.appendChild(fileInput);
+            document.getElementById('fileInput').click();
+            document.body.removeChild(fileInput);
+          }
+          break;
+        case 's':
+          if (evt.ctrlKey) {
+            evt.preventDefault();
+            saveSystem(this.graph);
+          }
+          break;
         default:
       }
     },

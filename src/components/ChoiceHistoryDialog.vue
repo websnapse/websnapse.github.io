@@ -38,6 +38,11 @@
               Decision History
             </DialogTitle>
 
+            <!-- create invisible focusable element -->
+            <button
+              class="absolute top-0 left-0 w-px h-px opacity-0 focus:outline-none"
+            ></button>
+
             <div class="w-full mt-4 overflow-auto max-h-[80vh]">
               <table class="w-full h-full overflow-scroll">
                 <thead>

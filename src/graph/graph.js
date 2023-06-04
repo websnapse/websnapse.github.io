@@ -13,7 +13,7 @@ export default function createGraph(container, width, height) {
   });
 
   const minimap = new G6.Minimap({
-    size: [200, 150],
+    size: [300, 200],
     className: 'minimap',
     type: 'delegate',
     padding: 100,
@@ -31,6 +31,19 @@ export default function createGraph(container, width, height) {
     height: height,
     linkCenter: false,
     pixelRatio: 1.5,
+
+    layout: {
+      type: 'dagre',
+      rankdir: 'LR',
+      linkDistance: 300,
+      nodeStrength: 10,
+      edgeStrength: 10,
+      nodeSpacing: 50,
+      minMovement: 0.01,
+      maxIteration: 100,
+      damping: 0.01,
+      preventOverlap: true,
+    },
 
     directed: true,
     enabledStack: true,
@@ -108,6 +121,8 @@ export default function createGraph(container, width, height) {
   });
 
   const contextMenu = initializeContextMenu(graph);
+
+  graph.destroyLayout();
 
   graph.addPlugin(contextMenu);
   interact(graph);

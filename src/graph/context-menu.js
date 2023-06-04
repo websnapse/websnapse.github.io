@@ -63,7 +63,7 @@ export default function initializeContextMenu(graph) {
           await addNode(point, graph);
           break;
         case 'Fit View':
-          graph.fitView([120, 0, 180, 0], null, true);
+          graph.fitView([120, 50, 180, 50], null, true);
           break;
         case 'Save':
           saveSystem(graph_ref.value);
@@ -85,10 +85,9 @@ export default function initializeContextMenu(graph) {
               damping: 0.01,
               preventOverlap: true,
             },
-            'center',
-            null,
-            true
+            'center'
           );
+          graph.destroyLayout();
 
           break;
         case 'Focus node':

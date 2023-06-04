@@ -16,7 +16,7 @@ body {
 }
 
 .tool-button {
-  @apply p-3 text-sm font-medium leading-none rounded-xl text-dark-50 hover:bg-dark hover:text-light hover:leading-none;
+  @apply text-sm font-medium leading-none rounded-xl text-dark-50 hover:text-dark dark:hover:text-light hover:leading-none;
 }
 
 .tool-active {
@@ -82,6 +82,10 @@ canvas {
   --popper-theme-border-radius: 0.5rem;
 }
 
+.popper {
+  @apply w-max;
+}
+
 .dark .tooltip {
   --popper-theme-background-color: theme('colors.light');
   --popper-theme-text-color: theme('colors.dark');
@@ -96,7 +100,7 @@ canvas {
 }
 
 .minimap {
-  @apply absolute border right-4 bottom-4 bg-light/40 border-dark/5 dark:border-light/5 dark:bg-neutral/40 backdrop-blur-sm;
+  @apply absolute hidden border rounded-md right-4 lg:block bottom-4 bg-light/40 border-dark/5 dark:border-light/5 dark:bg-neutral/40 backdrop-blur-sm;
 }
 
 .g6-minimap-viewport {

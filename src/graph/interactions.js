@@ -22,4 +22,12 @@ export default function interact(graph) {
       });
     }
   });
+
+  graph.on('afterrender', () => {
+    graph.fitView([120, 50, 180, 50], null, true);
+  });
+
+  graph.on('afterlayout', (evt) => {
+    graph.fitView([120, 50, 180, 50], null, true);
+  });
 }

@@ -2,6 +2,7 @@ import { watch, reactive } from 'vue';
 import graph from './graph';
 import sample from '../data.json';
 import { exportSytem } from '@/graph/utils/parse-system';
+import { useStorage } from '@vueuse/core';
 
 const system = reactive({
   mode: 'pseudorandom',
@@ -10,59 +11,18 @@ const system = reactive({
   speed: 1.5,
   tick: 0,
   history: [],
+  backup: useStorage('system', sample),
+  reset: null,
   ws: null,
 
   data() {
-    return graph.value ? exportSytem(graph.value) : sample;
+    return graph.value ? exportSytem(graph.value) : this.backup;
+  },
+  backupSystem() {
+    this.backup = system.reset
+      ? exportSytem(system.reset)
+      : exportSytem(graph.value);
   },
 });
-
-watch(
-  () => system.states,
-  (newValue, oldValue) => {
-    for (const key in newValue) {
-      if (newValue[key] !== oldValue[key]) {
-        const node = graph.value.findById(key);
-        const edges = graph.value.getEdges().filter((edge) => {
-          return edge.getSource().getID() === key;
-        });
-
-        for (const edge of edges) {
-          graph.value.setItemState(edge, 'animate', false);
-          graph.value.setItemState(
-            edge,
-            'animate',
-            newValue[key].value === 'animate'
-          );
-        }
-        node.clearStates(['default', 'animate', 'closed']);
-        graph.value.setItemState(node, newValue[key].value, true);
-        graph.value.setItemState(node, 'running', true);
-      }
-    }
-  }
-);
-
-watch(
-  () => system.configuration,
-  (newValue, oldValue) => {
-    for (const key in newValue) {
-      if (newValue[key] !== oldValue[key]) {
-        const node = graph.value.findById(key);
-        node.update({
-          content: newValue[key],
-        });
-      }
-    }
-  }
-);
-
-watch(
-  () => system.tick,
-  (newTick) => {
-    states.value = status_list.value[newTick];
-    config.value = config_list.value[newTick];
-  }
-);
 
 export default system;
