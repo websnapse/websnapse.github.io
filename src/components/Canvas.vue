@@ -267,6 +267,7 @@ onMounted(() => {
   );
 
   watch(config, (newValue) => {
+    console.log(newValue);
     newValue.map((item) => {
       const node = g.findById(item.id);
       const { type, content, delay } = node.getModel();

@@ -39,7 +39,7 @@ export default function keyboardInteractions() {
           settings.view = settings.view === 'simple' ? 'full' : 'simple';
           break;
         case 'Delete':
-          deleteItems(graph);
+          deleteItems(this.graph);
           break;
         default:
           break;

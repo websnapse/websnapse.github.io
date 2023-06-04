@@ -24,8 +24,6 @@ export default function createGraph(container, width, height) {
     },
   });
 
-  console.log(minimap);
-
   const graph = new G6.Graph({
     container: container,
     plugins: [grid, minimap],
