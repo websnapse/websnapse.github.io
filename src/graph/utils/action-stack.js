@@ -46,8 +46,8 @@ export function undo(graph) {
         });
         break;
       case 'changedata':
-        console.log('changedata', clone(currentData.data));
-        graph.read(data, false);
+        graph.clear();
+        graph.changeData(data, false);
         break;
       case 'delete': {
         Object.keys(data).forEach((key) => {
@@ -146,7 +146,8 @@ export function redo(graph) {
         });
         break;
       case 'changedata':
-        graph.read(data, false);
+        graph.clear();
+        graph.changeData(data, false);
         break;
       case 'delete':
         Object.keys(data).forEach((key) => {

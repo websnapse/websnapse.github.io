@@ -1,6 +1,4 @@
-import { handleKeydown, handleKeyup } from '@/graph/events/keyboard';
-import { computed, ref, watch } from 'vue';
-import graph from './graph';
+import { computed, ref } from 'vue';
 
 export const createNeuronDialogOpen = ref(false);
 

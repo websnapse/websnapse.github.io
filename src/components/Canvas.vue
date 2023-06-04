@@ -140,7 +140,8 @@ import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
 import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
 import EditSynapseDialog from '@/components/EditSynapseDialog.vue';
 import ChooseRuleDialog from '@/components/ChooseRuleDialog.vue';
-import Toolbar from './Toolbar.vue';
+import ChoiceHistoryDialog from '@/components/ChoiceHistoryDialog.vue';
+import Toolbar from '@/components/Toolbar.vue';
 
 import createGraph from '@/graph/graph';
 import system from '@/stores/system';
@@ -155,11 +156,10 @@ import {
   dialogDetails,
   hasDialog,
 } from '@/stores/dialog';
+import settings from '@/stores/settings';
 
 import { importSystem } from '@/graph/utils/parse-system';
 import { useToast } from 'vue-toast-notification';
-import ChoiceHistoryDialog from './ChoiceHistoryDialog.vue';
-import settings from '@/stores/settings';
 
 const original = ref(null);
 const config = ref();
