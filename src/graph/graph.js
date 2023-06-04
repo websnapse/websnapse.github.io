@@ -78,6 +78,7 @@ export default function createGraph(container, width, height) {
           type: 'zoom-canvas',
           enableOptimize: true,
           optimizeZoom: 0.5,
+          sensitivity: 1.5,
         },
         'node-interactions',
         'edge-interactions',

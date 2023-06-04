@@ -1,23 +1,22 @@
-import { computed, ref } from 'vue';
+import { reactive } from 'vue';
 
-export const createNeuronDialogOpen = ref(false);
+export const dialog = reactive({
+  createNeuron: false,
+  editSynapse: false,
+  editNeuron: false,
+  chooseRule: false,
+  choiceHistory: false,
+  details: null,
 
-export const editSynapseDialogOpen = ref(false);
-
-export const editNeuronDialogOpen = ref(false);
-
-export const chooseRuleDialogOpen = ref(false);
-
-export const choiceHistoryDialogOpen = ref(false);
-
-export const dialogDetails = ref(null);
-
-export const hasDialog = computed(() => {
-  return (
-    createNeuronDialogOpen.value ||
-    editSynapseDialogOpen.value ||
-    editNeuronDialogOpen.value ||
-    chooseRuleDialogOpen.value ||
-    choiceHistoryDialogOpen.value
-  );
+  hasDialog() {
+    return (
+      this.createNeuron ||
+      this.editSynapse ||
+      this.editNeuron ||
+      this.chooseRule ||
+      this.choiceHistory
+    );
+  },
 });
+
+export default dialog;

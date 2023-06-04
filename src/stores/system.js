@@ -10,6 +10,7 @@ const system = reactive({
   speed: 1.5,
   tick: 0,
   history: [],
+  ws: null,
 
   data() {
     return graph.value ? exportSytem(graph.value) : sample;

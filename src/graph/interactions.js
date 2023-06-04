@@ -8,4 +8,18 @@ export default function interact(graph) {
       item.refresh();
     }
   });
+
+  graph.on('wheel', (evt) => {
+    const zoom = graph.getZoom();
+
+    if (zoom < 0.5) {
+      graph.getEdges().forEach((edge) => {
+        edge.hide();
+      });
+    } else {
+      graph.getEdges().forEach((edge) => {
+        edge.show();
+      });
+    }
+  });
 }

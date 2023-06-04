@@ -1,6 +1,6 @@
 <template>
-  <Toolbar @load="load" @clear="clear" />
-
+  <Toolbar @load="load" @clear="clear" @redo="redoAction" @undo="undoAction" />
+  <Dialogs />
   <button
     @click="getHistory"
     class="absolute p-1 border rounded-md shadow-sm tool-button top-2 right-2 bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
@@ -11,40 +11,6 @@
     </Popper>
   </button>
   <div class="flex flex-col">
-    <TransitionRoot appear :show="createNeuronDialogOpen" as="template">
-      <CreateNeuronDialog
-        :isOpen="createNeuronDialogOpen"
-        :closeModal="() => (createNeuronDialogOpen = false)"
-      />
-    </TransitionRoot>
-    <TransitionRoot appear :show="choiceHistoryDialogOpen" as="template">
-      <ChoiceHistoryDialog
-        :isOpen="choiceHistoryDialogOpen"
-        :closeModal="() => (choiceHistoryDialogOpen = false)"
-      />
-    </TransitionRoot>
-    <TransitionRoot appear :show="editNeuronDialogOpen" as="template">
-      <EditNeuronDialog
-        :isOpen="editNeuronDialogOpen"
-        :closeModal="() => (editNeuronDialogOpen = false)"
-        :details="dialogDetails"
-      />
-    </TransitionRoot>
-    <TransitionRoot appear :show="editSynapseDialogOpen" as="template">
-      <EditSynapseDialog
-        :isOpen="editSynapseDialogOpen"
-        :closeModal="() => (editSynapseDialogOpen = false)"
-        :details="dialogDetails"
-      />
-    </TransitionRoot>
-    <TransitionRoot appear :show="chooseRuleDialogOpen" as="template">
-      <ChooseRuleDialog
-        :isOpen="chooseRuleDialogOpen"
-        :closeModal="() => (chooseRuleDialogOpen = false)"
-        :details="dialogDetails"
-        :socket="ws"
-      />
-    </TransitionRoot>
     <div
       id="mountNode"
       class="flex items-start justify-center w-screen h-screen overflow-hidden"
@@ -134,75 +100,62 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue';
-import { TransitionRoot } from '@headlessui/vue';
-import CreateNeuronDialog from '@/components/CreateNeuronDialog.vue';
-import EditNeuronDialog from '@/components/EditNeuronDialog.vue';
-import EditSynapseDialog from '@/components/EditSynapseDialog.vue';
-import ChooseRuleDialog from '@/components/ChooseRuleDialog.vue';
-import ChoiceHistoryDialog from '@/components/ChoiceHistoryDialog.vue';
+import { onMounted, ref, watch } from 'vue';
 import Toolbar from '@/components/Toolbar.vue';
+import Dialogs from '@/components/Dialogs.vue';
 
 import createGraph from '@/graph/graph';
 import system from '@/stores/system';
 import navbar from '@/stores/navbar';
 import graph from '@/stores/graph';
-import {
-  createNeuronDialogOpen,
-  editSynapseDialogOpen,
-  editNeuronDialogOpen,
-  chooseRuleDialogOpen,
-  choiceHistoryDialogOpen,
-  dialogDetails,
-  hasDialog,
-} from '@/stores/dialog';
+import dialog from '@/stores/dialog';
 import settings from '@/stores/settings';
 
 import { importSystem } from '@/graph/utils/parse-system';
 import { useToast } from 'vue-toast-notification';
+import { redo, undo } from '@/graph/utils/action-stack';
 
 const original = ref(null);
-const config = ref();
+const config = ref(null);
 const $toast = useToast();
 
-/** @type {WebSocket} */
-let ws = null;
 const reset = ref(null);
 const load = ref(null);
 const clear = ref(null);
-const history = ref(null);
+const undoAction = ref(null);
+const redoAction = ref(null);
 
 const getHistory = () => {
-  choiceHistoryDialogOpen.value = true;
-  ws.send(JSON.stringify({ cmd: 'history' }));
+  dialog.choiceHistory = true;
+  system.ws.send(JSON.stringify({ cmd: 'history' }));
 };
 
 const stop = () => {
   navbar.running = false;
-  ws.send(JSON.stringify({ cmd: 'stop' }));
+  system.ws.send(JSON.stringify({ cmd: 'stop' }));
 };
 
 const play = async () => {
   navbar.running = true;
   if (!original.value) {
-    ws = new WebSocket(
+    system.ws = new WebSocket(
       `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
     );
     original.value = system.data();
-    ws.onopen = function () {
-      ws.send(
+    system.ws.onopen = function () {
+      system.ws.send(
         JSON.stringify({
           data: system.data(),
           speed: parseInt(system.speed),
         })
       );
     };
-    ws.onmessage = function (event) {
+    system.ws.onmessage = function (event) {
       const data = JSON.parse(event.data);
       switch (data.type) {
         case 'prompt':
-          dialogDetails.value = data.choices;
-          chooseRuleDialogOpen.value = true;
+          dialog.details = data.choices;
+          dialog.chooseRule = true;
           break;
         case 'step':
           config.value = data.configurations;
@@ -219,23 +172,25 @@ const play = async () => {
       }
     };
   } else {
-    ws.send(JSON.stringify({ cmd: 'continue' }));
+    system.ws.send(JSON.stringify({ cmd: 'continue' }));
   }
 };
 
 const next = async () => {
-  ws.send(JSON.stringify({ cmd: 'next' }));
+  system.ws.send(JSON.stringify({ cmd: 'next' }));
 };
 
 const prev = async () => {
-  ws.send(JSON.stringify({ cmd: 'prev' }));
+  system.ws.send(JSON.stringify({ cmd: 'prev' }));
 };
 
 watch(
   () => system.speed,
   (newDuration) => {
-    if (ws) {
-      ws.send(JSON.stringify({ cmd: 'speed', speed: parseInt(newDuration) }));
+    if (system.ws) {
+      system.ws.send(
+        JSON.stringify({ cmd: 'speed', speed: parseInt(newDuration) })
+      );
     }
   }
 );
@@ -256,8 +211,10 @@ onMounted(() => {
   load.value = (data) => {
     original.value = null;
     g.destroyLayout();
+    g.clear();
     g.changeData(importSystem(data), true);
     g.fitCenter();
+    $toast.success('System imported successfully', { position: 'bottom-left' });
   };
 
   clear.value = () => {
@@ -281,7 +238,15 @@ onMounted(() => {
     }
     original.value = null;
 
-    ws.close();
+    system.ws.close();
+  };
+
+  undoAction.value = () => {
+    undo(g);
+  };
+
+  redoAction.value = () => {
+    redo(g);
   };
 
   watch(
@@ -304,13 +269,18 @@ onMounted(() => {
   watch(config, (newValue) => {
     newValue.map((item) => {
       const node = g.findById(item.id);
-      const content = node.getModel().content;
-      const delay = node.getModel().delay;
+      const { type, content, delay } = node.getModel();
 
       if (content !== item.content || delay !== item.delay) {
         node.update({
           content: item.content,
           delay: item.delay,
+        });
+      }
+
+      if (type === 'output') {
+        node.getInEdges().forEach((edge) => {
+          edge.refresh();
         });
       }
 
@@ -325,7 +295,7 @@ onMounted(() => {
   });
 
   watch(
-    () => hasDialog.value,
+    () => dialog.hasDialog(),
     (value) => {
       if (value) {
         g.removeBehaviors('keyboard-interactions');

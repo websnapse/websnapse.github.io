@@ -187,7 +187,7 @@ const changeActiveMode = (newMode) => {
             Undo
             <span class="ml-2 text-light/50 dark:text-dark/50">^z</span>
           </template>
-          <button class="tool-button" @click="undo">
+          <button class="tool-button" @click="$emit('undo')">
             <v-icon name="la-undo-solid" />
           </button>
         </Popper>
@@ -197,7 +197,7 @@ const changeActiveMode = (newMode) => {
             Redo
             <span class="ml-2 text-light/50 dark:text-dark/50">^Z</span>
           </template>
-          <button class="tool-button" @click="redo">
+          <button class="tool-button" @click="$emit('redo')">
             <v-icon name="la-redo-solid" />
           </button>
         </Popper>
@@ -218,7 +218,7 @@ const changeActiveMode = (newMode) => {
           <button type="button" @click="toggleDisplay" class="tool-button">
             <v-icon
               :name="
-                settings.view === 'full'
+                settings.view === 'simple'
                   ? 'pr-window-maximize'
                   : 'pr-window-minimize'
               "
