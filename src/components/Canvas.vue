@@ -142,35 +142,6 @@ const play = async () => {
       `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
     );
     original.value = system.data();
-    system.ws.onopen = function () {
-      system.ws.send(
-        JSON.stringify({
-          data: system.data(),
-          speed: parseInt(system.speed),
-        })
-      );
-    };
-    system.ws.onmessage = function (event) {
-      const data = JSON.parse(event.data);
-      switch (data.type) {
-        case 'prompt':
-          dialog.details = data.choices;
-          dialog.chooseRule = true;
-          break;
-        case 'step':
-          config.value = data.configurations;
-          if (data.halted && navbar.running) {
-            $toast.success('Simulation completed successfully');
-            navbar.running = false;
-          }
-          break;
-        case 'history':
-          system.history = data.history;
-          break;
-        default:
-          break;
-      }
-    };
   } else {
     system.ws.send(JSON.stringify({ cmd: 'continue' }));
   }
@@ -254,6 +225,41 @@ onMounted(() => {
   redoAction.value = () => {
     redo(g);
   };
+
+  watch(
+    () => system.ws,
+    (value) => {
+      value.onopen = function () {
+        value.send(
+          JSON.stringify({
+            data: system.data(),
+            speed: parseInt(system.speed),
+          })
+        );
+      };
+      value.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        switch (data.type) {
+          case 'prompt':
+            dialog.details = data.choices;
+            dialog.chooseRule = true;
+            break;
+          case 'step':
+            config.value = data.configurations;
+            if (data.halted && navbar.running) {
+              $toast.success('Simulation completed successfully');
+              navbar.running = false;
+            }
+            break;
+          case 'history':
+            system.history = data.history;
+            break;
+          default:
+            break;
+        }
+      };
+    }
+  );
 
   watch(
     () => navbar.running,
