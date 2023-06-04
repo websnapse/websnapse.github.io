@@ -14,7 +14,7 @@
     >
       <v-icon name="la-clock-solid" />
       Tick:
-      <span class="ml-2 font-bold text-light/80">{{ system.tick }}</span>
+      <span class="ml-2 font-bold dark:text-light/80">{{ system.tick }}</span>
     </div>
   </div>
   <div
