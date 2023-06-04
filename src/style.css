@@ -95,6 +95,10 @@ canvas {
   @apply dark:invert-[.9];
 }
 
+.minimap {
+  @apply absolute right-4 bottom-4;
+}
+
 .active-toggle {
   @apply relative text-primary;
 }

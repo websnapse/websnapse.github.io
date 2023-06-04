@@ -12,9 +12,23 @@ export default function createGraph(container, width, height) {
     img: settings.gridImage,
   });
 
+  const minimap = new G6.Minimap({
+    size: [200, 150],
+    className: 'minimap',
+    type: 'delegate',
+    padding: 100,
+    delegateStyle: {
+      fill: style.primary,
+      stroke: settings.dark ? style.light : style.dark,
+      lineWidth: 2,
+    },
+  });
+
+  console.log(minimap);
+
   const graph = new G6.Graph({
     container: container,
-    plugins: [grid],
+    plugins: [grid, minimap],
     width: width,
     height: height,
     linkCenter: false,
