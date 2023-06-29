@@ -1,6 +1,7 @@
 <script setup>
 import { useDark, useToggle } from '@vueuse/core';
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
+import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import Logo from '@/assets/logo.vue';
 
 import { saveSystem } from '@/graph/utils/parse-system';
@@ -10,13 +11,10 @@ import navbar from '@/stores/navbar.js';
 import graph from '@/stores/graph';
 import system from '@/stores/system';
 import dialog from '@/stores/dialog';
+import { ref } from 'vue';
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
-
-const toggleDisplay = () => {
-  settings.view = settings.view === 'full' ? 'simple' : 'full';
-};
 
 const saveGraph = () => saveSystem(graph.value);
 
@@ -38,6 +36,34 @@ const openFileInput = () => {
   document.body.appendChild(fileInput);
   document.getElementById('fileInput').click();
   document.body.removeChild(fileInput);
+};
+
+const samples = [
+  {
+    name: '2N Generator',
+    file: 'multiples-of/multiples_of(002).json',
+  },
+  {
+    name: 'Bit Adder',
+    file: 'bit-adder/bit_adder([7,11]).json',
+  },
+  {
+    name: 'Comparator',
+    file: 'comparator/comparator(4,2).json',
+  },
+  {
+    name: 'Subset Sum',
+    file: 'subset-sum/subset_sum([1,2,3],5).json',
+  },
+];
+
+const loadSample = (file) => {
+  // load file from public/samples
+  fetch(`/samples/${file}`)
+    .then((res) => res.json())
+    .then((data) => {
+      emit('load', data);
+    });
 };
 
 const emit = defineEmits(['load', 'clear']);
@@ -77,11 +103,42 @@ const getHistory = () => {
           <MenuItems
             class="absolute py-1 mt-2 origin-top-left divide-y rounded-md shadow text-light shadow-dark left-1 w-max divide-dark/10 dark:divide-light/10 bg-dark dark:bg-light dark:text-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
           >
-            <MenuItem v-slot="{ active }" ref="samples">
-              <button :class="active ? 'bg-primary' : ''" class="menu-button">
-                <v-icon name="la-flask-solid" class="mr-2" />
-                Samples
-              </button>
+            <MenuItem v-slot="{ active }" ref="get-samples">
+              <Popover v-slot="{ open }" class="relative">
+                <PopoverButton
+                  :class="active ? 'bg-primary' : ''"
+                  class="menu-button"
+                >
+                  <v-icon name="la-flask-solid" class="mr-2" />
+                  Samples
+                </PopoverButton>
+
+                <transition
+                  enter-active-class="transition duration-200 ease-out"
+                  enter-from-class="-translate-x-1 opacity-0"
+                  enter-to-class="translate-x-0 opacity-100"
+                  leave-active-class="transition duration-150 ease-in"
+                  leave-from-class="translate-x-0 opacity-100"
+                  leave-to-class="-translate-x-1 opacity-0"
+                >
+                  <PopoverPanel
+                    class="absolute top-0 z-10 w-full ml-2 left-full"
+                  >
+                    <ul
+                      class="flex flex-col py-1 rounded-lg shadow text-light bg-dark shadow-dark left-1 w-max divide-dark/10 dark:divide-light/10 dark:bg-light dark:text-dark ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    >
+                      <li v-for="sample in samples">
+                        <button
+                          class="w-full px-4 py-2 text-left hover:bg-light/10 dark:hover:bg-dark/10"
+                          @click="loadSample(sample.file)"
+                        >
+                          {{ sample.name }}
+                        </button>
+                      </li>
+                    </ul>
+                  </PopoverPanel>
+                </transition>
+              </Popover>
             </MenuItem>
             <MenuItem v-slot="{ active }" ref="load">
               <button
@@ -105,8 +162,13 @@ const getHistory = () => {
             </MenuItem>
             <MenuItem v-slot="{ active }" ref="setting" @click="toggleDark()">
               <button :class="active ? 'bg-primary' : ''" class="menu-button">
-                <v-icon name="la-cog-solid" class="mr-2" />
-                Settings
+                <v-icon
+                  name="la-moon-solid"
+                  v-if="!settings.dark"
+                  class="mr-2"
+                />
+                <v-icon name="la-sun-solid" v-else class="mr-2" />
+                Theme
               </button>
             </MenuItem>
           </MenuItems>

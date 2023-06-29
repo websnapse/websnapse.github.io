@@ -81,10 +81,11 @@ onMounted(() => {
   graph.value = g;
 
   load.value = (data) => {
-    system.reset = null;
+    const loadedSystem = importSystem(data);
     g.destroyLayout();
     g.clear();
-    g.changeData(importSystem(data), true);
+    g.changeData(loadedSystem, true);
+    system.reset = loadedSystem;
     g.fitCenter();
     $toast.success('System imported successfully', { position: 'top-right' });
   };
