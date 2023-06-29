@@ -1,7 +1,7 @@
 import { watch, reactive } from 'vue';
 import graph from './graph';
 import sample from '../data.json';
-import { exportSytem } from '@/graph/utils/parse-system';
+import { exportSystem } from '@/graph/utils/parse-system';
 import { useStorage } from '@vueuse/core';
 
 const system = reactive({
@@ -16,12 +16,10 @@ const system = reactive({
   ws: null,
 
   data() {
-    return graph.value ? exportSytem(graph.value) : this.backup;
+    return graph.value ? exportSystem() : this.backup;
   },
   backupSystem() {
-    this.backup = system.reset
-      ? exportSytem(system.reset)
-      : exportSytem(graph.value);
+    this.backup = system.reset ? exportSystem(system.reset) : exportSystem();
   },
 });
 
