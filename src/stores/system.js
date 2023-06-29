@@ -16,12 +16,10 @@ const system = reactive({
   ws: null,
 
   data() {
-    return graph.value ? exportSystem() : this.backup;
+    return graph.value ? exportSystem(graph.value) : this.backup;
   },
   backupSystem() {
-    this.backup = system.reset
-      ? exportSystem(graph.value)
-      : exportSystem(graph.value);
+    this.backup = system.reset ? system.reset : exportSystem(graph.value);
   },
 });
 
