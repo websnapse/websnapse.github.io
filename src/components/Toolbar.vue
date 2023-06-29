@@ -11,7 +11,6 @@ import navbar from '@/stores/navbar.js';
 import graph from '@/stores/graph';
 import system from '@/stores/system';
 import dialog from '@/stores/dialog';
-import { ref } from 'vue';
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);

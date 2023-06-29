@@ -1,5 +1,3 @@
-import graph from '@/stores/graph';
-
 export const importSystem = (system) => {
   const { neurons, synapses } = system;
 
@@ -31,9 +29,9 @@ export const importSystem = (system) => {
   return graph_system;
 };
 
-export const exportSystem = (system) => {
-  const nodes = system ? system.nodes : graph.value.save().nodes;
-  const edges = system ? system.edges : graph.value.save().edges;
+export const exportSystem = (graph) => {
+  const nodes = graph.save().nodes;
+  const edges = graph.save().edges;
 
   const parsed_nodes = nodes?.map((node) => {
     const { id, content, rules, type, x, y } = node;
@@ -42,7 +40,7 @@ export const exportSystem = (system) => {
       return {
         id,
         type,
-        content: String(content),
+        content,
         position: {
           x,
           y,

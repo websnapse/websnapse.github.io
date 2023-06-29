@@ -19,7 +19,9 @@ const system = reactive({
     return graph.value ? exportSystem() : this.backup;
   },
   backupSystem() {
-    this.backup = system.reset ? exportSystem(system.reset) : exportSystem();
+    this.backup = system.reset
+      ? exportSystem(graph.value)
+      : exportSystem(graph.value);
   },
 });
 
