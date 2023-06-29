@@ -129,7 +129,7 @@ const getHistory = () => {
                     >
                       <li v-for="sample in samples">
                         <button
-                          class="w-full px-4 py-2 text-left hover:bg-light/10 dark:hover:bg-dark/10"
+                          class="w-full px-4 py-2 text-left hover:bg-primary dark:hover:bg-primary"
                           @click="loadSample(sample.file)"
                         >
                           {{ sample.name }}
