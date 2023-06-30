@@ -130,25 +130,25 @@ export default function initalizeEdge() {
             strokeOpacity: 0,
           });
           if (value) {
-            let index = 0;
-            shape.animate(
-              () => {
-                index++;
-                if (index > 5) {
-                  index = 0;
-                }
-                const res = {
-                  lineDash: style.lineDash,
-                  lineDashOffset: -index,
-                };
-                // return the params for this frame
-                return res;
-              },
-              {
-                repeat: true,
-                duration: model.duration ?? 1000,
-              }
-            );
+            shape.attr('lineDash', style.lineDash);
+            // shape.animate(
+            //   () => {
+            //     index++;
+            //     if (index > 5) {
+            //       index = 0;
+            //     }
+            //     const res = {
+            //       lineDash: style.lineDash,
+            //       lineDashOffset: -index,
+            //     };
+            //     // return the params for this frame
+            //     return res;
+            //   },
+            //   {
+            //     repeat: true,
+            //     duration: model.duration ?? 1000,
+            //   }
+            // );
           } else {
             shape.stopAnimate();
             shape.attr('lineDash', null);

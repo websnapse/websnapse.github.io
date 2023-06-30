@@ -67,7 +67,6 @@ watch(
 );
 
 const handleBeforeUnload = (event) => {
-  event.preventDefault();
   system.backupSystem();
 };
 
@@ -163,7 +162,13 @@ onMounted(() => {
             dialog.chooseRule = true;
             break;
           case 'step':
-            config.value = data.configurations;
+            value.send(
+              JSON.stringify({
+                cmd: 'received',
+              })
+            );
+            config.value = JSON.parse(JSON.stringify(data.configurations));
+            data.configurations = null;
             if (data.halted && navbar.running) {
               $toast.success('Simulation completed successfully', {
                 position: 'top-right',
@@ -178,6 +183,7 @@ onMounted(() => {
           default:
             break;
         }
+        event = null;
       };
     }
   );
