@@ -64,7 +64,7 @@ canvas {
 }
 
 .g6-component-contextmenu {
-  @apply bg-white dark:bg-neutral dark:border-neutral dark:shadow-white/10 dark:shadow-lg;
+  @apply bg-light/80 dark:bg-neutral dark:border-neutral dark:shadow-white/10 dark:shadow-lg;
 }
 
 .context-menu-item {

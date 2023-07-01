@@ -8,15 +8,7 @@
     @zoomOut="zoomOut"
   />
   <SimulationControls @reset="reset" />
-  <div class="absolute flex gap-4 top-2 left-2 w-fit">
-    <div
-      class="p-4 border rounded-md shadow-sm dark:text-dark-50 top-full w-fit bg-light -z-1 bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
-    >
-      <v-icon name="la-clock-solid" />
-      Tick:
-      <span class="ml-2 font-bold dark:text-light/80">{{ system.tick }}</span>
-    </div>
-  </div>
+  <Tick />
   <div
     id="mountNode"
     class="flex items-start justify-center w-screen h-screen overflow-hidden"
@@ -42,6 +34,7 @@ import { useToast } from 'vue-toast-notification';
 import { redo, undo } from '@/graph/utils/action-stack';
 import ViewControls from './ViewControls.vue';
 import SimulationControls from './SimulationControls.vue';
+import Tick from './Tick.vue';
 
 const $toast = useToast();
 
@@ -81,6 +74,7 @@ onMounted(() => {
 
   load.value = (data) => {
     system.reset = null;
+    system.tick = 0;
     g.destroyLayout();
     g.clear();
     g.changeData(importSystem(data), true);
@@ -97,6 +91,7 @@ onMounted(() => {
       true
     );
     g.clear();
+    system.reset = null;
   };
 
   reset.value = async () => {
@@ -143,6 +138,8 @@ onMounted(() => {
     });
   };
 
+  const refreshTick = ref(0);
+
   watch(
     () => system.ws,
     (value) => {
@@ -162,6 +159,7 @@ onMounted(() => {
             dialog.chooseRule = true;
             break;
           case 'step':
+            console.timeEnd('step');
             config.value = JSON.parse(JSON.stringify(data.configurations));
             data.configurations = null;
             if (data.halted && navbar.running) {
@@ -179,6 +177,7 @@ onMounted(() => {
               );
             }
             system.tick = data.tick;
+            console.time('step');
             break;
           case 'history':
             system.history = data.history;
@@ -209,11 +208,12 @@ onMounted(() => {
   );
 
   async function processItems(newValue) {
-    if (!newValue) return;
-
     const nodes = g
       .getNodes()
       .filter((node) => node.getModel().type !== 'input');
+    nodes.forEach((node) => {
+      node.update;
+    });
     const nodeMap = nodes.reduce((acc, node) => {
       acc[node.getModel().id] = node;
       return acc;
@@ -223,28 +223,31 @@ onMounted(() => {
       const node = nodeMap[item.id];
       const { type, content, delay } = node.getModel();
 
-      if (content !== item.content && delay !== item.delay) {
-        node.update({
-          content: item.content,
-          delay: item.delay,
-        });
-      }
+      if (refreshTick.value == 0 || !navbar.running) {
+        if (content !== item.content && delay !== item.delay) {
+          console.log('update both');
+          node.update({
+            content: item.content,
+            delay: item.delay,
+          });
+        } else {
+          if (content !== item.content) {
+            node.update({
+              content: item.content,
+            });
+          }
+        }
 
-      if (content !== item.content) {
-        node.update({
-          content: item.content,
-        });
-      }
-
-      if (delay !== item.delay) {
-        node.update({
-          delay: item.delay,
-        });
+        if (delay !== item.delay) {
+          node.update({
+            delay: item.delay,
+          });
+        }
       }
 
       if (type === 'output') {
         node.getInEdges().forEach(async (edge) => {
-          await edge.refresh();
+          edge.refresh();
         });
       }
 
@@ -256,16 +259,76 @@ onMounted(() => {
         edge.setState('spiking', item.state === 'spiking');
       });
     });
+
     await Promise.all(promises);
+  }
+
+  async function updateStates(newValue) {
+    const nodes = g
+      .getNodes()
+      .filter((node) => node.getModel().type !== 'input');
+
+    const nodeMap = nodes.reduce((acc, node) => {
+      acc[node.getModel().id] = node;
+      return acc;
+    }, {});
+
+    const promises = newValue.map(async (item) => {
+      const node = nodeMap[item.id];
+      const { type } = node.getModel();
+
+      if (type === 'output') {
+        node.getInEdges().forEach(async (edge) => {
+          edge.refresh();
+        });
+      }
+
+      node.clearStates(['spiking', 'closed', 'forgetting']);
+      if (item.state !== 'default') {
+        node.setState(item.state, true);
+      }
+
+      if (settings.view === 'simple') {
+        node.setState('simple', true);
+      }
+
+      node.getOutEdges().forEach((edge) => {
+        edge.setState('spiking', item.state === 'spiking');
+      });
+    });
+
+    Promise.all(promises);
+  }
+
+  function changeItems(newValue) {
+    const update = {
+      nodes: newValue.map((item) => {
+        const { id, content, delay, state } = item;
+        return {
+          id,
+          content,
+          delay,
+          state,
+        };
+      }),
+      edges: g.save().edges,
+    };
+
+    if (refreshTick.value == 0 || !navbar.running) {
+      g.changeData(update);
+    }
+    updateStates(newValue);
   }
 
   watch(
     config,
     (newValue) => {
       if (!newValue) return;
+      refreshTick.value = (refreshTick.value + 1) % settings.refreshRate;
       processItems(newValue);
+      // changeItems(newValue);
     },
-    { deep: true, immediate: true }
+    { deep: true }
   );
 
   watch(

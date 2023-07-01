@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute z-10 flex gap-2 mx-auto left-4 bottom-4 w-fit">
+  <div class="absolute z-10 hidden gap-2 mx-auto sm:flex left-4 bottom-4 w-fit">
     <div
       class="flex items-center border divide-x rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
     >

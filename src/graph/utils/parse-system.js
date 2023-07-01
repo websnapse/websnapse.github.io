@@ -78,7 +78,7 @@ export const exportSystem = (graph) => {
 
 export const saveSystem = (graph) => {
   const a = document.createElement('a');
-  const file = new Blob([JSON.stringify(exportSytem(graph))], {
+  const file = new Blob([JSON.stringify(exportSystem(graph))], {
     type: 'text/plain',
   });
   a.href = URL.createObjectURL(file);

@@ -93,13 +93,11 @@ export default function initializeContextMenu(graph) {
         case 'Radial layout':
           graph.updateLayout(
             {
-              type: 'radial',
-              linkDistance: 1000,
-              maxIteration: 1000,
-              nodeSpacing: 100,
-              unitRadius: 20,
-              preventOverlap: true,
-              strictRadial: true,
+              type: 'circular',
+              radius: null,
+              clockwise: false,
+              ordering: 'degree',
+              angleRatio: 1,
             },
             'center'
           );

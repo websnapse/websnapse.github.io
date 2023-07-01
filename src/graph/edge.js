@@ -12,7 +12,7 @@ const options = {
       lineAppendWidth: 20,
       shadowBlur: 0,
       shadowColor: style.primary,
-      lineWidth: 2,
+      lineWidth: 1,
       stroke: settings.dark ? style.darkContent : style.content,
       endArrow: {
         path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
@@ -48,6 +48,7 @@ const options = {
         padding: [5, 5, 5, 5],
         radius: 5,
       },
+      fontFamily: 'KaTeX_Main',
     },
   },
 };
@@ -92,7 +93,7 @@ export default function initalizeEdge() {
           attrs: {
             lineAppendWidth: 30,
             stroke: settings.dark ? style.darkContent : style.content,
-            lineWidth: 2,
+            lineWidth: 1,
             endArrow: {
               path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
               fill: settings.dark ? style.darkContent : style.content,
@@ -119,7 +120,7 @@ export default function initalizeEdge() {
               ? style.darkContent
               : style.content
           );
-          shape.attr('lineWidth', value ? 5 : 2);
+          shape.attr('lineWidth', value ? 1 : 1);
           shape.attr('endArrow', {
             path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
             fill: value
@@ -131,24 +132,22 @@ export default function initalizeEdge() {
           });
           if (value) {
             shape.attr('lineDash', style.lineDash);
-            // shape.animate(
-            //   () => {
-            //     index++;
-            //     if (index > 5) {
-            //       index = 0;
-            //     }
-            //     const res = {
-            //       lineDash: style.lineDash,
-            //       lineDashOffset: -index,
-            //     };
-            //     // return the params for this frame
-            //     return res;
-            //   },
-            //   {
-            //     repeat: true,
-            //     duration: model.duration ?? 1000,
-            //   }
-            // );
+            let index = 0;
+            shape.animate(
+              () => {
+                index = (index + 1) % 6;
+                const res = {
+                  lineDash: style.lineDash,
+                  lineDashOffset: -index,
+                };
+                // return the params for this frame
+                return res;
+              },
+              {
+                repeat: true,
+                duration: model.duration ?? 1000,
+              }
+            );
           } else {
             shape.stopAnimate();
             shape.attr('lineDash', null);
@@ -167,7 +166,7 @@ export default function initalizeEdge() {
             lineAppendWidth: 20,
             shadowBlur: 0,
             shadowColor: style.primary,
-            lineWidth: 2,
+            lineWidth: 1,
             stroke: settings.dark ? style.darkContent : style.content,
             endArrow: {
               path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',

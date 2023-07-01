@@ -15,11 +15,12 @@ const settings = reactive({
     return gridImage[settings.grid];
   }),
   view: useStorage('view', 'full'),
+  refreshRate: useStorage('refresh', 100),
 });
 
 watch(
   () => settings.grid,
-  (value) => {
+  () => {
     const grid = document.querySelector('.g6-grid');
 
     if (grid) {

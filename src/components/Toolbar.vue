@@ -80,7 +80,9 @@ const getHistory = () => {
 </script>
 
 <template>
-  <div class="absolute left-0 right-0 z-10 flex gap-2 mx-auto top-2 w-fit">
+  <div
+    class="absolute z-10 flex gap-2 mx-auto sm:left-0 left-2 sm:right-0 top-2 w-fit"
+  >
     <div
       class="flex items-center p-1 border rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
     >

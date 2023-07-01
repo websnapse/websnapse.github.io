@@ -5,7 +5,12 @@ export default function interact(graph) {
     const { item } = evt;
     if (item.getType() === 'node') {
       item.setState('simple', settings.view === 'simple');
-      item.refresh();
+
+      const model = item.getModel();
+
+      if (model.type === 'regular') {
+        item.set('model', { ...model, delay: 0 });
+      }
     }
   });
 

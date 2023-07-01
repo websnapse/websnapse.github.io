@@ -76,6 +76,7 @@ export default function keyboardInteractions() {
             evt.preventDefault();
             duplicateItems(this.graph);
           }
+          break;
         case 'o':
           if (evt.ctrlKey) {
             evt.preventDefault();

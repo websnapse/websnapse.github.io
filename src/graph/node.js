@@ -123,17 +123,19 @@ const drawRegular = (cfg, group) => {
     name: 'label',
   });
 
-  const delay = latexToImg(cfg.delay ?? 0);
-
-  const delay_shape = group.addShape('image', {
+  const delay_shape = group.addShape('text', {
     attrs: {
-      x: -delay.width / 2,
-      y: node_height + start_y + 10,
-      width: delay.width * 0.8,
-      height: delay.height * 0.8,
-      img: delay.dom,
+      x: 0,
+      y: shape.attr('y') + shape.attr('height') + 10,
+      text: cfg.delay ?? 0,
+      textAlign: 'center',
+      textBaseline: 'top',
+      fontSize: 20,
+      fontFamily: 'KaTeX_Main',
+      fill: settings.dark ? style.darkContent : style.content,
     },
     name: 'delay',
+    visible: true,
     zIndex: 20,
   });
 
@@ -341,10 +343,6 @@ const setStateRegular = (name, value, item) => {
     shape.attr('y', -shape.attr('height') / 2);
 
     if (type === 'regular') {
-      const delay = item.getContainer().find((ele) => {
-        return ele.get('name') === 'delay';
-      });
-
       const label = item.getContainer().find((ele) => {
         return ele.get('name') === 'label';
       });
@@ -357,18 +355,17 @@ const setStateRegular = (name, value, item) => {
         return ele.get('name') === 'content-alt';
       });
 
+      const delay = item.getContainer().find((ele) => {
+        return ele.get('name') === 'delay';
+      });
+
       content.hide();
+
+      // label.hide();
 
       content_alt.show();
 
-      label.hide();
-
-      delay.hide();
-
-      delay.attr(
-        'y',
-        value ? shape.attr('height') / 2 + delay.attr('height') : 0
-      );
+      delay.attr('y', value ? shape.attr('height') / 2 + 10 : 0);
     }
 
     if (type === 'input') {
@@ -481,6 +478,9 @@ const options = {
 export default function initializeNode() {
   G6.registerNode('regular', {
     options,
+    updateContent: (content) => {
+      console.log('updateContent', content);
+    },
     drawShape: (cfg, group) => {
       return drawRegular(cfg, group);
     },
