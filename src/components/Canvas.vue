@@ -162,11 +162,6 @@ onMounted(() => {
             dialog.chooseRule = true;
             break;
           case 'step':
-            value.send(
-              JSON.stringify({
-                cmd: 'received',
-              })
-            );
             config.value = JSON.parse(JSON.stringify(data.configurations));
             data.configurations = null;
             if (data.halted && navbar.running) {
@@ -174,6 +169,14 @@ onMounted(() => {
                 position: 'top-right',
               });
               navbar.running = false;
+            }
+
+            if (navbar.running) {
+              value.send(
+                JSON.stringify({
+                  cmd: 'received',
+                })
+              );
             }
             system.tick = data.tick;
             break;
@@ -206,33 +209,54 @@ onMounted(() => {
   );
 
   async function processItems(newValue) {
-    await Promise.all(
-      newValue?.map(async (item) => {
-        const node = g.findById(item.id);
-        const { type, content, delay } = node.getModel();
+    if (!newValue) return;
 
-        if (content !== item.content || delay !== item.delay) {
-          node.update({
-            content: item.content,
-            delay: item.delay,
-          });
-        }
+    const nodes = g
+      .getNodes()
+      .filter((node) => node.getModel().type !== 'input');
+    const nodeMap = nodes.reduce((acc, node) => {
+      acc[node.getModel().id] = node;
+      return acc;
+    }, {});
 
-        if (type === 'output') {
-          node.getInEdges().forEach(async (edge) => {
-            await edge.refresh();
-          });
-        }
+    const promises = newValue.map(async (item) => {
+      const node = nodeMap[item.id];
+      const { type, content, delay } = node.getModel();
 
-        node.clearStates(['spiking', 'closed', 'forgetting']);
-        if (item.state !== 'default') {
-          node.setState(item.state, true);
-        }
-        node.getOutEdges().forEach((edge) => {
-          edge.setState('spiking', item.state === 'spiking');
+      if (content !== item.content && delay !== item.delay) {
+        node.update({
+          content: item.content,
+          delay: item.delay,
         });
-      })
-    );
+      }
+
+      if (content !== item.content) {
+        node.update({
+          content: item.content,
+        });
+      }
+
+      if (delay !== item.delay) {
+        node.update({
+          delay: item.delay,
+        });
+      }
+
+      if (type === 'output') {
+        node.getInEdges().forEach(async (edge) => {
+          await edge.refresh();
+        });
+      }
+
+      node.clearStates(['spiking', 'closed', 'forgetting']);
+      if (item.state !== 'default') {
+        node.setState(item.state, true);
+      }
+      node.getOutEdges().forEach((edge) => {
+        edge.setState('spiking', item.state === 'spiking');
+      });
+    });
+    await Promise.all(promises);
   }
 
   watch(

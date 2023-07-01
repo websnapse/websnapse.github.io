@@ -4,9 +4,7 @@ import style from '@/stores/styles';
 import settings from '@/stores/settings';
 
 const drawRegular = (cfg, group) => {
-  const rendered_content = latexToImg(cfg.content);
-  const rendered_rules = cfg.rules.map((key) => latexToImg(key));
-  const render = [rendered_content, ...rendered_rules];
+  const render = [cfg.content, ...cfg.rules].map((item) => latexToImg(item));
 
   const mw = Math.max(
     Math.max(...render.map((item) => item.width)),
@@ -52,6 +50,23 @@ const drawRegular = (cfg, group) => {
       img: render[0].dom,
     },
     name: 'content',
+    draggable: true,
+    zIndex: 20,
+  });
+
+  const content_alt = group.addShape('text', {
+    attrs: {
+      y: 0,
+      x: start_x + (style.p + mw / 2),
+      text: cfg.content,
+      textAlign: 'center',
+      textBaseline: 'middle',
+      fontSize: 20,
+      fontFamily: 'KaTeX_Main',
+      fill: settings.dark ? style.darkContent : style.content,
+    },
+    name: 'content-alt',
+    visible: false,
     draggable: true,
     zIndex: 20,
   });
@@ -329,6 +344,26 @@ const setStateRegular = (name, value, item) => {
       const delay = item.getContainer().find((ele) => {
         return ele.get('name') === 'delay';
       });
+
+      const label = item.getContainer().find((ele) => {
+        return ele.get('name') === 'label';
+      });
+
+      const content = item.getContainer().find((ele) => {
+        return ele.get('name') === 'content';
+      });
+
+      const content_alt = item.getContainer().find((ele) => {
+        return ele.get('name') === 'content-alt';
+      });
+
+      content.hide();
+
+      content_alt.show();
+
+      label.hide();
+
+      delay.hide();
 
       delay.attr(
         'y',
