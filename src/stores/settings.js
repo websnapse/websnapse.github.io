@@ -15,7 +15,7 @@ const settings = reactive({
     return gridImage[settings.grid];
   }),
   view: useStorage('view', 'full'),
-  refreshRate: useStorage('refresh', 100),
+  refreshRate: useStorage('refresh', 1),
 });
 
 watch(
