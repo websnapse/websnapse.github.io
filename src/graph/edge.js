@@ -12,7 +12,7 @@ const options = {
       lineAppendWidth: 20,
       shadowBlur: 0,
       shadowColor: style.primary,
-      lineWidth: 1,
+      lineWidth: 2,
       stroke: settings.dark ? style.darkContent : style.content,
       endArrow: {
         path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
@@ -120,7 +120,7 @@ export default function initalizeEdge() {
               ? style.darkContent
               : style.content
           );
-          shape.attr('lineWidth', value ? 1 : 1);
+          shape.attr('lineWidth', value ? 4 : 1);
           shape.attr('endArrow', {
             path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
             fill: value

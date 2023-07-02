@@ -4,7 +4,9 @@ export default function interact(graph) {
   graph.on('afteradditem', (evt) => {
     const { item } = evt;
     if (item.getType() === 'node') {
-      item.setState('simple', settings.view === 'simple');
+      if (settings.view === 'simple') {
+        item.setState('simple', true);
+      }
 
       const model = item.getModel();
 
@@ -29,6 +31,7 @@ export default function interact(graph) {
   });
 
   graph.on('afterrender', () => {
+    console.log('xxx');
     graph.fitView([120, 50, 180, 50], null, true);
   });
 

@@ -4,7 +4,11 @@ import style from '@/stores/styles';
 import settings from '@/stores/settings';
 
 const drawRegular = (cfg, group) => {
-  const render = [cfg.content, ...cfg.rules].map((item) => latexToImg(item));
+  const render_content = latexToImg(cfg.content);
+  const render_rules = latexToImg(
+    `\\displaylines{${cfg.rules.join('\\\\[-0.5em]')}}`
+  );
+  const render = [render_content, render_rules];
 
   const mw = Math.max(
     Math.max(...render.map((item) => item.width)),
@@ -71,43 +75,17 @@ const drawRegular = (cfg, group) => {
     zIndex: 20,
   });
 
-  cfg.rules.forEach((_, index) => {
-    const rule = group.addShape('image', {
-      attrs: {
-        width: render[1 + index].width,
-        height: render[1 + index].height,
-        y:
-          -node_height / 2 +
-          style.p +
-          style.m +
-          render
-            .slice(0, 1 + index)
-            .reduce((acc, item) => acc + item.height, 0),
-        x: -node_width / 2 + style.p + mw / 2 - render[1 + index].width / 2,
-        img: render[1 + index].dom,
-      },
-      name: `rule-${index}`,
-      visible: true,
-      draggable: true,
-      zIndex: 20,
-    });
-  });
-
-  const ruleBoundary = group.addShape('rect', {
+  const rules = group.addShape('image', {
     attrs: {
       y: start_y + style.p + render[0].height + style.m,
-      x: start_x + style.p,
-      width: mw,
-      height: render
-        .slice(0, 1 + cfg.rules.length)
-        .reduce((acc, item) => acc + item.height, 0),
-      radius: 10,
-      fill: '#00000000',
+      x: start_x + (style.p + mw / 2 - render[1].width / 2),
+      width: render[1].width,
+      height: render[1].height,
+      img: render[1].dom,
     },
-    visible: true,
     name: 'rules',
     draggable: true,
-    zIndex: 30,
+    zIndex: 20,
   });
 
   const node_id = latexToImg(cfg.id);

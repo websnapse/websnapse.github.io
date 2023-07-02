@@ -208,12 +208,7 @@ onMounted(() => {
   );
 
   async function processItems(newValue) {
-    const nodes = g
-      .getNodes()
-      .filter((node) => node.getModel().type !== 'input');
-    nodes.forEach((node) => {
-      node.update;
-    });
+    const nodes = g.getNodes();
     const nodeMap = nodes.reduce((acc, node) => {
       acc[node.getModel().id] = node;
       return acc;
@@ -225,7 +220,6 @@ onMounted(() => {
 
       if (refreshTick.value == 0 || !navbar.running) {
         if (content !== item.content && delay !== item.delay) {
-          console.log('update both');
           node.update({
             content: item.content,
             delay: item.delay,
