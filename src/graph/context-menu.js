@@ -1,10 +1,10 @@
 import G6 from '@antv/g6';
 import addNode from './utils/add-node';
 import deleteItems from './utils/delete-items';
-import graph_ref from '@/stores/graph';
-import { saveSystem } from './utils/parse-system';
 import { updateNeuron, updateSynapse } from '@/utils/dialog';
 import duplicateItems from './utils/duplicate-items';
+import settings from '@/stores/settings';
+import style from '@/stores/styles';
 
 export default function initializeContextMenu(graph) {
   const contextMenu = new G6.Menu({
@@ -67,7 +67,10 @@ export default function initializeContextMenu(graph) {
           graph.fitView([120, 50, 180, 50], null, true);
           break;
         case 'Save':
-          saveSystem(graph_ref.value);
+          graph.downloadFullImage('system', 'image/png', {
+            backgroundColor: settings.dark ? style.dark : '#fff',
+            padding: 20,
+          });
           break;
         case 'Clear':
           graph.clear();

@@ -1,16 +1,16 @@
 <template>
   <div class="absolute z-10 hidden gap-2 mx-auto sm:flex left-4 bottom-4 w-fit">
     <div
-      class="flex items-center border divide-x rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
+      class="flex items-center border divide-x rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/[0.15] dark:border-light/5 dark:bg-neutral/80"
     >
-      <div class="border-dark/5 dark:border-light/5">
+      <div class="border-dark/[0.15] dark:border-light/5">
         <Popper class="tooltip" hover>
           <button class="p-2 tool-button" @click="$emit('zoomIn')">
             <v-icon scale="0.8" name="la-plus-solid" />
           </button>
         </Popper>
       </div>
-      <div class="border-dark/5 dark:border-light/5">
+      <div class="border-dark/[0.15] dark:border-light/5">
         <Popper class="tooltip" hover>
           <button class="p-2 tool-button" @click="$emit('zoomOut')">
             <v-icon scale="0.8" name="la-minus-solid" />
@@ -19,9 +19,9 @@
       </div>
     </div>
     <div
-      class="flex items-center border divide-x rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
+      class="flex items-center border divide-x rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/[0.15] dark:border-light/5 dark:bg-neutral/80"
     >
-      <div class="border-dark/5 dark:border-light/5">
+      <div class="border-dark/[0.15] dark:border-light/5">
         <Popper class="tooltip" hover>
           <template #content>
             Undo
@@ -32,7 +32,7 @@
           </button>
         </Popper>
       </div>
-      <div class="border-dark/5 dark:border-light/5">
+      <div class="border-dark/[0.15] dark:border-light/5">
         <Popper class="tooltip" hover>
           <template #content>
             Redo
@@ -45,7 +45,7 @@
       </div>
     </div>
     <div
-      class="flex items-center border rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/5 dark:border-light/5 dark:bg-neutral/80"
+      class="flex items-center border rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/[0.15] dark:border-light/5 dark:bg-neutral/80"
     >
       <Popper class="tooltip" hover>
         <template #content>

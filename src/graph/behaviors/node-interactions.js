@@ -32,14 +32,32 @@ export default function nodeInteractions() {
       if (!updated.success) return;
 
       if (updated.type === 'regular') {
-        model.id = updated.id;
-        model.content = updated.content;
-        model.rules = updated.rules;
+        if (updated.rules !== model.rules) {
+          // get item edges
+          let edges = [];
+          item.getEdges().forEach((edge) => edges.push(clone(edge.getModel())));
+          setTimeout(() => {
+            this.graph.removeItem(item);
+            this.graph.addItem('node', {
+              ...model,
+              ...updated,
+            });
+            edges.forEach((edge) => {
+              this.graph.addItem('edge', edge);
+            });
+          }, 100);
+        }
       } else {
-        model.id = updated.id;
-        model.content = updated.content;
+        if (updated.type === 'regular') {
+          model.id = updated.id;
+          model.content = updated.content;
+          model.rules = updated.rules;
+        } else {
+          model.id = updated.id;
+          model.content = updated.content;
+        }
+        this.graph.updateItem(item, model, true);
       }
-      this.graph.updateItem(item, model, true);
     },
   });
 }

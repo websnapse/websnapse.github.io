@@ -2,22 +2,23 @@ import G6 from '@antv/g6';
 import { foldString, latexToImg } from '@/utils/math';
 import style from '@/stores/styles';
 import settings from '@/stores/settings';
+import { memoize } from 'lodash';
 
 const drawRegular = (cfg, group) => {
   const render_content = latexToImg(cfg.content);
-  const render_rules = latexToImg(
+  const render_rules = memoize(latexToImg)(
     `\\displaylines{${cfg.rules.join('\\\\[-0.5em]')}}`
   );
   const render = [render_content, render_rules];
 
-  const mw = Math.max(
-    Math.max(...render.map((item) => item.width)),
-    style.min_width
-  );
-  const mh = Math.max(
-    render.reduce((acc, item) => acc + item.height, 0) + style.m,
-    style.min_height
-  );
+  const mw =
+    settings.view === 'full'
+      ? Math.max(...render.map((item) => item.width), style.min_width)
+      : Math.max(render_content.width, 20);
+  const mh =
+    settings.view === 'full'
+      ? Math.max(render.reduce((acc, item) => acc + item.height, 0) + style.m)
+      : 20;
 
   // set neuron size to mw, mh
   const node_width = 2 * style.p + mw;
@@ -33,11 +34,11 @@ const drawRegular = (cfg, group) => {
       y: start_y,
       width: node_width,
       height: node_height,
+      radius: settings.view === 'full' ? style.r : 15,
       stroke: settings.dark ? style.darkContent : style.content,
       lineWidth: style.lineInactive,
       shadowColor: style.primary,
       shadowBlur: 0,
-      radius: style.r,
       fill: settings.dark ? style.dark : style.light,
     },
     name: 'neuron',
@@ -45,32 +46,19 @@ const drawRegular = (cfg, group) => {
     zIndex: 10,
   });
 
-  const content = group.addShape('image', {
+  const content = group.addShape('text', {
     attrs: {
-      y: start_y + style.p,
-      x: start_x + (style.p + mw / 2 - render[0].width / 2),
-      width: render[0].width,
-      height: render[0].height,
-      img: render[0].dom,
-    },
-    name: 'content',
-    draggable: true,
-    zIndex: 20,
-  });
-
-  const content_alt = group.addShape('text', {
-    attrs: {
-      y: 0,
+      y: settings.view === 'full' ? start_y + style.p : 0,
       x: start_x + (style.p + mw / 2),
       text: cfg.content,
       textAlign: 'center',
-      textBaseline: 'middle',
+      textBaseline: settings.view === 'full' ? 'top' : 'middle',
       fontSize: 20,
       fontFamily: 'KaTeX_Main',
       fill: settings.dark ? style.darkContent : style.content,
     },
-    name: 'content-alt',
-    visible: false,
+    name: 'content',
+    visible: true,
     draggable: true,
     zIndex: 20,
   });
@@ -85,21 +73,27 @@ const drawRegular = (cfg, group) => {
     },
     name: 'rules',
     draggable: true,
+    visible: settings.view === 'full',
     zIndex: 20,
   });
 
-  const node_id = latexToImg(cfg.id);
+  if (settings.label) {
+    const node_id = latexToImg(cfg.id);
 
-  const id = group.addShape('image', {
-    attrs: {
-      x: start_x - 15 - node_id.width / 2,
-      y: start_y - 15,
-      width: node_id.width * 0.8,
-      height: node_id.height * 0.8,
-      img: node_id.dom,
-    },
-    name: 'label',
-  });
+    const id = group.addShape('image', {
+      attrs: {
+        x:
+          settings.view === 'full'
+            ? start_x - 15 - node_id.width / 2
+            : start_x + (style.p + mw / 2 - (node_id.width * 0.8) / 2),
+        y: start_y - 20,
+        width: node_id.width * 0.8,
+        height: node_id.height * 0.8,
+        img: node_id.dom,
+      },
+      name: 'label',
+    });
+  }
 
   const delay_shape = group.addShape('text', {
     attrs: {
@@ -125,14 +119,17 @@ const drawRegular = (cfg, group) => {
 const drawInput = (cfg, group) => {
   const render = [latexToImg(foldString(`${cfg.content}`))];
 
-  const mw = Math.max(
-    Math.max(...render.map((item) => item.width)),
-    style.min_width
-  );
-  const mh = Math.max(
-    render.reduce((acc, item) => acc + item.height, 0) + style.m,
-    style.min_height
-  );
+  const mw =
+    settings.view === 'full'
+      ? Math.max(Math.max(...render.map((item) => item.width)), style.min_width)
+      : Math.max(...render.map((item) => item.width), 20);
+  const mh =
+    settings.view === 'full'
+      ? Math.max(
+          render.reduce((acc, item) => acc + item.height, 0),
+          style.min_height
+        )
+      : 20;
 
   // set neuron size to mw, mh
   const node_width = 2 * style.p + mw;
@@ -152,7 +149,7 @@ const drawInput = (cfg, group) => {
       lineWidth: style.lineInactive,
       shadowColor: settings.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
-      radius: style.r,
+      radius: settings.view === 'full' ? style.r : 15,
       fill: settings.dark ? style.dark : style.light,
     },
     name: 'neuron',
@@ -189,18 +186,23 @@ const drawInput = (cfg, group) => {
     zIndex: 20,
   });
 
-  const node_id = latexToImg(cfg.id);
+  if (settings.label) {
+    const node_id = latexToImg(cfg.id);
 
-  const id = group.addShape('image', {
-    attrs: {
-      x: start_x - 15 - node_id.width / 2,
-      y: start_y - 15,
-      width: node_id.width * 0.8,
-      height: node_id.height * 0.8,
-      img: node_id.dom,
-    },
-    name: 'label',
-  });
+    const id = group.addShape('image', {
+      attrs: {
+        x:
+          settings.view === 'full'
+            ? start_x - 15 - node_id.width / 2
+            : start_x + (style.p + mw / 2 - (node_id.width * 0.8) / 2),
+        y: start_y - 20,
+        width: node_id.width * 0.8,
+        height: node_id.height * 0.8,
+        img: node_id.dom,
+      },
+      name: 'label',
+    });
+  }
 
   group.sort();
 
@@ -210,14 +212,17 @@ const drawInput = (cfg, group) => {
 const drawOutput = (cfg, group) => {
   const render = [latexToImg(foldString(`${cfg.content}`))];
 
-  const mw = Math.max(
-    Math.max(...render.map((item) => item.width)),
-    style.min_width
-  );
-  const mh = Math.max(
-    render.reduce((acc, item) => acc + item.height, 0) + style.m,
-    style.min_height
-  );
+  const mw =
+    settings.view === 'full'
+      ? Math.max(Math.max(...render.map((item) => item.width)), style.min_width)
+      : Math.max(...render.map((item) => item.width), 20);
+  const mh =
+    settings.view === 'full'
+      ? Math.max(
+          render.reduce((acc, item) => acc + item.height, 0),
+          style.min_height
+        )
+      : 20;
 
   // set neuron size to mw, mh
   const node_width = 2 * style.p + mw;
@@ -237,7 +242,7 @@ const drawOutput = (cfg, group) => {
       lineWidth: style.lineInactive,
       shadowColor: settings.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
-      radius: style.r,
+      radius: settings.view === 'full' ? style.r : 15,
       fill: settings.dark ? style.dark : style.light,
     },
     name: 'neuron',
@@ -255,7 +260,7 @@ const drawOutput = (cfg, group) => {
       lineWidth: style.lineInactive,
       shadowColor: settings.dark ? style.darkPrimary : style.primary,
       shadowBlur: 0,
-      radius: style.r - 5,
+      radius: shape.attr('radius') - 5,
       fill: settings.dark ? style.dark : style.light,
     },
     name: 'output-indicator',
@@ -276,18 +281,23 @@ const drawOutput = (cfg, group) => {
     zIndex: 20,
   });
 
-  const node_id = latexToImg(cfg.id);
+  if (settings.label) {
+    const node_id = latexToImg(cfg.id);
 
-  const id = group.addShape('image', {
-    attrs: {
-      x: start_x - 15 - node_id.width / 2,
-      y: start_y - 15,
-      width: node_id.width * 0.8,
-      height: node_id.height * 0.8,
-      img: node_id.dom,
-    },
-    name: 'label',
-  });
+    const id = group.addShape('image', {
+      attrs: {
+        x:
+          settings.view === 'full'
+            ? start_x - 15 - node_id.width / 2
+            : start_x + (style.p + mw / 2 - (node_id.width * 0.8) / 2),
+        y: start_y - 20,
+        width: node_id.width * 0.8,
+        height: node_id.height * 0.8,
+        img: node_id.dom,
+      },
+      name: 'label',
+    });
+  }
 
   group.sort();
 
@@ -297,95 +307,10 @@ const drawOutput = (cfg, group) => {
 const setStateRegular = (name, value, item) => {
   const shape = item.get('keyShape');
   const { type } = item.getModel();
-  const rules = item.getContainer().findAll((ele) => {
-    return ele.get('name')?.includes('rule');
-  });
+
   const content = item.getContainer().find((ele) => {
     return ele.get('name') === 'content';
   });
-  if (name === 'simple') {
-    content.attr('x', value ? -content.attr('width') / 2 : -60);
-    content.attr('y', value ? -content.attr('height') / 2 : -60);
-
-    shape.attr(
-      'width',
-      value
-        ? Math.max(style.p + content.attr('width') + style.p, style.min_height)
-        : 2 * 20 + 100
-    );
-    shape.attr('height', value ? style.min_height : 2 * 20 + 100);
-    shape.attr('radius', value ? style.r / 2 : style.r);
-
-    // recenter the shape
-    shape.attr('x', -shape.attr('width') / 2);
-    shape.attr('y', -shape.attr('height') / 2);
-
-    if (type === 'regular') {
-      const label = item.getContainer().find((ele) => {
-        return ele.get('name') === 'label';
-      });
-
-      const content = item.getContainer().find((ele) => {
-        return ele.get('name') === 'content';
-      });
-
-      const content_alt = item.getContainer().find((ele) => {
-        return ele.get('name') === 'content-alt';
-      });
-
-      const delay = item.getContainer().find((ele) => {
-        return ele.get('name') === 'delay';
-      });
-
-      content.hide();
-
-      // label.hide();
-
-      content_alt.show();
-
-      delay.attr('y', value ? shape.attr('height') / 2 + 10 : 0);
-    }
-
-    if (type === 'input') {
-      const indicator = item.getContainer().find((ele) => {
-        return ele.get('name') === 'input-indicator';
-      });
-      indicator.attr(
-        'points',
-        value
-          ? [
-              [shape.attr('x') - 2, 0],
-              [shape.attr('x') - 15, 10],
-              [shape.attr('x') - 15, -10],
-            ]
-          : []
-      );
-    }
-
-    if (type === 'output') {
-      const indicator = item.getContainer().find((ele) => {
-        return ele.get('name') === 'output-indicator';
-      });
-      indicator.attr('radius', value ? style.r / 2 - 5 : style.r - 5);
-      indicator.attr('x', shape.attr('x') + 5);
-      indicator.attr('y', shape.attr('y') + 5);
-      indicator.attr('width', shape.attr('width') - 10);
-      indicator.attr('height', shape.attr('height') - 10);
-    }
-
-    // recenter the label
-    const label = item.getContainer().find((ele) => {
-      return ele.get('name') === 'label';
-    });
-
-    // center the label on the x axis
-    label.attr('x', -label.attr('width') / 2);
-    label.attr('y', -shape.attr('height') / 2 - 20);
-
-    rules.forEach((rule) => {
-      value ? rule.hide() : rule.show();
-    });
-  }
   if (name === 'spiking') {
     shape.attr(
       'stroke',
@@ -453,11 +378,226 @@ const options = {
   },
 };
 
+const updateOutput = (cfg, item) => {
+  const group = item.getContainer();
+  const shape = group.find((ele) => {
+    return ele.get('name') === 'neuron';
+  });
+  const indicator = group.find((ele) => {
+    return ele.get('name') === 'output-indicator';
+  });
+  const latex_content = latexToImg(foldString(`${cfg.content}`));
+  const content = group.find((ele) => {
+    return ele.get('name') === 'content';
+  });
+
+  content.attr({
+    width: latex_content.width,
+    height: latex_content.height,
+    img: latex_content.dom,
+    y: -latex_content.height / 2,
+    x: -latex_content.width / 2,
+  });
+
+  const mw =
+    settings.view === 'full'
+      ? Math.max(latex_content.width, style.min_width)
+      : Math.max(latex_content.width, 20);
+  const mh =
+    settings.view === 'full'
+      ? Math.max(latex_content.height, style.min_height)
+      : 20;
+
+  const node_width = 2 * style.p + mw;
+  const node_height = 2 * style.p + mh;
+  cfg.size = [node_width, node_height];
+
+  const start_x = -node_width / 2;
+  const start_y = -node_height / 2;
+
+  shape.attr({
+    x: start_x,
+    y: start_y,
+    width: node_width,
+    height: node_height,
+    radius: settings.view === 'full' ? style.r : 15,
+  });
+  indicator.attr({
+    x: start_x + 5,
+    y: start_y + 5,
+    width: node_width - 10,
+    height: node_height - 10,
+    radius: shape.attr('radius') - 5,
+  });
+
+  if (settings.label) {
+    const id = group.find((ele) => {
+      return ele.get('name') === 'label';
+    });
+
+    id.attr({
+      x:
+        settings.view === 'full'
+          ? start_x - 15 - id.attr('width') / 2
+          : start_x + (style.p + mw / 2 - id.attr('width') / 2),
+      y: start_y - 20,
+    });
+  }
+};
+
+const updateInput = (cfg, item) => {
+  const group = item.getContainer();
+  const shape = group.find((ele) => {
+    return ele.get('name') === 'neuron';
+  });
+  const indicator = group.find((ele) => {
+    return ele.get('name') === 'input-indicator';
+  });
+  const latex_content = latexToImg(foldString(`${cfg.content}`));
+  const content = group.find((ele) => {
+    return ele.get('name') === 'content';
+  });
+
+  content.attr({
+    width: latex_content.width,
+    height: latex_content.height,
+    img: latex_content.dom,
+    y: -latex_content.height / 2,
+    x: -latex_content.width / 2,
+  });
+
+  const mw =
+    settings.view === 'full'
+      ? Math.max(latex_content.width, style.min_width)
+      : Math.max(latex_content.width, 20);
+  const mh =
+    settings.view === 'full'
+      ? Math.max(latex_content.height, style.min_height)
+      : 20;
+
+  const node_width = 2 * style.p + mw;
+  const node_height = 2 * style.p + mh;
+  cfg.size = [node_width, node_height];
+
+  const start_x = -node_width / 2;
+  const start_y = -node_height / 2;
+
+  shape.attr({
+    x: start_x,
+    y: start_y,
+    width: node_width,
+    height: node_height,
+    radius: settings.view === 'full' ? style.r : 15,
+  });
+  indicator.attr({
+    points: [
+      [start_x - 2, start_y + node_height / 2],
+      [start_x - 15, start_y + node_height / 2 + 10],
+      [start_x - 15, start_y + node_height / 2 - 10],
+    ],
+  });
+
+  if (settings.label) {
+    const id = group.find((ele) => {
+      return ele.get('name') === 'label';
+    });
+
+    id.attr({
+      x:
+        settings.view === 'full'
+          ? start_x - 15 - id.attr('width') / 2
+          : start_x + (style.p + mw / 2 - id.attr('width') / 2),
+      y: start_y - 20,
+    });
+  }
+};
+
+const updateRegular = (cfg, item) => {
+  const group = item.getContainer();
+  const shape = group.find((ele) => {
+    return ele.get('name') === 'neuron';
+  });
+  const content = group.find((ele) => {
+    return ele.get('name') === 'content';
+  });
+
+  const delay = group.find((ele) => {
+    return ele.get('name') === 'delay';
+  });
+
+  const rules = group.find((ele) => {
+    return ele.get('name') === 'rules';
+  });
+
+  const render_content = latexToImg(cfg.content);
+  const render_rules = memoize(latexToImg)(
+    `\\displaylines{${cfg.rules.join('\\\\[-0.5em]')}}`
+  );
+  const render = [render_content, render_rules];
+
+  const mw =
+    settings.view === 'full'
+      ? Math.max(...render.map((item) => item.width), style.min_width)
+      : Math.max(render_content.width, 20);
+  const mh =
+    settings.view === 'full'
+      ? Math.max(render.reduce((acc, item) => acc + item.height, 0) + style.m)
+      : 20;
+
+  // set neuron size to mw, mh
+  const node_width = 2 * style.p + mw;
+  const node_height = 2 * style.p + mh;
+  cfg.size = [node_width, node_height];
+
+  const start_x = -node_width / 2;
+  const start_y = -node_height / 2;
+
+  shape.attr({
+    x: start_x,
+    y: start_y,
+    width: node_width,
+    height: node_height,
+    radius: settings.view === 'full' ? style.r : 15,
+  });
+
+  rules.attr({
+    y: start_y + style.p + render[0].height + style.m,
+    x: start_x + (style.p + mw / 2 - render[1].width / 2),
+  });
+
+  settings.view === 'full' ? rules.show() : rules.hide();
+
+  delay.attr({
+    text: cfg.delay,
+    y: shape.attr('y') + shape.attr('height') + 10,
+  });
+
+  content.attr({
+    text: cfg.content,
+    y: settings.view === 'full' ? start_y + style.p : 0,
+    textBaseline: settings.view === 'full' ? 'top' : 'middle',
+  });
+
+  if (settings.label) {
+    const id = group.find((ele) => {
+      return ele.get('name') === 'label';
+    });
+
+    id.attr({
+      x:
+        settings.view === 'full'
+          ? start_x - 15 - id.attr('width') / 2
+          : start_x + (style.p + mw / 2 - id.attr('width') / 2),
+      y: start_y - 20,
+    });
+  }
+};
+
 export default function initializeNode() {
   G6.registerNode('regular', {
     options,
-    updateContent: (content) => {
-      console.log('updateContent', content);
+    update: (cfg, item) => {
+      updateRegular(cfg, item);
     },
     drawShape: (cfg, group) => {
       return drawRegular(cfg, group);
@@ -468,6 +608,9 @@ export default function initializeNode() {
   });
   G6.registerNode('output', {
     options,
+    update: (cfg, item) => {
+      updateOutput(cfg, item);
+    },
     drawShape: (cfg, group) => {
       return drawOutput(cfg, group);
     },
@@ -477,6 +620,9 @@ export default function initializeNode() {
   });
   G6.registerNode('input', {
     options,
+    update: (cfg, item) => {
+      updateInput(cfg, item);
+    },
     drawShape: (cfg, group) => {
       return drawInput(cfg, group);
     },

@@ -100,7 +100,7 @@ canvas {
 }
 
 .minimap {
-  @apply absolute hidden border rounded-md right-4 lg:block bottom-4 bg-light/40 border-dark/5 dark:border-light/5 dark:bg-neutral/40 backdrop-blur-sm;
+  @apply absolute hidden border rounded-md right-4 lg:block bottom-4 bg-light/40 border-dark/[0.15] dark:border-light/5 dark:bg-neutral/40 backdrop-blur-sm;
 }
 
 .g6-minimap-viewport {

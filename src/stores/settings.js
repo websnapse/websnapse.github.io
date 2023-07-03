@@ -16,6 +16,7 @@ const settings = reactive({
   }),
   view: useStorage('view', 'full'),
   refreshRate: useStorage('refresh', 1),
+  label: useStorage('label', true),
 });
 
 watch(

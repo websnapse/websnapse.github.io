@@ -19,19 +19,20 @@ export default function interact(graph) {
   graph.on('wheel', (evt) => {
     const zoom = graph.getZoom();
 
-    if (zoom < 0.5) {
-      graph.getEdges().forEach((edge) => {
-        edge.hide();
-      });
-    } else {
-      graph.getEdges().forEach((edge) => {
-        edge.show();
-      });
+    if (settings.view === 'full') {
+      if (zoom < 0.5) {
+        graph.getEdges().forEach((edge) => {
+          edge.hide();
+        });
+      } else {
+        graph.getEdges().forEach((edge) => {
+          edge.show();
+        });
+      }
     }
   });
 
   graph.on('afterrender', () => {
-    console.log('xxx');
     graph.fitView([120, 50, 180, 50], null, true);
   });
 

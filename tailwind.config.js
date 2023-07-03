@@ -9,7 +9,7 @@ export default {
         neutral: '#262627',
         dark: '#210B2C',
         'dark-50': '#877f90',
-        light: '#EDF2F4',
+        light: '#fff',
         error: '#D90429',
       },
     },
