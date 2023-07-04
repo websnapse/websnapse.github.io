@@ -159,7 +159,6 @@ onMounted(() => {
             dialog.chooseRule = true;
             break;
           case 'step':
-            console.timeEnd('step');
             config.value = JSON.parse(JSON.stringify(data.configurations));
             data.configurations = null;
             if (data.halted && navbar.running) {
@@ -177,7 +176,6 @@ onMounted(() => {
               );
             }
             system.tick = data.tick;
-            console.time('step');
             break;
           case 'history':
             system.history = data.history;
@@ -245,15 +243,16 @@ onMounted(() => {
         });
       }
 
-      node.clearStates(['spiking', 'closed', 'forgetting']);
-      if (item.state !== 'default') {
-        node.setState(item.state, true);
+      if (!node.hasState(item.state)) {
+        node.clearStates(['spiking', 'closed', 'forgetting']);
+        if (item.state !== 'default') {
+          node.setState(item.state, true);
+        }
+        node.getOutEdges().forEach((edge) => {
+          edge.setState('spiking', item.state === 'spiking');
+        });
       }
-      node.getOutEdges().forEach((edge) => {
-        edge.setState('spiking', item.state === 'spiking');
-      });
     });
-
     await Promise.all(promises);
   }
 
@@ -320,7 +319,6 @@ onMounted(() => {
       if (!newValue) return;
       refreshTick.value = (refreshTick.value + 1) % settings.refreshRate;
       processItems(newValue);
-      // changeItems(newValue);
     },
     { deep: true }
   );

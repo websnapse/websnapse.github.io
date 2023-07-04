@@ -306,23 +306,26 @@ const drawOutput = (cfg, group) => {
 
 const setStateRegular = (name, value, item) => {
   const shape = item.get('keyShape');
-  const { type } = item.getModel();
-
-  const content = item.getContainer().find((ele) => {
-    return ele.get('name') === 'content';
-  });
   if (name === 'spiking') {
-    shape.attr(
-      'stroke',
-      value ? style.primary : settings.dark ? style.darkContent : style.content
-    );
-    shape.attr('shadowBlur', value ? 10 : 0);
+    shape.attr({
+      stroke: value
+        ? style.primary
+        : settings.dark
+        ? style.darkContent
+        : style.content,
+      shadowBlur: value ? 10 : 0,
+      shadowColor: style.primary,
+    });
   } else if (name === 'forgetting') {
-    shape.attr(
-      'stroke',
-      value ? style.primary : settings.dark ? style.darkContent : style.content
-    );
-    shape.attr('shadowBlur', value ? 10 : 0);
+    shape.attr({
+      stroke: value
+        ? style.error
+        : settings.dark
+        ? style.darkContent
+        : style.content,
+      shadowBlur: value ? 10 : 0,
+      shadowColor: style.error,
+    });
   } else if (!['spiking', 'forgetting', 'simple'].includes(name)) {
     const shapes = item.getStateStyle(name);
     const original_style = item.getOriginStyle();
@@ -530,18 +533,14 @@ const updateRegular = (cfg, item) => {
   });
 
   const render_content = latexToImg(cfg.content);
-  const render_rules = memoize(latexToImg)(
-    `\\displaylines{${cfg.rules.join('\\\\[-0.5em]')}}`
-  );
-  const render = [render_content, render_rules];
 
   const mw =
     settings.view === 'full'
-      ? Math.max(...render.map((item) => item.width), style.min_width)
+      ? Math.max(render_content.width, rules.attr('width'), style.min_width)
       : Math.max(render_content.width, 20);
   const mh =
     settings.view === 'full'
-      ? Math.max(render.reduce((acc, item) => acc + item.height, 0) + style.m)
+      ? render_content.height + rules.attr('height') + style.m
       : 20;
 
   // set neuron size to mw, mh
@@ -561,8 +560,8 @@ const updateRegular = (cfg, item) => {
   });
 
   rules.attr({
-    y: start_y + style.p + render[0].height + style.m,
-    x: start_x + (style.p + mw / 2 - render[1].width / 2),
+    y: start_y + style.p + render_content.height + style.m,
+    x: start_x + (style.p + mw / 2 - rules.attr('width') / 2),
   });
 
   settings.view === 'full' ? rules.show() : rules.hide();
