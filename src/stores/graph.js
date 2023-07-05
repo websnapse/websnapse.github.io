@@ -18,8 +18,14 @@ watch(
 
 watch(
   () => settings.dark,
-  (val) => {
-    graph.value.refresh();
+  (value) => {
+    // graph.value.refresh();
+    graph.value.getNodes().forEach((node) => {
+      graph.value.setItemState(node, 'dark', value);
+    });
+    graph.value.getEdges().forEach((edge) => {
+      graph.value.setItemState(edge, 'dark', value);
+    });
   }
 );
 

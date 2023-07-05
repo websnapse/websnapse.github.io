@@ -228,29 +228,32 @@ onMounted(() => {
               content: item.content,
             });
           }
+
+          if (delay !== item.delay) {
+            node.update({
+              delay: item.delay,
+            });
+          }
         }
 
-        if (delay !== item.delay) {
-          node.update({
-            delay: item.delay,
+        if (type === 'output') {
+          node.getInEdges().forEach((edge) => {
+            if (!edge.hasState('spiking')) {
+              edge.refresh();
+            }
           });
         }
-      }
 
-      if (type === 'output') {
-        node.getInEdges().forEach(async (edge) => {
-          edge.refresh();
-        });
-      }
+        if (!node.hasState(item.state)) {
+          node.clearStates(['spiking', 'closed', 'forgetting']);
 
-      if (!node.hasState(item.state)) {
-        node.clearStates(['spiking', 'closed', 'forgetting']);
-        if (item.state !== 'default') {
-          node.setState(item.state, true);
+          if (item.state !== 'default') {
+            node.setState(item.state, true);
+          }
+          node.getOutEdges().forEach((edge) => {
+            edge.setState('spiking', item.state === 'spiking');
+          });
         }
-        node.getOutEdges().forEach((edge) => {
-          edge.setState('spiking', item.state === 'spiking');
-        });
       }
     });
     await Promise.all(promises);

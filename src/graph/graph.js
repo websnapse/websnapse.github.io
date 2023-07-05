@@ -57,10 +57,10 @@ export default function createGraph(container, width, height) {
       labelCfg: {
         autorotate: true,
         style: {
-          fill: settings.dark ? style.darkContent : style.content,
+          fill: style.content,
           fontSize: 20,
           background: {
-            fill: settings.dark ? style.dark : style.light,
+            fill: style.light,
             padding: [5, 5, 5, 5],
             radius: 5,
           },

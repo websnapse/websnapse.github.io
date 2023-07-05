@@ -14,6 +14,8 @@ export default function interact(graph) {
         item.set('model', { ...model, delay: 0 });
       }
     }
+
+    item.setState('dark', settings.dark);
   });
 
   graph.on('wheel', (evt) => {
