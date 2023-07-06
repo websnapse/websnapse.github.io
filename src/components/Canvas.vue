@@ -21,8 +21,12 @@
 import { onMounted, ref, watch } from 'vue';
 import Toolbar from '@/components/Toolbar.vue';
 import Dialogs from '@/components/Dialogs.vue';
+import Tick from '@/components/Tick.vue';
+import ViewControls from '@/components/ViewControls.vue';
+import SimulationControls from '@/components/SimulationControls.vue';
 
 import createGraph from '@/graph/graph';
+import renderTick from '@/graph/utils/render-tick';
 import system from '@/stores/system';
 import navbar from '@/stores/navbar';
 import graph from '@/stores/graph';
@@ -32,14 +36,10 @@ import settings from '@/stores/settings';
 import { importSystem } from '@/graph/utils/parse-system';
 import { useToast } from 'vue-toast-notification';
 import { redo, undo } from '@/graph/utils/action-stack';
-import ViewControls from './ViewControls.vue';
-import SimulationControls from './SimulationControls.vue';
-import Tick from './Tick.vue';
 
 const $toast = useToast();
 
 const config = ref(null);
-
 const reset = ref(null);
 const load = ref(null);
 const clear = ref(null);
@@ -47,19 +47,9 @@ const undoAction = ref(null);
 const redoAction = ref(null);
 const zoomIn = ref(null);
 const zoomOut = ref(null);
+const refreshTick = ref(0);
 
-watch(
-  () => system.speed,
-  (newDuration) => {
-    if (system.ws && system.ws.readyState === WebSocket.OPEN) {
-      system.ws.send(
-        JSON.stringify({ cmd: 'speed', speed: parseInt(newDuration) })
-      );
-    }
-  }
-);
-
-const handleBeforeUnload = (event) => {
+const handleBeforeUnload = () => {
   system.backupSystem();
 };
 
@@ -138,8 +128,7 @@ onMounted(() => {
     });
   };
 
-  const refreshTick = ref(0);
-
+  // when websocket changes
   watch(
     () => system.ws,
     (value) => {
@@ -188,6 +177,7 @@ onMounted(() => {
     }
   );
 
+  // remove interactions when running
   watch(
     () => navbar.running,
     (value) => {
@@ -196,132 +186,23 @@ onMounted(() => {
             'node-interactions',
             'edge-interactions',
             'click-select',
+            'brush-select',
           ])
         : g.addBehaviors([
             'node-interactions',
             'edge-interactions',
             'click-select',
+            'brush-select',
           ]);
     }
   );
 
-  async function processItems(newValue) {
-    const nodes = g.getNodes();
-    const nodeMap = nodes.reduce((acc, node) => {
-      acc[node.getModel().id] = node;
-      return acc;
-    }, {});
-
-    const promises = newValue.map(async (item) => {
-      const node = nodeMap[item.id];
-      const { type, content, delay } = node.getModel();
-
-      if (refreshTick.value == 0 || !navbar.running) {
-        if (content !== item.content && delay !== item.delay) {
-          node.update({
-            content: item.content,
-            delay: item.delay,
-          });
-        } else {
-          if (content !== item.content) {
-            node.update({
-              content: item.content,
-            });
-          }
-
-          if (delay !== item.delay) {
-            node.update({
-              delay: item.delay,
-            });
-          }
-        }
-
-        if (type === 'output') {
-          node.getInEdges().forEach((edge) => {
-            if (!edge.hasState('spiking')) {
-              edge.refresh();
-            }
-          });
-        }
-
-        if (!node.hasState(item.state)) {
-          node.clearStates(['spiking', 'closed', 'forgetting']);
-
-          if (item.state !== 'default') {
-            node.setState(item.state, true);
-          }
-          node.getOutEdges().forEach((edge) => {
-            edge.setState('spiking', item.state === 'spiking');
-          });
-        }
-      }
-    });
-    await Promise.all(promises);
-  }
-
-  async function updateStates(newValue) {
-    const nodes = g
-      .getNodes()
-      .filter((node) => node.getModel().type !== 'input');
-
-    const nodeMap = nodes.reduce((acc, node) => {
-      acc[node.getModel().id] = node;
-      return acc;
-    }, {});
-
-    const promises = newValue.map(async (item) => {
-      const node = nodeMap[item.id];
-      const { type } = node.getModel();
-
-      if (type === 'output') {
-        node.getInEdges().forEach(async (edge) => {
-          edge.refresh();
-        });
-      }
-
-      node.clearStates(['spiking', 'closed', 'forgetting']);
-      if (item.state !== 'default') {
-        node.setState(item.state, true);
-      }
-
-      if (settings.view === 'simple') {
-        node.setState('simple', true);
-      }
-
-      node.getOutEdges().forEach((edge) => {
-        edge.setState('spiking', item.state === 'spiking');
-      });
-    });
-
-    Promise.all(promises);
-  }
-
-  function changeItems(newValue) {
-    const update = {
-      nodes: newValue.map((item) => {
-        const { id, content, delay, state } = item;
-        return {
-          id,
-          content,
-          delay,
-          state,
-        };
-      }),
-      edges: g.save().edges,
-    };
-
-    if (refreshTick.value == 0 || !navbar.running) {
-      g.changeData(update);
-    }
-    updateStates(newValue);
-  }
-
   watch(
     config,
-    (newValue) => {
+    async (newValue) => {
       if (!newValue) return;
       refreshTick.value = (refreshTick.value + 1) % settings.refreshRate;
-      processItems(newValue);
+      await renderTick(g, newValue);
     },
     { deep: true }
   );
@@ -337,8 +218,6 @@ onMounted(() => {
     }
   );
 
-  window.addEventListener('beforeunload', handleBeforeUnload);
-
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
     g.changeSize(width, height);
@@ -346,5 +225,6 @@ onMounted(() => {
   });
 
   resizeObserver.observe(document.getElementById('mountNode'));
+  window.addEventListener('beforeunload', handleBeforeUnload);
 });
 </script>

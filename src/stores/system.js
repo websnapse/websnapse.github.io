@@ -23,4 +23,15 @@ const system = reactive({
   },
 });
 
+watch(
+  () => system.speed,
+  (newDuration) => {
+    if (system.ws && system.ws.readyState === WebSocket.OPEN) {
+      system.ws.send(
+        JSON.stringify({ cmd: 'speed', speed: parseInt(newDuration) })
+      );
+    }
+  }
+);
+
 export default system;

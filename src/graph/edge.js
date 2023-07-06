@@ -22,7 +22,7 @@ const options = {
       lineAppendWidth: 20,
       shadowBlur: 0,
       shadowColor: style.primary,
-      lineWidth: 2,
+      lineWidth: style.lineInactive,
       stroke: style.darkContent,
       endArrow: {
         path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
@@ -32,26 +32,26 @@ const options = {
     spiking: {
       stroke: style.primary,
       endArrow: {
-        path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+        path: 'M 0,0 L 13,8 L 9,0 L 13,-8 Z',
         fill: style.primary,
         strokeOpacity: 0,
       },
       lineWidth: 4,
       lineDash: style.lineDash,
     },
-  },
-  style: {
-    lineDash: null,
-    lineDashOffset: null,
-    lineAppendWidth: 20,
-    shadowBlur: 0,
-    shadowColor: style.primary,
-    lineWidth: 2,
-    stroke: style.content,
-    endArrow: {
-      path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-      fill: 'black',
-      strokeOpacity: 1,
+    default: {
+      lineDash: null,
+      lineDashOffset: null,
+      lineAppendWidth: 20,
+      shadowBlur: 0,
+      shadowColor: style.primary,
+      lineWidth: style.lineInactive,
+      stroke: style.content,
+      endArrow: {
+        path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+        fill: style.content,
+        strokeOpacity: 1,
+      },
     },
   },
 };
@@ -65,7 +65,7 @@ export default function initalizeEdge() {
         const { startPoint, endPoint } = cfg;
         const shape = group.addShape('path', {
           attrs: {
-            ...options.style,
+            ...options.stateStyles.default,
             path: [
               ['M', startPoint.x, startPoint.y],
               ['L', endPoint.x, endPoint.y],
@@ -80,7 +80,7 @@ export default function initalizeEdge() {
         const model = item.getModel();
         const change = item.getStateStyle(name);
         const dark_style = item.getStateStyle('dark');
-        const original_style = item.getOriginStyle()['path-shape'];
+        const original_style = item.getStateStyle('default');
         const reset = item.hasState('dark')
           ? pick(dark_style, Object.keys(change))
           : pick(original_style, Object.keys(change));

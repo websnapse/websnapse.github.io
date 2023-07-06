@@ -2,7 +2,93 @@ import G6 from '@antv/g6';
 import { foldString, latexToImg } from '@/utils/math';
 import style from '@/stores/styles';
 import settings from '@/stores/settings';
-import { memoize } from 'lodash';
+import { memoize, pick } from 'lodash';
+
+const options = {
+  stateStyles: {
+    hover: {
+      neuron: {
+        shadowColor: style.primary,
+        shadowBlur: 10,
+      },
+    },
+    selected: {
+      neuron: {
+        shadowBlur: 10,
+        lineWidth: style.lineActive,
+        stroke: style.primary,
+        shadowColor: style.primary,
+      },
+    },
+    closed: {
+      neuron: {
+        shadowBlur: 10,
+        stroke: style.error,
+        shadowColor: style.error,
+      },
+    },
+    spiking: {
+      neuron: {
+        stroke: style.primary,
+        shadowBlur: 10,
+        shadowColor: style.primary,
+      },
+    },
+    forgetting: {
+      neuron: {
+        stroke: style.primary,
+        shadowBlur: 10,
+        shadowColor: style.primary,
+      },
+    },
+    dark: {
+      neuron: {
+        stroke: style.darkContent,
+        fill: style.dark,
+        lineWidth: style.lineInactive,
+        shadowBlur: 0,
+      },
+      content: {
+        fill: style.darkContent,
+      },
+      delay: {
+        fill: style.darkContent,
+      },
+    },
+    simple: {
+      neuron: {
+        radius: 15,
+      },
+      content: {
+        textBaseline: 'middle',
+      },
+    },
+    default: {
+      neuron: {
+        radius: style.r,
+        stroke: style.content,
+        lineWidth: style.lineInactive,
+        shadowColor: style.primary,
+        fill: style.light,
+        shadowBlur: 0,
+      },
+      content: {
+        fill: style.content,
+        textAlign: 'center',
+        textBaseline: 'top',
+        fontSize: 20,
+        fontFamily: 'KaTeX_Main',
+      },
+      delay: {
+        fill: style.content,
+        textAlign: 'center',
+        textBaseline: 'top',
+        fontSize: 20,
+        fontFamily: 'KaTeX_Main',
+      },
+    },
+  },
+};
 
 const drawRegular = (cfg, group) => {
   const render_content = latexToImg(cfg.content);
@@ -20,50 +106,41 @@ const drawRegular = (cfg, group) => {
       ? Math.max(render.reduce((acc, item) => acc + item.height, 0) + style.m)
       : 20;
 
-  // set neuron size to mw, mh
   const node_width = 2 * style.p + mw;
   const node_height = 2 * style.p + mh;
   cfg.size = [node_width, node_height];
+  cfg.delay = 0;
 
   const start_x = -node_width / 2;
   const start_y = -node_height / 2;
 
   const shape = group.addShape('rect', {
+    name: 'neuron',
     attrs: {
       x: start_x,
       y: start_y,
       width: node_width,
       height: node_height,
-      radius: settings.view === 'full' ? style.r : 15,
-      stroke: settings.dark ? style.darkContent : style.content,
-      lineWidth: style.lineInactive,
-      shadowColor: style.primary,
-      shadowBlur: 0,
-      fill: settings.dark ? style.dark : style.light,
+      ...options.stateStyles.default.neuron,
     },
-    name: 'neuron',
     draggable: true,
     zIndex: 10,
   });
 
-  const content = group.addShape('text', {
+  group.addShape('text', {
+    name: 'content',
     attrs: {
       y: settings.view === 'full' ? start_y + style.p : 0,
       x: start_x + (style.p + mw / 2),
       text: cfg.content,
-      textAlign: 'center',
-      textBaseline: settings.view === 'full' ? 'top' : 'middle',
-      fontSize: 20,
-      fontFamily: 'KaTeX_Main',
-      fill: settings.dark ? style.darkContent : style.content,
+      ...options.stateStyles.default.content,
     },
-    name: 'content',
-    visible: true,
     draggable: true,
     zIndex: 20,
   });
 
-  const rules = group.addShape('image', {
+  group.addShape('image', {
+    name: 'rules',
     attrs: {
       y: start_y + style.p + render[0].height + style.m,
       x: start_x + (style.p + mw / 2 - render[1].width / 2),
@@ -71,7 +148,6 @@ const drawRegular = (cfg, group) => {
       height: render[1].height,
       img: render[1].dom,
     },
-    name: 'rules',
     draggable: true,
     visible: settings.view === 'full',
     zIndex: 20,
@@ -80,7 +156,8 @@ const drawRegular = (cfg, group) => {
   if (settings.label) {
     const node_id = latexToImg(cfg.id);
 
-    const id = group.addShape('image', {
+    group.addShape('image', {
+      name: 'label',
       attrs: {
         x:
           settings.view === 'full'
@@ -91,23 +168,17 @@ const drawRegular = (cfg, group) => {
         height: node_id.height * 0.8,
         img: node_id.dom,
       },
-      name: 'label',
     });
   }
 
-  const delay_shape = group.addShape('text', {
+  group.addShape('text', {
+    name: 'delay',
     attrs: {
       x: 0,
       y: shape.attr('y') + shape.attr('height') + 10,
-      text: cfg.delay ?? 0,
-      textAlign: 'center',
-      textBaseline: 'top',
-      fontSize: 20,
-      fontFamily: 'KaTeX_Main',
-      fill: settings.dark ? style.darkContent : style.content,
+      text: cfg.delay,
+      ...options.stateStyles.default.delay,
     },
-    name: 'delay',
-    visible: true,
     zIndex: 20,
   });
 
@@ -305,80 +376,74 @@ const drawOutput = (cfg, group) => {
 };
 
 const setStateRegular = (name, value, item) => {
-  const shape = item.get('keyShape');
-  if (name === 'spiking') {
-    shape.attr({
-      stroke: value
-        ? style.primary
-        : settings.dark
-        ? style.darkContent
-        : style.content,
-      shadowBlur: value ? 10 : 0,
-      shadowColor: style.primary,
+  const neuron = item.get('keyShape');
+  const group = item.getContainer();
+  const change = item.getStateStyle(name);
+  const default_style = item.getStateStyle('default');
+  const dark_style = item.getStateStyle('dark');
+  let reset = {};
+  Object.keys(change).forEach((element) => {
+    reset[element] = item.hasState('dark')
+      ? pick(dark_style[element], Object.keys(change[element]))
+      : pick(default_style[element], Object.keys(change[element]));
+  });
+  if (value) {
+    Object.keys(change).forEach((child) => {
+      const shape = group.find((element) => element.get('name') === child);
+      shape.attr(change[child]);
     });
-  } else if (name === 'forgetting') {
-    shape.attr({
-      stroke: value
-        ? style.error
-        : settings.dark
-        ? style.darkContent
-        : style.content,
-      shadowBlur: value ? 10 : 0,
-      shadowColor: style.error,
-    });
-  } else if (!['spiking', 'forgetting', 'simple'].includes(name)) {
-    const shapes = item.getStateStyle(name);
-    const original_style = item.getOriginStyle();
-
-    if (!shapes) return;
-
-    Object.keys(shapes)?.forEach((shapeName) => {
-      const shapeItem = item
-        .get('group')
-        .find((e) => e.get('name') === shapeName);
-
-      const attrs = shapes[shapeName];
-      Object.keys(attrs).forEach((attr) => {
-        const attr_value = shapes[shapeName][attr];
-        const orig_value = original_style[shapeName][attr];
-        shapeItem?.attr(attr, value ? attr_value : orig_value);
-      });
+  } else {
+    Object.keys(reset).forEach((child) => {
+      const shape = group.find((element) => element.get('name') === child);
+      shape.attr(reset[child]);
     });
   }
-};
 
-const options = {
-  stateStyles: {
-    hover: {
-      neuron: {
-        shadowColor: style.primary,
-        shadowBlur: 10,
-      },
-    },
-    selected: {
-      neuron: {
-        shadowBlur: 10,
-        lineWidth: style.lineActive,
-        stroke: style.primary,
-        shadowColor: style.primary,
-      },
-    },
-    closed: {
-      neuron: {
-        shadowBlur: 10,
-        stroke: style.error,
-        shadowColor: style.error,
-      },
-    },
-    default: {
-      neuron: {
-        shadowBlur: 0,
-        shadowColor: style.primary,
-        lineWidth: style.lineInactive,
-        stroke: settings.dark ? style.darkContent : style.content,
-      },
-    },
-  },
+  if (name === 'simple') {
+    const content = group.find((ele) => {
+      return ele.get('name') === 'content';
+    });
+    const delay = group.find((ele) => {
+      return ele.get('name') === 'delay';
+    });
+    const rules = group.find((ele) => {
+      return ele.get('name') === 'rules';
+    });
+
+    neuron.attr({
+      height: value
+        ? Math.max(style.min_height, 20)
+        : 2 * style.p + 20 + style.m + rules.attr('height'),
+    });
+
+    content.attr({
+      y: value ? 0 : -neuron.attr('height') / 2 + style.p,
+    });
+    delay.attr({
+      y: neuron.attr('y') + neuron.attr('height') + 10,
+    });
+
+    value ? rules.hide() : rules.show();
+  } else if (name === 'dark') {
+    const { id, rules } = item.getModel();
+    const label_shape = group.find((ele) => {
+      return ele.get('name') === 'label';
+    });
+    const rules_shape = group.find((ele) => {
+      return ele.get('name') === 'rules';
+    });
+
+    const node_id = latexToImg(id);
+    label_shape.attr({
+      img: node_id.dom,
+    });
+    const rules_img = memoize(latexToImg)(
+      `\\displaylines{${rules.join('\\\\[-0.5em]')}}`
+    );
+    rules_shape.attr({
+      img: rules_img.dom,
+    });
+  }
 };
 
 const updateOutput = (cfg, item) => {
@@ -532,18 +597,15 @@ const updateRegular = (cfg, item) => {
     return ele.get('name') === 'rules';
   });
 
-  const render_content = latexToImg(cfg.content);
+  const content_width = String(cfg.content).length * 10;
 
   const mw =
     settings.view === 'full'
-      ? Math.max(render_content.width, rules.attr('width'), style.min_width)
-      : Math.max(render_content.width, 20);
+      ? Math.max(content_width, rules.attr('width'), style.min_width)
+      : Math.max(content_width, 20);
   const mh =
-    settings.view === 'full'
-      ? render_content.height + rules.attr('height') + style.m
-      : 20;
+    settings.view === 'full' ? 20 + rules.attr('height') + style.m : 20;
 
-  // set neuron size to mw, mh
   const node_width = 2 * style.p + mw;
   const node_height = 2 * style.p + mh;
   cfg.size = [node_width, node_height];
@@ -556,15 +618,12 @@ const updateRegular = (cfg, item) => {
     y: start_y,
     width: node_width,
     height: node_height,
-    radius: settings.view === 'full' ? style.r : 15,
   });
 
   rules.attr({
-    y: start_y + style.p + render_content.height + style.m,
+    y: start_y + style.p + 20 + style.m,
     x: start_x + (style.p + mw / 2 - rules.attr('width') / 2),
   });
-
-  settings.view === 'full' ? rules.show() : rules.hide();
 
   delay.attr({
     text: cfg.delay,
@@ -573,21 +632,48 @@ const updateRegular = (cfg, item) => {
 
   content.attr({
     text: cfg.content,
-    y: settings.view === 'full' ? start_y + style.p : 0,
-    textBaseline: settings.view === 'full' ? 'top' : 'middle',
   });
+};
 
-  if (settings.label) {
-    const id = group.find((ele) => {
-      return ele.get('name') === 'label';
+const setStateEnvironment = (name, value, item) => {
+  const shape = item.get('keyShape');
+  if (name === 'spiking') {
+    shape.attr({
+      stroke: value
+        ? style.primary
+        : settings.dark
+        ? style.darkContent
+        : style.content,
+      shadowBlur: value ? 10 : 0,
+      shadowColor: style.primary,
     });
+  } else if (name === 'forgetting') {
+    shape.attr({
+      stroke: value
+        ? style.error
+        : settings.dark
+        ? style.darkContent
+        : style.content,
+      shadowBlur: value ? 10 : 0,
+      shadowColor: style.error,
+    });
+  } else if (!['spiking', 'forgetting', 'simple'].includes(name)) {
+    const shapes = item.getStateStyle(name);
+    const original_style = item.getOriginStyle();
 
-    id.attr({
-      x:
-        settings.view === 'full'
-          ? start_x - 15 - id.attr('width') / 2
-          : start_x + (style.p + mw / 2 - id.attr('width') / 2),
-      y: start_y - 20,
+    if (!shapes) return;
+
+    Object.keys(shapes)?.forEach((shapeName) => {
+      const shapeItem = item
+        .get('group')
+        .find((e) => e.get('name') === shapeName);
+
+      const attrs = shapes[shapeName];
+      Object.keys(attrs).forEach((attr) => {
+        const attr_value = shapes[shapeName][attr];
+        const orig_value = original_style[shapeName][attr];
+        shapeItem?.attr(attr, value ? attr_value : orig_value);
+      });
     });
   }
 };
@@ -613,9 +699,9 @@ export default function initializeNode() {
     drawShape: (cfg, group) => {
       return drawOutput(cfg, group);
     },
-    setState: (name, value, item) => {
-      return setStateRegular(name, value, item);
-    },
+    // setState: (name, value, item) => {
+    //   return setStateEnvironment(name, value, item);
+    // },
   });
   G6.registerNode('input', {
     options,
@@ -625,8 +711,8 @@ export default function initializeNode() {
     drawShape: (cfg, group) => {
       return drawInput(cfg, group);
     },
-    setState: (name, value, item) => {
-      return setStateRegular(name, value, item);
-    },
+    // setState: (name, value, item) => {
+    //   return setStateEnvironment(name, value, item);
+    // },
   });
 }

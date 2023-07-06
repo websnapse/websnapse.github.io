@@ -1,5 +1,4 @@
 import settings from '@/stores/settings';
-
 export default function interact(graph) {
   graph.on('afteradditem', (evt) => {
     const { item } = evt;
@@ -18,7 +17,13 @@ export default function interact(graph) {
     item.setState('dark', settings.dark);
   });
 
-  graph.on('wheel', (evt) => {
+  graph.on('afterupdateitem', (evt) => {
+    const { item } = evt;
+
+    item.setState('dark', settings.dark);
+  });
+
+  graph.on('wheel', () => {
     const zoom = graph.getZoom();
 
     if (settings.view === 'full') {
@@ -36,9 +41,20 @@ export default function interact(graph) {
 
   graph.on('afterrender', () => {
     graph.fitView([120, 50, 180, 50], null, true);
+    // refreshEdge(graph);
   });
 
-  graph.on('afterlayout', (evt) => {
+  graph.on('afterlayout', () => {
     graph.fitView([120, 50, 180, 50], null, true);
+  });
+}
+
+function refreshEdge(graph) {
+  const edges = graph.save().edges;
+  graph.getEdges().forEach((edge, i) => {
+    graph.updateItem(edge, {
+      curveOffset: edges[i].curveOffset,
+      curvePosition: edges[i].curvePosition,
+    });
   });
 }

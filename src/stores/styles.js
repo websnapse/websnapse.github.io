@@ -19,7 +19,7 @@ const styles = reactive({
   min_width: 100,
   min_height: 60,
   lineActive: 5,
-  lineInactive: 2,
+  lineInactive: 1,
 });
 
 export default styles;
