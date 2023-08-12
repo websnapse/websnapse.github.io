@@ -63,6 +63,7 @@ onMounted(() => {
   graph.value = g;
 
   load.value = (data) => {
+    system.ws.close();
     system.reset = null;
     system.tick = 0;
     g.destroyLayout();
@@ -85,6 +86,7 @@ onMounted(() => {
   };
 
   reset.value = async () => {
+    g.destroyLayout();
     if (!system.reset) return;
 
     navbar.running = false;
@@ -93,14 +95,8 @@ onMounted(() => {
       node.delay = 0;
     });
     g.changeData(data);
-    if (settings.view === 'simple') {
-      g.getNodes().forEach((node) => {
-        node.setState('simple', true);
-      });
-    }
     system.reset = null;
     system.tick = 0;
-
     system.ws.close();
   };
 
@@ -177,7 +173,7 @@ onMounted(() => {
     }
   );
 
-  // remove interactions when running
+  // remove graph interactions when running
   watch(
     () => navbar.running,
     (value) => {
@@ -207,6 +203,7 @@ onMounted(() => {
     { deep: true }
   );
 
+  // remove keyboard bindings when dialog pops-up
   watch(
     () => dialog.hasDialog(),
     (value) => {

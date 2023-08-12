@@ -43,6 +43,7 @@ const options = {
     },
     dark: {
       neuron: {
+        radius: style.r,
         stroke: style.darkContent,
         fill: style.dark,
         lineWidth: style.lineInactive,
@@ -90,26 +91,37 @@ const options = {
   },
 };
 
+function displayRules(rules) {
+  return `\\displaylines{${rules.join('\\\\[-0.5em]')}}`;
+}
+
 const drawRegular = (cfg, group) => {
-  const render_content = latexToImg(cfg.content);
-  const render_rules = memoize(latexToImg)(
-    `\\displaylines{${cfg.rules.join('\\\\[-0.5em]')}}`
+  const content_length = `${cfg.content}`.length;
+  const node_id_light = latexToImg(cfg.id);
+  const node_id_dark = latexToImg(cfg.id, style.darkContent);
+  const render_rules_light = latexToImg(displayRules(cfg.rules));
+  const render_rules_dark = latexToImg(
+    displayRules(cfg.rules),
+    style.darkContent
   );
-  const render = [render_content, render_rules];
+  cfg.light_rules = render_rules_light.dom;
+  cfg.dark_rules = render_rules_dark.dom;
+  cfg.light_label = node_id_light.dom;
+  cfg.dark_label = node_id_dark.dom;
+  cfg.delay = 0;
 
   const mw =
     settings.view === 'full'
-      ? Math.max(...render.map((item) => item.width), style.min_width)
-      : Math.max(render_content.width, 20);
+      ? Math.max(render_rules_dark.width, content_length * 10, style.min_width)
+      : Math.max(content_length * 10, 20);
   const mh =
     settings.view === 'full'
-      ? Math.max(render.reduce((acc, item) => acc + item.height, 0) + style.m)
+      ? Math.max(content_length * 20 + style.m + render_rules_light.height)
       : 20;
 
   const node_width = 2 * style.p + mw;
   const node_height = 2 * style.p + mh;
   cfg.size = [node_width, node_height];
-  cfg.delay = 0;
 
   const start_x = -node_width / 2;
   const start_y = -node_height / 2;
@@ -130,7 +142,7 @@ const drawRegular = (cfg, group) => {
   group.addShape('text', {
     name: 'content',
     attrs: {
-      y: settings.view === 'full' ? start_y + style.p : 0,
+      y: start_y + style.p,
       x: start_x + (style.p + mw / 2),
       text: cfg.content,
       ...options.stateStyles.default.content,
@@ -142,11 +154,11 @@ const drawRegular = (cfg, group) => {
   group.addShape('image', {
     name: 'rules',
     attrs: {
-      y: start_y + style.p + render[0].height + style.m,
-      x: start_x + (style.p + mw / 2 - render[1].width / 2),
-      width: render[1].width,
-      height: render[1].height,
-      img: render[1].dom,
+      y: start_y + style.p + 20 + style.m,
+      x: start_x + (style.p + mw / 2 - render_rules_light.width / 2),
+      width: render_rules_light.width,
+      height: render_rules_light.height,
+      img: settings.dark ? cfg.dark_rules : cfg.light_rules,
     },
     draggable: true,
     visible: settings.view === 'full',
@@ -154,19 +166,14 @@ const drawRegular = (cfg, group) => {
   });
 
   if (settings.label) {
-    const node_id = latexToImg(cfg.id);
-
     group.addShape('image', {
       name: 'label',
       attrs: {
-        x:
-          settings.view === 'full'
-            ? start_x - 15 - node_id.width / 2
-            : start_x + (style.p + mw / 2 - (node_id.width * 0.8) / 2),
+        x: start_x - 15 - (node_id_light.width * 0.8) / 2,
         y: start_y - 20,
-        width: node_id.width * 0.8,
-        height: node_id.height * 0.8,
-        img: node_id.dom,
+        width: node_id_light.width * 0.8,
+        height: node_id_light.height * 0.8,
+        img: settings.dark ? cfg.dark_label : cfg.light_label,
       },
     });
   }
@@ -282,6 +289,10 @@ const drawInput = (cfg, group) => {
 
 const drawOutput = (cfg, group) => {
   const render = [latexToImg(foldString(`${cfg.content}`))];
+  const node_id_light = latexToImg(cfg.id);
+  const node_id_dark = latexToImg(cfg.id, style.darkContent);
+  cfg.light_label = node_id_light.dom;
+  cfg.dark_label = node_id_dark.dom;
 
   const mw =
     settings.view === 'full'
@@ -353,18 +364,16 @@ const drawOutput = (cfg, group) => {
   });
 
   if (settings.label) {
-    const node_id = latexToImg(cfg.id);
-
     const id = group.addShape('image', {
       attrs: {
         x:
           settings.view === 'full'
-            ? start_x - 15 - node_id.width / 2
-            : start_x + (style.p + mw / 2 - (node_id.width * 0.8) / 2),
+            ? start_x - 15 - (node_id_light.width * 0.8) / 2
+            : start_x + (style.p + mw / 2 - (node_id_light.width * 0.8) / 2),
         y: start_y - 20,
-        width: node_id.width * 0.8,
-        height: node_id.height * 0.8,
-        img: node_id.dom,
+        width: node_id_light.width * 0.8,
+        height: node_id_light.height * 0.8,
+        img: settings.dark ? cfg.dark_label : cfg.light_label,
       },
       name: 'label',
     });
@@ -409,11 +418,26 @@ const setStateRegular = (name, value, item) => {
     const rules = group.find((ele) => {
       return ele.get('name') === 'rules';
     });
+    const label = group.find((ele) => {
+      return ele.get('name') === 'label';
+    });
 
     neuron.attr({
       height: value
         ? Math.max(style.min_height, 20)
         : 2 * style.p + 20 + style.m + rules.attr('height'),
+      width: value
+        ? 2 * style.p + Math.max(String(content.attr('text')).length * 10, 20)
+        : Math.max(
+            rules.attr('width'),
+            String(content.attr('text')).length * 10,
+            style.min_width
+          ),
+    });
+
+    neuron.attr({
+      y: -neuron.attr('height') / 2,
+      x: -neuron.attr('width') / 2,
     });
 
     content.attr({
@@ -424,24 +448,12 @@ const setStateRegular = (name, value, item) => {
     });
 
     value ? rules.hide() : rules.show();
-  } else if (name === 'dark') {
-    const { id, rules } = item.getModel();
-    const label_shape = group.find((ele) => {
-      return ele.get('name') === 'label';
-    });
-    const rules_shape = group.find((ele) => {
-      return ele.get('name') === 'rules';
-    });
 
-    const node_id = latexToImg(id);
-    label_shape.attr({
-      img: node_id.dom,
-    });
-    const rules_img = memoize(latexToImg)(
-      `\\displaylines{${rules.join('\\\\[-0.5em]')}}`
-    );
-    rules_shape.attr({
-      img: rules_img.dom,
+    label.attr({
+      x: value
+        ? neuron.attr('x') + (neuron.attr('width') - label.attr('width')) / 2
+        : neuron.attr('x') - 15 - label.attr('width'),
+      y: neuron.attr('y') - 20,
     });
   }
 };
@@ -454,7 +466,10 @@ const updateOutput = (cfg, item) => {
   const indicator = group.find((ele) => {
     return ele.get('name') === 'output-indicator';
   });
-  const latex_content = latexToImg(foldString(`${cfg.content}`));
+  const latex_content = latexToImg(
+    foldString(`${cfg.content}`),
+    settings.dark ? style.darkContent : style.content
+  );
   const content = group.find((ele) => {
     return ele.get('name') === 'content';
   });

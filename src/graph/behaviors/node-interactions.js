@@ -15,7 +15,6 @@ export default function nodeInteractions() {
     onClick(evt) {
       const { item } = evt;
       item.setState('selected', true);
-      console.log(item);
     },
     onMouseEnter(evt) {
       const { item } = evt;
