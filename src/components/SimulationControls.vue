@@ -7,7 +7,7 @@
       <Popper class="tooltip" hover placement="top">
         <template #content>
           {{
-            system.mode.charAt(0).toUpperCase() + system.mode.slice(1) + ' Mode'
+            system.mode.charAt(0).toUpperCase() + system.mode.slice(1) + " Mode"
           }}
         </template>
         <button
@@ -83,12 +83,12 @@
 </template>
 
 <script setup>
-import navbar from '@/stores/navbar';
-import system from '@/stores/system';
+import navbar from "@/stores/navbar";
+import system from "@/stores/system";
 
 const stop = () => {
   navbar.running = false;
-  system.ws.send(JSON.stringify({ cmd: 'stop' }));
+  system.ws.send(JSON.stringify({ cmd: "stop" }));
 };
 
 const play = async () => {
@@ -99,15 +99,15 @@ const play = async () => {
     );
     system.reset = system.data();
   } else {
-    system.ws.send(JSON.stringify({ cmd: 'continue' }));
+    system.ws.send(JSON.stringify({ cmd: "continue" }));
   }
 };
 
 const next = async () => {
-  system.ws.send(JSON.stringify({ cmd: 'next' }));
+  system.ws.send(JSON.stringify({ cmd: "next" }));
 };
 
 const prev = async () => {
-  system.ws.send(JSON.stringify({ cmd: 'prev' }));
+  system.ws.send(JSON.stringify({ cmd: "prev" }));
 };
 </script>

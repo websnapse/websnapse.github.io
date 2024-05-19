@@ -1,10 +1,10 @@
 export default function duplicateItems(graph) {
   const copies = [];
 
-  graph.findAllByState('node', 'selected').forEach((node) => {
+  graph.findAllByState("node", "selected").forEach((node) => {
     const model = node.getModel();
     copies.push({
-      type: 'node',
+      type: "node",
       model: {
         ...model,
         id: `${model.id}-copy`,
@@ -12,12 +12,12 @@ export default function duplicateItems(graph) {
         y: model.y + 10,
       },
     });
-    node.clearStates('selected');
+    node.clearStates("selected");
   });
-  graph.findAllByState('edge', 'selected').forEach((edge) => {
+  graph.findAllByState("edge", "selected").forEach((edge) => {
     const model = edge.getModel();
     copies.push({
-      type: 'edge',
+      type: "edge",
       model: {
         ...model,
         id: `${model.id}-copy`,
@@ -25,12 +25,12 @@ export default function duplicateItems(graph) {
         target: `${model.target}-copy`,
       },
     });
-    edge.clearStates('selected');
+    edge.clearStates("selected");
   });
 
   graph.addItems(copies, true);
 
   copies.forEach((copy) => {
-    graph.setItemState(copy.model.id, 'selected', true);
+    graph.setItemState(copy.model.id, "selected", true);
   });
 }

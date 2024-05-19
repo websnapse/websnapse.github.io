@@ -55,16 +55,15 @@ export default function createGraph(container, width, height) {
     defaultEdge: {
       type: 'synapse',
       labelCfg: {
-        autoRotate: true,
+        autorotate: true,
         style: {
-          fill: style.content,
-          fontSize: 16,
+          fill: settings.dark ? style.darkContent : style.content,
+          fontSize: 20,
           background: {
-            fill: style.light,
+            fill: settings.dark ? style.dark : style.light,
             padding: [5, 5, 5, 5],
             radius: 5,
           },
-          fontFamily: 'KaTeX_Main',
         },
       },
     },

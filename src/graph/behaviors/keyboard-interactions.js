@@ -48,9 +48,7 @@ export default function keyboardInteractions() {
           this.graph.clear();
           break;
         case 'y':
-          () => {
-            settings.view = settings.view === 'simple' ? 'full' : 'simple';
-          };
+          settings.view = settings.view === 'simple' ? 'full' : 'simple';
           break;
         case 'Delete':
           deleteItems(this.graph);

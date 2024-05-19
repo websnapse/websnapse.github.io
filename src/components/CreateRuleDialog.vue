@@ -32,10 +32,61 @@
             class="w-full max-w-sm p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl"
           >
             <DialogTitle as="h3" class="text-lg font-medium leading-6">
-              Node Properties
+              Add Rule
             </DialogTitle>
 
             <div class="grid grid-cols-3 gap-4 mt-4">
+              <div class="col-span-3">
+                <form class="flex flex-col gap-4">
+                  <div class="relative flex flex-col gap-1">
+                    <label
+                      for="label"
+                      class="mb-2 text-sm font-medium text-gray-900"
+                    >
+                      ID
+                    </label>
+                    <input
+                      type="text"
+                      id="label"
+                      v-model="rulebook.current_neuron_id"
+                      class="input-field"
+                      placeholder="place id of neuron here"
+                      required
+                    />
+                  </div>
+                  <div class="relative flex flex-col gap-1">
+                    <label
+                      for="rules"
+                      class="block mb-2 text-sm font-medium text-gray-900"
+                    >
+                      Rules
+                    </label>
+                    <MathEditor
+                      v-for="(rule, index) in rulebook.rules"
+                      v-bind:model-value="rule"
+                      @change="(value) => (rulebook.rules[index] = value)"
+                      @delete="rulebook.rules.splice(index, 1)"
+                    />
+                    <button
+                      class="py-2 text-sm font-medium border-2 border-dashed rounded-md text-dark/50"
+                      @click.prevent="() => rulebook.rules.push('')"
+                    >
+                      Add Rule
+                    </button>
+                    <div class="mt-4">
+                      <button
+                        type="submit"
+                        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        @click="checkDetails"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- <div class="grid grid-cols-3 gap-4 mt-4">
               <div class="col-span-3">
                 <form class="flex flex-col gap-4">
                   <div class="relative flex flex-col gap-1">
@@ -108,7 +159,7 @@
                   </div>
                 </form>
               </div>
-            </div>
+            </div> -->
           </DialogPanel>
         </TransitionChild>
       </div>
@@ -123,27 +174,22 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/vue";
-import MathEditor from "@/components/MathEditor.vue";
+
 import rulebook from "@/stores/rulebook";
 
-const props = defineProps(["isOpen", "closeModal", "details"]);
+import MathEditor from "@/components/MathEditor.vue";
+
+const props = defineProps(["isOpen", "closeModal"]);
 
 const checkDetails = () => {
-  if (props.details.type === "regular") {
-    props.details.rules.forEach((rule) => {
-      if (rule === "") {
-        alert("Please enter rules");
-        return;
-      }
-    });
-  }
+  rulebook.rules.forEach((rule) => {
+    if (rule == "") {
+      alert("Please enter rules");
+      return;
+    }
+  });
 
-  if (props.details.type === "output") {
-    props.details.content = "";
-  }
-
-  rulebook.all_rules[props.details.id] = props.details.rules;
-  props.details.success = true;
+  rulebook.success = true;
   props.closeModal();
 };
 </script>

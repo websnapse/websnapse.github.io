@@ -35,15 +35,67 @@
               as="h3"
               class="text-lg font-medium leading-6 text-gray-900"
             >
-              Decision History
+              Rulebook
             </DialogTitle>
-
-            <!-- create invisible focusable element -->
             <button
               class="absolute top-0 left-0 w-px h-px opacity-0 focus:outline-none"
             ></button>
-
-            <div class="w-full mt-4 overflow-auto max-h-[80vh]">
+            <div class="max-w-xl mt-4 overflow-auto max-h-[80vh]">
+              <label class="mb-2 text-sm font-medium"> Shown Rules </label>
+              <table class="w-full h-full overflow-scroll">
+                <tbody>
+                  <tr v-for="[id, rules] of Object.entries(rulebook.all_rules)">
+                    <td class="p-4 text-left border border-gray-200">
+                      {{ id }}
+                    </td>
+                    <td
+                      class="p-4 text-left border border-gray-200 equation"
+                      v-for="rule in rules"
+                      v-html="getKatex(rule)"
+                    ></td>
+                  </tr>
+                </tbody>
+              </table>
+              <label class="mb-2 text-sm font-medium"> Global Rules </label>
+              <table class="w-full h-full overflow-scroll">
+                <tbody>
+                  <tr
+                    v-for="[id, rules] of Object.entries(rulebook.global_rules)"
+                  >
+                    <td class="p-4 text-left border border-gray-200">
+                      {{ id }}
+                    </td>
+                    <td
+                      class="p-4 text-left border border-gray-200 equation"
+                      v-for="[index, rule] of rules.entries()"
+                      v-html="getKatex(rule)"
+                      @click="rules.splice(index, 1)"
+                    ></td>
+                  </tr>
+                </tbody>
+              </table>
+              <label class="mb-2 text-sm font-medium"> Global Edges </label>
+              <table class="w-full h-full overflow-scroll">
+                <tbody>
+                  <tr v-for="[index, edge] of rulebook.global_edges.entries()">
+                    <!-- <td class="p-4 text-left border border-gray-200">
+                      {{ id }}
+                    </td> -->
+                    <td
+                      class="p-4 text-left border border-gray-200 equation"
+                      v-html="edge['to']"
+                      @click="rulebook.global_edges.splice(index, 1)"
+                    ></td>
+                    <td
+                      class="p-4 text-left border border-gray-200 equation"
+                      v-html="edge['from']"
+                      @click="rulebook.global_edges.splice(index, 1)"
+                    ></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- <div class="w-full mt-4 overflow-auto max-h-[80vh]">
               <table class="w-full h-full overflow-scroll">
                 <thead>
                   <tr class="bg-dark/20">
@@ -71,7 +123,7 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
+            </div> -->
           </DialogPanel>
         </TransitionChild>
       </div>
@@ -90,6 +142,8 @@ import {
 } from "@headlessui/vue";
 import system from "@/stores/system";
 import { foldString } from "@/utils/math";
+
+import rulebook from "@/stores/rulebook";
 
 const props = defineProps(["isOpen", "closeModal"]);
 

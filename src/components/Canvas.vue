@@ -18,28 +18,28 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import Toolbar from '@/components/Toolbar.vue';
-import Dialogs from '@/components/Dialogs.vue';
-import Tick from '@/components/Tick.vue';
-import ViewControls from '@/components/ViewControls.vue';
-import SimulationControls from '@/components/SimulationControls.vue';
+import { onMounted, ref, watch } from "vue";
+import Toolbar from "@/components/Toolbar.vue";
+import Dialogs from "@/components/Dialogs.vue";
 
-import createGraph from '@/graph/graph';
-import renderTick from '@/graph/utils/render-tick';
-import system from '@/stores/system';
-import navbar from '@/stores/navbar';
-import graph from '@/stores/graph';
-import dialog from '@/stores/dialog';
-import settings from '@/stores/settings';
+import createGraph from "@/graph/graph";
+import system from "@/stores/system";
+import navbar from "@/stores/navbar";
+import graph from "@/stores/graph";
+import dialog from "@/stores/dialog";
+import settings from "@/stores/settings";
 
-import { importSystem } from '@/graph/utils/parse-system';
-import { useToast } from 'vue-toast-notification';
-import { redo, undo } from '@/graph/utils/action-stack';
+import { importSystem } from "@/graph/utils/parse-system";
+import { useToast } from "vue-toast-notification";
+import { redo, undo } from "@/graph/utils/action-stack";
+import ViewControls from "./ViewControls.vue";
+import SimulationControls from "./SimulationControls.vue";
+import Tick from "./Tick.vue";
 
 const $toast = useToast();
 
 const config = ref(null);
+
 const reset = ref(null);
 const load = ref(null);
 const clear = ref(null);
@@ -47,30 +47,53 @@ const undoAction = ref(null);
 const redoAction = ref(null);
 const zoomIn = ref(null);
 const zoomOut = ref(null);
-const refreshTick = ref(0);
 
-const handleBeforeUnload = () => {
+watch(
+  () => system.speed,
+  (newDuration) => {
+    if (system.ws && system.ws.readyState === WebSocket.OPEN) {
+      system.ws.send(
+        JSON.stringify({ cmd: "speed", speed: parseInt(newDuration) })
+      );
+    }
+  }
+);
+
+const handleBeforeUnload = (event) => {
   system.backupSystem();
 };
 
-onMounted(() => {
-  const vh = document.getElementById('mountNode').offsetHeight;
-  const vw = document.getElementById('mountNode').offsetWidth;
+import rulebook from "@/stores/rulebook";
 
-  const g = createGraph('mountNode', vw, vh);
+onMounted(() => {
+  const vh = document.getElementById("mountNode").offsetHeight;
+  const vw = document.getElementById("mountNode").offsetWidth;
+
+  const g = createGraph("mountNode", vw, vh);
 
   g.read(importSystem(system.data()));
   graph.value = g;
 
+  // console.log(graph.value.getNodes());
+  // rulebook.all_rules = {};
+  // graph.value.getNodes().forEach((node) => {
+  //   const nodeMap = new Object();
+
+  //   if (node.getModel().type == "regular") {
+  //     nodeMap[node.getModel().id] = node.getModel().rules;
+  //     rulebook.all_rules = { ...rulebook.all_rules, ...nodeMap };
+  //   }
+  // });
+
   load.value = (data) => {
-    system.ws.close();
     system.reset = null;
     system.tick = 0;
     g.destroyLayout();
     g.clear();
+    console.log(data);
     g.changeData(importSystem(data), true);
     g.fitCenter();
-    $toast.success('System imported successfully', { position: 'top-right' });
+    $toast.success("System imported successfully", { position: "top-right" });
   };
 
   clear.value = () => {
@@ -86,7 +109,6 @@ onMounted(() => {
   };
 
   reset.value = async () => {
-    g.destroyLayout();
     if (!system.reset) return;
 
     navbar.running = false;
@@ -95,8 +117,14 @@ onMounted(() => {
       node.delay = 0;
     });
     g.changeData(data);
+    if (settings.view === "simple") {
+      g.getNodes().forEach((node) => {
+        node.setState("simple", true);
+      });
+    }
     system.reset = null;
     system.tick = 0;
+
     system.ws.close();
   };
 
@@ -124,7 +152,8 @@ onMounted(() => {
     });
   };
 
-  // when websocket changes
+  const refreshTick = ref(0);
+
   watch(
     () => system.ws,
     (value) => {
@@ -139,16 +168,18 @@ onMounted(() => {
       value.onmessage = function (event) {
         const data = JSON.parse(event.data);
         switch (data.type) {
-          case 'prompt':
+          case "prompt":
             dialog.details = data.choices;
             dialog.chooseRule = true;
             break;
-          case 'step':
+          case "step":
             config.value = JSON.parse(JSON.stringify(data.configurations));
+            config.edges = JSON.parse(JSON.stringify(data.edges));
+            // console.log(config.edges);
             data.configurations = null;
             if (data.halted && navbar.running) {
-              $toast.success('Simulation completed successfully', {
-                position: 'top-right',
+              $toast.success("Simulation completed successfully", {
+                position: "top-right",
               });
               navbar.running = false;
             }
@@ -156,13 +187,13 @@ onMounted(() => {
             if (navbar.running) {
               value.send(
                 JSON.stringify({
-                  cmd: 'received',
+                  cmd: "received",
                 })
               );
             }
             system.tick = data.tick;
             break;
-          case 'history':
+          case "history":
             system.history = data.history;
             break;
           default:
@@ -173,47 +204,255 @@ onMounted(() => {
     }
   );
 
-  // remove graph interactions when running
   watch(
     () => navbar.running,
     (value) => {
       value
         ? g.removeBehaviors([
-            'node-interactions',
-            'edge-interactions',
-            'click-select',
-            'brush-select',
+            "node-interactions",
+            "edge-interactions",
+            "click-select",
           ])
         : g.addBehaviors([
-            'node-interactions',
-            'edge-interactions',
-            'click-select',
-            'brush-select',
+            "node-interactions",
+            "edge-interactions",
+            "click-select",
           ]);
     }
   );
 
+  async function processItems(newValue) {
+    console.log(newValue);
+    const nodes = g.getNodes();
+    const idSet = new Set(newValue.map((dict) => dict.id));
+    const curSet = new Set();
+
+    let adjustGrid = false;
+    nodes.forEach((node) => {
+      if (idSet.has(node.getModel().id)) {
+        curSet.add(node.getModel().id);
+      } else {
+        adjustGrid = true;
+        g.removeItem(node);
+      }
+    });
+
+    newValue.forEach(async (item) => {
+      var node = g.findById(item.id);
+
+      if (node == undefined) {
+        const nodeRules =
+          item.id in rulebook.global_rules
+            ? rulebook.global_rules[item.id]
+            : [];
+
+        g.addItem("node", {
+          x: 100,
+          y: 100,
+          id: item.id,
+          type: "regular",
+          content: item.content,
+          rules: nodeRules,
+          delay: 0,
+        });
+      }
+    });
+
+    for (const [id, edges] of Object.entries(config.edges)) {
+      var node = g.findById(id);
+
+      if (node != undefined) {
+        edges.forEach((edge) => {
+          var node2 = g.findById(edge);
+          if (node2 != undefined) {
+            if (
+              g
+                .getEdges()
+                .filter(
+                  (oldedge) =>
+                    oldedge.getSource().getModel().id === id &&
+                    oldedge.getTarget().getModel().id === edge
+                ).length == 0
+            ) {
+              g.addItem("edge", {
+                source: node,
+                target: node2,
+                label: 1,
+              });
+            }
+          }
+        });
+      }
+    }
+
+    const promises = newValue.map(async (item) => {
+      var node = g.findById(item.id);
+
+      // g.addItem("edge", {
+      //   source: item.id,
+      //   target: "out",
+      //   label: 1,
+      // });
+
+      // if (node == undefined) {
+      //   g.updateLayout(
+      //     {
+      //       type: "dagre",
+      //       rankdir: "LR",
+      //       linkDistance: 300,
+      //       nodeStrength: 10,
+      //       edgeStrength: 10,
+      //       nodeSpacing: 50,
+      //       minMovement: 0.01,
+      //       maxIteration: 100,
+      //       damping: 0.01,
+      //       preventOverlap: true,
+      //     },
+      //     "center"
+      //   );
+      //   node = g.findById(item.id);
+      // }
+
+      const { type, content, delay } = node.getModel();
+
+      if (refreshTick.value == 0 || !navbar.running) {
+        if (content !== item.content && delay !== item.delay) {
+          node.update({
+            content: item.content,
+            delay: item.delay,
+          });
+        } else {
+          if (content !== item.content) {
+            node.update({
+              content: item.content,
+            });
+          }
+        }
+
+        if (delay !== item.delay) {
+          node.update({
+            delay: item.delay,
+          });
+        }
+      }
+
+      if (type === "output") {
+        node.getInEdges().forEach(async (edge) => {
+          edge.refresh();
+        });
+      }
+
+      if (!node.hasState(item.state)) {
+        node.clearStates(["spiking", "closed", "forgetting"]);
+        if (item.state !== "default") {
+          node.setState(item.state, true);
+        }
+        node.getOutEdges().forEach((edge) => {
+          edge.setState("spiking", item.state === "spiking");
+        });
+      }
+    });
+
+    if (adjustGrid) {
+      g.updateLayout(
+        {
+          type: "dagre",
+          rankdir: "LR",
+          linkDistance: 300,
+          nodeStrength: 10,
+          edgeStrength: 10,
+          nodeSpacing: 50,
+          minMovement: 0.01,
+          maxIteration: 100,
+          damping: 0.01,
+          preventOverlap: true,
+        },
+        "center"
+      );
+    }
+    await Promise.all(promises);
+  }
+
+  async function updateStates(newValue) {
+    const nodes = g
+      .getNodes()
+      .filter((node) => node.getModel().type !== "input");
+
+    const nodeMap = nodes.reduce((acc, node) => {
+      acc[node.getModel().id] = node;
+      return acc;
+    }, {});
+
+    const promises = newValue.map(async (item) => {
+      const node = nodeMap[item.id];
+
+      const { type } = node.getModel();
+
+      if (type === "output") {
+        node.getInEdges().forEach(async (edge) => {
+          edge.refresh();
+        });
+      }
+
+      node.clearStates(["spiking", "closed", "forgetting"]);
+      if (item.state !== "default") {
+        node.setState(item.state, true);
+      }
+
+      if (settings.view === "simple") {
+        node.setState("simple", true);
+      }
+
+      node.getOutEdges().forEach((edge) => {
+        edge.setState("spiking", item.state === "spiking");
+      });
+    });
+
+    Promise.all(promises);
+  }
+
+  function changeItems(newValue) {
+    const update = {
+      nodes: newValue.map((item) => {
+        const { id, content, delay, state } = item;
+        return {
+          id,
+          content,
+          delay,
+          state,
+        };
+      }),
+      edges: g.save().edges,
+    };
+
+    if (refreshTick.value == 0 || !navbar.running) {
+      g.changeData(update);
+    }
+    updateStates(newValue);
+  }
+
   watch(
     config,
-    async (newValue) => {
+    (newValue) => {
       if (!newValue) return;
       refreshTick.value = (refreshTick.value + 1) % settings.refreshRate;
-      await renderTick(g, newValue);
+      processItems(newValue);
     },
     { deep: true }
   );
 
-  // remove keyboard bindings when dialog pops-up
   watch(
     () => dialog.hasDialog(),
     (value) => {
       if (value) {
-        g.removeBehaviors('keyboard-interactions');
+        g.removeBehaviors("keyboard-interactions");
       } else {
-        g.addBehaviors('keyboard-interactions');
+        g.addBehaviors("keyboard-interactions");
       }
     }
   );
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
 
   const resizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
@@ -221,7 +460,6 @@ onMounted(() => {
     g.fitView();
   });
 
-  resizeObserver.observe(document.getElementById('mountNode'));
-  window.addEventListener('beforeunload', handleBeforeUnload);
+  resizeObserver.observe(document.getElementById("mountNode"));
 });
 </script>

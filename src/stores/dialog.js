@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive } from "vue";
 
 export const dialog = reactive({
   createNeuron: false,
@@ -6,6 +6,9 @@ export const dialog = reactive({
   editNeuron: false,
   chooseRule: false,
   choiceHistory: false,
+  rulebook: false,
+  createRule: false,
+  createEdge: false,
   details: null,
 
   hasDialog() {
@@ -14,7 +17,10 @@ export const dialog = reactive({
       this.editSynapse ||
       this.editNeuron ||
       this.chooseRule ||
-      this.choiceHistory
+      this.choiceHistory ||
+      this.rulebook ||
+      this.createRule ||
+      this.createEdge
     );
   },
 });

@@ -1,30 +1,22 @@
 import settings from '@/stores/settings';
+
 export default function interact(graph) {
   graph.on('afteradditem', (evt) => {
     const { item } = evt;
+    if (item.getType() === 'node') {
+      if (settings.view === 'simple') {
+        item.setState('simple', true);
+      }
 
-    item.setState('dark', settings.dark);
+      const model = item.getModel();
 
-    if (item.getType() === 'edge') return;
-
-    if (settings.view === 'simple') {
-      item.setState('simple', true);
+      if (model.type === 'regular') {
+        item.set('model', { ...model, delay: 0 });
+      }
     }
   });
 
-  graph.on('afterupdateitem', (evt) => {
-    const { item } = evt;
-
-    item.setState('dark', settings.dark);
-
-    if (item.getType() === 'edge') return;
-
-    if (settings.view === 'simple') {
-      item.setState('simple', true);
-    }
-  });
-
-  graph.on('wheel', () => {
+  graph.on('wheel', (evt) => {
     const zoom = graph.getZoom();
 
     if (settings.view === 'full') {
@@ -40,17 +32,11 @@ export default function interact(graph) {
     }
   });
 
-  graph.on('afterlayout', () => {
+  graph.on('afterrender', () => {
     graph.fitView([120, 50, 180, 50], null, true);
   });
-}
 
-function refreshEdge(graph) {
-  const edges = graph.save().edges;
-  graph.getEdges().forEach((edge, i) => {
-    graph.updateItem(edge, {
-      curveOffset: edges[i].curveOffset,
-      curvePosition: edges[i].curvePosition,
-    });
+  graph.on('afterlayout', (evt) => {
+    graph.fitView([120, 50, 180, 50], null, true);
   });
 }

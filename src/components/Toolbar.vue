@@ -1,58 +1,64 @@
 <script setup>
-import { useDark, useToggle } from '@vueuse/core';
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
-import Logo from '@/assets/logo.vue';
+import { useDark, useToggle } from "@vueuse/core";
+import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
+import Logo from "@/assets/logo.vue";
 
-import { saveSystem } from '@/graph/utils/parse-system';
+import { saveSystem } from "@/graph/utils/parse-system";
 
-import settings from '@/stores/settings';
-import navbar from '@/stores/navbar.js';
-import graph from '@/stores/graph';
-import system from '@/stores/system';
-import dialog from '@/stores/dialog';
+import settings from "@/stores/settings";
+import navbar from "@/stores/navbar.js";
+import graph from "@/stores/graph";
+import system from "@/stores/system";
+import dialog from "@/stores/dialog";
+
+import addRule from "@/graph/utils/add-rule";
+import addEdge from "@/graph/utils/add-edge";
+import rulebook from "@/stores/rulebook";
+import { rule } from "postcss";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 const saveGraph = () => saveSystem(graph.value);
+const addNewRule = () => addRule();
 
 const openFileInput = () => {
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = '.json';
-  fileInput.id = 'fileInput';
-  fileInput.style.display = 'none';
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".json";
+  fileInput.id = "fileInput";
+  fileInput.style.display = "none";
   fileInput.onchange = () => {
     const file = fileInput.files[0];
     const reader = new FileReader();
     reader.onload = (e) => {
       const data = JSON.parse(e.target.result);
-      emit('load', data);
+      emit("load", data);
     };
     reader.readAsText(file);
   };
   document.body.appendChild(fileInput);
-  document.getElementById('fileInput').click();
+  document.getElementById("fileInput").click();
   document.body.removeChild(fileInput);
 };
 
 const samples = [
   {
-    name: '2N Generator',
-    file: 'multiples-of/multiples_of(002).json',
+    name: "2N Generator",
+    file: "multiples-of/multiples_of(002).json",
   },
   {
-    name: 'Bit Adder',
-    file: 'bit-adder/bit_adder([7,11]).json',
+    name: "Bit Adder",
+    file: "bit-adder/bit_adder([7,11]).json",
   },
   {
-    name: 'Comparator',
-    file: 'comparator/comparator(4,2).json',
+    name: "Comparator",
+    file: "comparator/comparator(4,2).json",
   },
   {
-    name: 'Subset Sum',
-    file: 'subset-sum/subset_sum([1,2,3],5).json',
+    name: "Subset Sum",
+    file: "subset-sum/subset_sum([1,2,3],5).json",
   },
 ];
 
@@ -61,11 +67,11 @@ const loadSample = (file) => {
   fetch(`/samples/${file}`)
     .then((res) => res.json())
     .then((data) => {
-      emit('load', data);
+      emit("load", data);
     });
 };
 
-const emit = defineEmits(['load', 'clear']);
+const emit = defineEmits(["load", "clear"]);
 
 const changeActiveMode = (newMode) => {
   navbar.mode = newMode;
@@ -73,9 +79,17 @@ const changeActiveMode = (newMode) => {
 
 const getHistory = () => {
   try {
-    system.ws.send(JSON.stringify({ cmd: 'history' }));
+    system.ws.send(JSON.stringify({ cmd: "history" }));
   } catch (e) {}
   dialog.choiceHistory = true;
+};
+
+const getRulebook = () => {
+  dialog.rulebook = true;
+};
+
+const createNewEdge = () => {
+  addEdge();
 };
 </script>
 
@@ -220,6 +234,25 @@ const getHistory = () => {
           </Popper>
           <Popper class="tooltip" hover>
             <template #content>
+              Global Rule
+              <!-- <span class="ml-2 text-light/50 dark:text-dark/50">R</span> -->
+            </template>
+            <button @click="addNewRule" class="p-3 tool-button">
+              <v-icon name="la-star-of-life-solid" />
+            </button>
+          </Popper>
+          <Popper class="tooltip" hover>
+            <template #content>
+              Global Edge
+              <!-- <span class="ml-2 text-light/50 dark:text-dark/50">E</span> -->
+            </template>
+            <button @click="createNewEdge" class="p-3 tool-button">
+              <v-icon name="la-star-of-life-solid" />
+            </button>
+          </Popper>
+
+          <Popper class="tooltip" hover>
+            <template #content>
               Delete
               <span class="ml-2 text-light/50 dark:text-dark/50">D</span>
             </template>
@@ -261,8 +294,15 @@ const getHistory = () => {
     </div>
 
     <div
-      class="p-1 border rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/[0.15] dark:border-light/5 dark:bg-neutral/80"
+      class="flex p-1 items-center border rounded-md shadow-sm bg-light/80 backdrop-blur-sm border-dark/[0.15] dark:border-light/5 dark:bg-neutral/80"
     >
+      <Popper class="tooltip" hover>
+        <template #content> Rulebook </template>
+        <button @click="getRulebook" class="p-3 tool-button">
+          <v-icon name="la-book-solid" />
+        </button>
+      </Popper>
+      <div class="flex w-px h-5 mx-1 bg-dark/10 dark:bg-light/10"></div>
       <Popper class="tooltip" hover>
         <template #content> History </template>
         <button @click="getHistory" class="p-3 tool-button">

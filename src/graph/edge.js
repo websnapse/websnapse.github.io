@@ -1,12 +1,23 @@
 import G6 from '@antv/g6';
 import style from '@/stores/styles';
-import { pick } from 'lodash';
+import settings from '@/stores/settings';
 
 const options = {
   stateStyles: {
     hover: {
       shadowBlur: 10,
       shadowColor: style.primary,
+    },
+    default: {
+      lineAppendWidth: 20,
+      shadowBlur: 0,
+      shadowColor: style.primary,
+      lineWidth: 2,
+      stroke: settings.dark ? style.darkContent : style.content,
+      endArrow: {
+        path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+        fill: settings.dark ? style.darkContent : style.content,
+      },
     },
     selected: {
       stroke: style.primary,
@@ -16,42 +27,28 @@ const options = {
         fill: style.primary,
       },
     },
-    dark: {
-      lineDash: null,
-      lineDashOffset: null,
-      lineAppendWidth: 20,
-      shadowBlur: 0,
-      shadowColor: style.primary,
-      lineWidth: style.lineInactive,
-      stroke: style.darkContent,
-      endArrow: {
-        path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-        fill: style.darkContent,
-      },
+  },
+  style: {
+    shadowBlur: 0,
+    shadowColor: style.primary,
+    lineWidth: 2,
+    stroke: settings.dark ? style.darkContent : style.content,
+    endArrow: {
+      path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+      fill: settings.dark ? style.darkContent : style.content,
     },
-    spiking: {
-      stroke: style.primary,
-      endArrow: {
-        path: 'M 0,0 L 13,8 L 9,0 L 13,-8 Z',
-        fill: style.primary,
-        strokeOpacity: 0,
+  },
+  labelCfg: {
+    autorotate: true,
+    style: {
+      fill: settings.dark ? style.darkContent : style.content,
+      fontSize: 20,
+      background: {
+        fill: settings.dark ? style.dark : style.light,
+        padding: [5, 5, 5, 5],
+        radius: 5,
       },
-      lineWidth: 4,
-      lineDash: style.lineDash,
-    },
-    default: {
-      lineDash: null,
-      lineDashOffset: null,
-      lineAppendWidth: 20,
-      shadowBlur: 0,
-      shadowColor: style.primary,
-      lineWidth: style.lineInactive,
-      stroke: style.content,
-      endArrow: {
-        path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
-        fill: style.content,
-        strokeOpacity: 1,
-      },
+      fontFamily: 'KaTeX_Main',
     },
   },
 };
@@ -61,11 +58,46 @@ export default function initalizeEdge() {
     'synapse',
     {
       options,
+      labelAutoRotate: true,
+      afterUpdate(cfg, item) {
+        const group = item.getContainer();
+        const label = group.find(
+          (element) => element.get('name') === 'text-shape'
+        );
+        const path = group.find(
+          (element) => element.get('name') === 'path-shape'
+        );
+        const labelBg = group.find(
+          (element) => element.get('name') === 'text-bg-shape'
+        );
+
+        // update the colors of the path and the arrow
+        path.attr({
+          stroke: settings.dark ? style.darkContent : style.content,
+        });
+        path.attr('endArrow', {
+          path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+          fill: settings.dark ? style.darkContent : style.content,
+        });
+
+        label.attr('fill', settings.dark ? style.darkContent : style.content);
+        labelBg.attr({
+          fill: settings.dark ? style.dark : style.light,
+          radius: 5,
+          padding: [5, 5, 5, 5],
+        });
+      },
       drawShape(cfg, group) {
         const { startPoint, endPoint } = cfg;
         const shape = group.addShape('path', {
           attrs: {
-            ...options.stateStyles.default,
+            lineAppendWidth: 30,
+            stroke: settings.dark ? style.darkContent : style.content,
+            lineWidth: 1,
+            endArrow: {
+              path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+              fill: settings.dark ? style.darkContent : style.content,
+            },
             path: [
               ['M', startPoint.x, startPoint.y],
               ['L', endPoint.x, endPoint.y],
@@ -78,32 +110,28 @@ export default function initalizeEdge() {
       setState(name, value, item) {
         const shape = item.get('keyShape');
         const model = item.getModel();
-        const change = item.getStateStyle(name);
-        const dark_style = item.getStateStyle('dark');
-        const original_style = item.getStateStyle('default');
-        const reset = item.hasState('dark')
-          ? pick(dark_style, Object.keys(change))
-          : pick(original_style, Object.keys(change));
 
-        if (name === 'dark') {
-          shape.attr(change);
-          const group = item.getContainer();
-          const label = group.find(
-            (element) => element.get('name') === 'text-shape'
+        if (name === 'spiking') {
+          shape.attr(
+            'stroke',
+            value
+              ? style.primary
+              : settings.dark
+              ? style.darkContent
+              : style.content
           );
-          const labelBg = group.find(
-            (element) => element.get('name') === 'text-bg-shape'
-          );
-
-          labelBg.attr({
-            fill: value ? style.dark : style.light,
+          shape.attr('lineWidth', value ? 4 : 1);
+          shape.attr('endArrow', {
+            path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+            fill: value
+              ? style.primary
+              : settings.dark
+              ? style.darkContent
+              : style.content,
+            strokeOpacity: 0,
           });
-          label.attr('fill', value ? style.darkContent : style.content);
-        }
-
-        if (value) {
-          shape.attr(change);
-          if (name === 'spiking') {
+          if (value) {
+            shape.attr('lineDash', style.lineDash);
             let index = 0;
             shape.animate(
               () => {
@@ -112,6 +140,7 @@ export default function initalizeEdge() {
                   lineDash: style.lineDash,
                   lineDashOffset: -index,
                 };
+                // return the params for this frame
                 return res;
               },
               {
@@ -119,13 +148,38 @@ export default function initalizeEdge() {
                 duration: model.duration ?? 1000,
               }
             );
+          } else {
+            shape.stopAnimate();
+            shape.attr('lineDash', null);
+            shape.attr('lineDashOffset', null);
+            shape.attr({
+              stroke: settings.dark ? style.darkContent : style.content,
+              endArrow: {
+                path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+                fill: settings.dark ? style.darkContent : style.content,
+              },
+            });
           }
         } else {
-          shape.stopAnimate();
-          shape.attr(reset);
+          const attrs = item.getStateStyle(name);
+          const original_style = {
+            lineAppendWidth: 20,
+            shadowBlur: 0,
+            shadowColor: style.primary,
+            lineWidth: 1,
+            stroke: settings.dark ? style.darkContent : style.content,
+            endArrow: {
+              path: 'M 0,0 L 12,6 L 9,0 L 12,-6 Z',
+              fill: settings.dark ? style.darkContent : style.content,
+            },
+          };
+
+          if (!item.hasState('spiking')) {
+            value ? shape.attr(attrs) : shape.attr(original_style);
+          }
         }
       },
     },
-    'quadratic'
+    'quadratic' // extend the built-in edge 'cubic'
   );
 }

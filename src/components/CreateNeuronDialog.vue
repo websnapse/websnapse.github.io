@@ -185,50 +185,56 @@
 </template>
 
 <script setup>
-import { neuron } from '@/stores/neuron';
+import { neuron } from "@/stores/neuron";
 
 import {
   TransitionChild,
   Dialog,
   DialogPanel,
   DialogTitle,
-} from '@headlessui/vue';
+} from "@headlessui/vue";
 import {
   Listbox,
   ListboxButton,
   ListboxOptions,
   ListboxOption,
-} from '@headlessui/vue';
-import MathEditor from '@/components/MathEditor.vue';
+} from "@headlessui/vue";
+import MathEditor from "@/components/MathEditor.vue";
 
-const props = defineProps(['isOpen', 'closeModal']);
+const props = defineProps(["isOpen", "closeModal"]);
 
-const types = ['regular', 'input', 'output'];
+const types = ["regular", "input", "output"];
 
 const addRule = () => {
-  neuron.rules.push('');
+  neuron.rules.push("");
   setTimeout(() => {
     const mathField =
-      document.getElementsByClassName('math')[neuron.rules.length];
+      document.getElementsByClassName("math")[neuron.rules.length];
     mathField.children[0].children[0].children[0].focus();
   }, 0);
 };
 
+import rulebook from "@/stores/rulebook";
+
 const checkDetails = () => {
-  if (neuron.type === 'regular') {
+  if (neuron.type === "regular") {
     neuron.rules.forEach((rule) => {
-      if (rule === '') {
-        alert('Please enter rules');
+      if (rule === "") {
+        alert("Please enter rules");
         return;
       }
     });
   }
 
-  if (neuron.type === 'output') {
-    neuron.content = '';
+  if (neuron.type === "output") {
+    neuron.content = "";
   }
 
+  if (neuron.type === "regular") {
+    rulebook.all_rules[neuron.id] = neuron.rules;
+  }
   neuron.success = true;
+
   props.closeModal();
 };
 </script>

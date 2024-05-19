@@ -37,7 +37,7 @@ export const foldString = (str) => {
  * @param {string} formula
  * @returns
  */
-export const latexToImg = (formula, color = style.content) => {
+export const latexToImg = (formula) => {
   let wrapper = MathJax.tex2svg(`${formula}`, {
     em: 10,
     ex: 5,
@@ -45,7 +45,7 @@ export const latexToImg = (formula, color = style.content) => {
   });
   let output = { svg: '', img: '' };
   let mjOut = wrapper.getElementsByTagName('svg')[0];
-  mjOut.style.color = color;
+  mjOut.style.color = settings.dark ? style.darkContent : style.dark;
   output.svg = mjOut.outerHTML;
   const width = mjOut.getAttribute('width');
   const height = mjOut.getAttribute('height');
