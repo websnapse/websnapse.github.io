@@ -90,7 +90,6 @@ onMounted(() => {
     system.tick = 0;
     g.destroyLayout();
     g.clear();
-    console.log(data);
     g.changeData(importSystem(data), true);
     g.fitCenter();
     $toast.success("System imported successfully", { position: "top-right" });
@@ -105,6 +104,9 @@ onMounted(() => {
       true
     );
     g.clear();
+    rulebook.global_rules = {};
+    rulebook.all_rules = {};
+    rulebook.global_edges = [];
     system.reset = null;
   };
 

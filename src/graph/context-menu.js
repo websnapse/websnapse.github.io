@@ -5,6 +5,7 @@ import { updateNeuron, updateSynapse } from "@/utils/dialog";
 import duplicateItems from "./utils/duplicate-items";
 import settings from "@/stores/settings";
 import style from "@/stores/styles";
+import rulebook from "@/stores/rulebook";
 
 export default function initializeContextMenu(graph) {
   const contextMenu = new G6.Menu({
@@ -74,6 +75,9 @@ export default function initializeContextMenu(graph) {
           break;
         case "Clear":
           graph.clear();
+          rulebook.global_rules = {};
+          rulebook.all_rules = {};
+          rulebook.global_edges = [];
           break;
         case "Auto layout":
           await graph.updateLayout(

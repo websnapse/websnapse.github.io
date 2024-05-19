@@ -167,27 +167,31 @@ export const exportSystem = (graph) => {
 
   var graph_rules = [];
   Object.entries(rulebook.all_rules).forEach(([node, rules]) => {
-    rules.forEach((rule) => {
-      if (rule.includes("\\left")) {
-        const idx = rule.indexOf("\\right]");
-        const newRule =
-          rule.slice(0, idx + 7) + `_{${node}}` + rule.slice(idx + 7);
-        graph_rules = [...graph_rules, newRule];
-      } else {
-        const newRule = `\\left[${rule.trim()} \\right]_{${node}}`;
-        graph_rules = [...graph_rules, newRule];
-      }
-    });
+    if (rules != undefined) {
+      rules.forEach((rule) => {
+        if (rule.includes("\\left")) {
+          const idx = rule.indexOf("\\right]");
+          const newRule =
+            rule.slice(0, idx + 7) + `_{${node}}` + rule.slice(idx + 7);
+          graph_rules = [...graph_rules, newRule];
+        } else {
+          const newRule = `\\left[${rule.trim()} \\right]_{${node}}`;
+          graph_rules = [...graph_rules, newRule];
+        }
+      });
+    }
   });
   Object.entries(rulebook.global_rules).forEach(([node, rules]) => {
-    rules.forEach((rule) => {
-      if (rule.includes("\\left")) {
-        graph_rules = [...graph_rules, rule.trim()];
-      } else {
-        const newRule = `\\left[${rule.trim()} \\right]_{${node}}`;
-        graph_rules = [...graph_rules, newRule];
-      }
-    });
+    if (rules != undefined) {
+      rules.forEach((rule) => {
+        if (rule.includes("\\left")) {
+          graph_rules = [...graph_rules, rule.trim()];
+        } else {
+          const newRule = `\\left[${rule.trim()} \\right]_{${node}}`;
+          graph_rules = [...graph_rules, newRule];
+        }
+      });
+    }
   });
 
   const graph_edges = rulebook.global_edges.map((edge) => {
