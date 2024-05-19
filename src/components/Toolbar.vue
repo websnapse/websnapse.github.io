@@ -247,7 +247,7 @@ const createNewEdge = () => {
               <!-- <span class="ml-2 text-light/50 dark:text-dark/50">E</span> -->
             </template>
             <button @click="createNewEdge" class="p-3 tool-button">
-              <v-icon name="la-star-of-life-solid" />
+              <v-icon name="bi-cursor" />
             </button>
           </Popper>
 
