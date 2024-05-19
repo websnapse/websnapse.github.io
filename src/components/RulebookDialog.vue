@@ -83,12 +83,12 @@
                     </td> -->
                     <td
                       class="p-4 text-left border border-gray-200 equation"
-                      v-html="edge['to']"
+                      v-html="edge['from']"
                       @click="rulebook.global_edges.splice(index, 1)"
                     ></td>
                     <td
                       class="p-4 text-left border border-gray-200 equation"
-                      v-html="edge['from']"
+                      v-html="edge['to']"
                       @click="rulebook.global_edges.splice(index, 1)"
                     ></td>
                   </tr>
