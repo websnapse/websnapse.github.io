@@ -10,6 +10,54 @@ export const importSystem = (system) => {
   const { neurons, synapses, rule_dict } = system;
   var allnodes = new Set();
 
+  if (rule_dict == undefined) {
+    var graph_nodes = neurons.map((node) => {
+      var { id, content, type, rules, position } = node;
+
+      rulebook.all_rules[id] = rules;
+      allnodes.add(id);
+      return {
+        id,
+        content,
+        rules,
+        type,
+        x: position.x,
+        y: position.y,
+      };
+    });
+    var graph_edges = [];
+    synapses.forEach((synapse) => {
+      if (allnodes.has(synapse.from) && allnodes.has(synapse.to)) {
+        graph_edges = [
+          ...graph_edges,
+          {
+            source: synapse.from,
+            target: synapse.to,
+            label: synapse.weight,
+          },
+        ];
+      } else {
+        rulebook.global_edges = [
+          ...rulebook.global_edges,
+          {
+            from: synapse.from,
+            to: synapse.to,
+            weight: synapse.weight,
+          },
+        ];
+      }
+    });
+
+    const graph_system = {
+      nodes: graph_nodes,
+      edges: graph_edges,
+    };
+
+    console.log(graph_system);
+
+    return graph_system;
+  }
+
   var graph_nodes = neurons.map((node) => {
     var { id, content, type, position } = node;
     allnodes.add(id);
@@ -127,6 +175,8 @@ export const importSystem = (system) => {
     nodes: graph_nodes,
     edges: graph_edges,
   };
+
+  console.log(graph_system);
 
   return graph_system;
 };
