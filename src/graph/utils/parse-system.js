@@ -102,7 +102,10 @@ export const importSystem = (system) => {
           rules: [...graph_nodes[index].rules, modRule],
         };
         if (matches[0] in rulebook.all_rules) {
-          rulebook.all_rules[matches[0]] = [...rulebook.all_rules[matches[0]]];
+          rulebook.all_rules[matches[0]] = [
+            ...rulebook.all_rules[matches[0]],
+            modRule,
+          ];
         } else {
           rulebook.all_rules[matches[0]] = [modRule];
         }

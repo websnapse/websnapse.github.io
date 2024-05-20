@@ -129,24 +129,24 @@
 </style>
 
 <script setup>
-import katex from 'katex';
+import katex from "katex";
 
-import { computed } from 'vue';
+import { computed } from "vue";
 import {
   TransitionChild,
   Dialog,
   DialogPanel,
   DialogTitle,
-} from '@headlessui/vue';
+} from "@headlessui/vue";
 import {
   Listbox,
   ListboxButton,
   ListboxOptions,
   ListboxOption,
-} from '@headlessui/vue';
-import system from '@/stores/system';
+} from "@headlessui/vue";
+import system from "@/stores/system";
 
-const props = defineProps(['isOpen', 'closeModal', 'details', 'socket']);
+const props = defineProps(["isOpen", "closeModal", "details", "socket"]);
 
 const getKatex = (text) => {
   return katex.renderToString(String(text), {
@@ -174,7 +174,7 @@ const getNode = (id) => {
 const checkDetails = () => {
   props.socket.send(
     JSON.stringify({
-      cmd: 'choice',
+      cmd: "choice",
       choice: selected_rules.value,
     })
   );

@@ -3,32 +3,34 @@ import { neuron } from "../../stores/neuron";
 
 export default async function addNode(ev, graph) {
   neuron.id = Math.random().toString(36).substr(2, 5);
+  neuron.rules = [];
   await createNeuron();
 
   if (!neuron.success) return;
+  else {
+    neuron.success = false;
 
-  neuron.success = false;
+    neuron.count += 1;
+    if (neuron.type === "regular") {
+      graph.addItem("node", {
+        x: ev.x,
+        y: ev.y,
+        id: neuron.id, // Generate a unique id
+        type: neuron.type,
+        content: neuron.content,
+        rules: neuron.rules,
+      });
+    } else {
+      graph.addItem("node", {
+        x: ev.x,
+        y: ev.y,
+        id: neuron.id, // Generate a unique id
+        type: neuron.type,
+        content: neuron.content,
+      });
 
-  neuron.count += 1;
-  if (neuron.type === "regular") {
-    graph.addItem("node", {
-      x: ev.x,
-      y: ev.y,
-      id: neuron.id, // Generate a unique id
-      type: neuron.type,
-      content: neuron.content,
-      rules: neuron.rules,
-    });
-  } else {
-    graph.addItem("node", {
-      x: ev.x,
-      y: ev.y,
-      id: neuron.id, // Generate a unique id
-      type: neuron.type,
-      content: neuron.content,
-    });
-
-    neuron.content = 1;
-    neuron.rules = [];
+      neuron.content = 1;
+      neuron.rules = [];
+    }
   }
 }

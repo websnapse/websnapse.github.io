@@ -233,6 +233,7 @@ const checkDetails = () => {
   if (neuron.type === "regular") {
     rulebook.all_rules[neuron.id] = neuron.rules;
   }
+
   neuron.success = true;
 
   props.closeModal();
