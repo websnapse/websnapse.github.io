@@ -247,20 +247,18 @@ onMounted(() => {
 
     const idSet = new Set(newValue.map((dict) => dict.id));
 
-    let adjustGrid = false;
-    g.getNodes().forEach(async (node) => {
-      if (!idSet.has(node.getModel().id)) {
-        adjustGrid = true;
-        g.removeItem(node);
-      }
-    });
+    let finNodes = g.getNodes().map((node) => node.getModel().id);
 
-    g.getNodes().forEach(async (node) => {
-      if (!idSet.has(node.getModel().id)) {
-        adjustGrid = true;
-        g.removeItem(node);
-      }
-    });
+    let adjustGrid = false;
+    while (finNodes.length != idSet.size) {
+      g.getNodes().forEach(async (node) => {
+        if (!idSet.has(node.getModel().id)) {
+          adjustGrid = true;
+          g.removeItem(node);
+        }
+      });
+      finNodes = g.getNodes().map((node) => node.getModel().id);
+    }
 
     for (const [id, edges] of Object.entries(config.edges)) {
       var node = g.findById(id);
