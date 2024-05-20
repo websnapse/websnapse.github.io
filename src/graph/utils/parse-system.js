@@ -1,4 +1,5 @@
 import rulebook from "@/stores/rulebook";
+import system from "@/stores/system";
 import { rule } from "postcss";
 
 export const importSystem = (system) => {
@@ -135,7 +136,7 @@ export const exportSystem = (graph) => {
   const edges = graph.save().edges;
 
   const parsed_nodes = nodes?.map((node) => {
-    var { id, content, rules, type, x, y } = node;
+    var { id, content, type, x, y } = node;
     if (type === "input" || type === "output") {
       return {
         id,
@@ -151,7 +152,7 @@ export const exportSystem = (graph) => {
     return {
       id,
       content,
-      rules,
+      rules: [],
       type,
       position: {
         x,
@@ -175,7 +176,7 @@ export const exportSystem = (graph) => {
         if (rule.includes("\\left")) {
           const idx = rule.indexOf("\\right]");
           const newRule =
-            rule.slice(0, idx + 7) + `_{${node}}` + rule.slice(idx + 7);
+            rule.slice(0, idx + 7) + "_{" + node + "}" + rule.slice(idx + 7);
           graph_rules = [...graph_rules, newRule];
         } else {
           const newRule = `\\left[${rule.trim()} \\right]_{${node}}`;
@@ -188,7 +189,10 @@ export const exportSystem = (graph) => {
     if (rules != undefined) {
       rules.forEach((rule) => {
         if (rule.includes("\\left")) {
-          graph_rules = [...graph_rules, rule.trim()];
+          const idx = rule.indexOf("\\right]");
+          const newRule =
+            rule.slice(0, idx + 7) + "_{" + node + "}" + rule.slice(idx + 7);
+          graph_rules = [...graph_rules, newRule];
         } else {
           const newRule = `\\left[${rule.trim()} \\right]_{${node}}`;
           graph_rules = [...graph_rules, newRule];
@@ -211,6 +215,7 @@ export const exportSystem = (graph) => {
     rule_dict: graph_rules,
   };
 
+  system.reset = parsed_system;
   return parsed_system;
 };
 

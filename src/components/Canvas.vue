@@ -224,21 +224,6 @@ onMounted(() => {
   );
 
   async function processItems(newValue) {
-    console.log(newValue);
-    const nodes = g.getNodes();
-    const idSet = new Set(newValue.map((dict) => dict.id));
-    const curSet = new Set();
-
-    let adjustGrid = false;
-    nodes.forEach((node) => {
-      if (idSet.has(node.getModel().id)) {
-        curSet.add(node.getModel().id);
-      } else {
-        adjustGrid = true;
-        g.removeItem(node);
-      }
-    });
-
     newValue.forEach(async (item) => {
       var node = g.findById(item.id);
 
@@ -260,6 +245,23 @@ onMounted(() => {
       }
     });
 
+    const idSet = new Set(newValue.map((dict) => dict.id));
+
+    let adjustGrid = false;
+    g.getNodes().forEach(async (node) => {
+      if (!idSet.has(node.getModel().id)) {
+        adjustGrid = true;
+        g.removeItem(node);
+      }
+    });
+
+    g.getNodes().forEach(async (node) => {
+      if (!idSet.has(node.getModel().id)) {
+        adjustGrid = true;
+        g.removeItem(node);
+      }
+    });
+
     for (const [id, edges] of Object.entries(config.edges)) {
       var node = g.findById(id);
 
@@ -272,8 +274,8 @@ onMounted(() => {
                 .getEdges()
                 .filter(
                   (oldedge) =>
-                    oldedge.getSource().getModel().id === id &&
-                    oldedge.getTarget().getModel().id === edge
+                    oldedge.getModel().source === id &&
+                    oldedge.getModel().target === edge
                 ).length == 0
             ) {
               g.addItem("edge", {
@@ -289,31 +291,6 @@ onMounted(() => {
 
     const promises = newValue.map(async (item) => {
       var node = g.findById(item.id);
-
-      // g.addItem("edge", {
-      //   source: item.id,
-      //   target: "out",
-      //   label: 1,
-      // });
-
-      // if (node == undefined) {
-      //   g.updateLayout(
-      //     {
-      //       type: "dagre",
-      //       rankdir: "LR",
-      //       linkDistance: 300,
-      //       nodeStrength: 10,
-      //       edgeStrength: 10,
-      //       nodeSpacing: 50,
-      //       minMovement: 0.01,
-      //       maxIteration: 100,
-      //       damping: 0.01,
-      //       preventOverlap: true,
-      //     },
-      //     "center"
-      //   );
-      //   node = g.findById(item.id);
-      // }
 
       const { type, content, delay } = node.getModel();
 
