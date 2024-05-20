@@ -186,7 +186,7 @@ export const exportSystem = (graph) => {
   const edges = graph.save().edges;
 
   const parsed_nodes = nodes?.map((node) => {
-    var { id, content, type, x, y } = node;
+    var { id, content, type, rules, x, y } = node;
     if (type === "input" || type === "output") {
       return {
         id,
@@ -202,7 +202,7 @@ export const exportSystem = (graph) => {
     return {
       id,
       content,
-      rules: [],
+      rules,
       type,
       position: {
         x,
@@ -265,7 +265,6 @@ export const exportSystem = (graph) => {
     rule_dict: graph_rules,
   };
 
-  system.reset = parsed_system;
   return parsed_system;
 };
 
