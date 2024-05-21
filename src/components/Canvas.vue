@@ -200,6 +200,9 @@ onMounted(() => {
           case "history":
             let all_neurons = new Set();
 
+            console.log(data.history);
+            console.log(data.labels);
+
             data.labels.forEach((iter) => {
               console.log(iter);
               iter.forEach((neuron) => {
@@ -216,9 +219,8 @@ onMounted(() => {
 
             data.history.forEach((decision, i) => {
               decision.forEach((neuron, j) => {
-                if (neuron) {
+                if (neuron !== null) {
                   const idx = system.labels.indexOf(data.labels[i][j]);
-
                   if (typeof neuron == "string") {
                     system.history[i][idx] = foldString(neuron);
                   } else {
@@ -233,6 +235,7 @@ onMounted(() => {
                 }
               });
             });
+
             break;
           default:
             break;
