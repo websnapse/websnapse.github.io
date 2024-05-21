@@ -15,12 +15,17 @@ export default async function addEdge() {
   newEdge["to"] = rulebook.to;
   newEdge["weight"] = rulebook.weight;
 
+  const src_node = graph.value.findById(rulebook.from);
+  const dst_node = graph.value.findById(rulebook.to);
   if (rulebook.from != "" && rulebook.to != "") {
-    rulebook.global_edges = [...rulebook.global_edges, newEdge];
-    graph.value.addItem("edge", {
-      source: rulebook.from,
-      target: rulebook.to,
-      label: rulebook.weight,
-    });
+    if (src_node != undefined && dst_node != undefined) {
+      graph.value.addItem("edge", {
+        source: rulebook.from,
+        target: rulebook.to,
+        label: rulebook.weight,
+      });
+    } else {
+      rulebook.global_edges = [...rulebook.global_edges, newEdge];
+    }
   }
 }

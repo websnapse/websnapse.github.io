@@ -12,16 +12,28 @@ export default async function addRule() {
   if (rulebook.success) {
     const node = graph.value.findById(rulebook.current_neuron_id);
     if (node != null) {
-      const { rules } = node.getModel();
+      const { id, x, y, type, rules, content } = node.getModel();
+
       const newRules = [...rules, ...rulebook.rules];
-      graph.value.updateItem(
-        node,
-        {
-          rules: newRules,
-        },
-        true
-      );
-      rulebook.all_rules[node.getModel().id] = newRules;
+
+      if (type == "regular") {
+        graph.value.updateItem(
+          node,
+          {
+            rules: newRules,
+          },
+          false
+        );
+        // graph.addItem("node", {
+        //   x: x,
+        //   y: y,
+        //   id: id,
+        //   type: type,
+        //   content: content,
+        //   rules: rules,
+        // });
+        rulebook.all_rules[node.getModel().id] = newRules;
+      }
     } else {
       // graph.value.addItem("node", {
       //   x: 100,

@@ -74,17 +74,6 @@ onMounted(() => {
   g.read(importSystem(system.data()));
   graph.value = g;
 
-  // console.log(graph.value.getNodes());
-  // rulebook.all_rules = {};
-  // graph.value.getNodes().forEach((node) => {
-  //   const nodeMap = new Object();
-
-  //   if (node.getModel().type == "regular") {
-  //     nodeMap[node.getModel().id] = node.getModel().rules;
-  //     rulebook.all_rules = { ...rulebook.all_rules, ...nodeMap };
-  //   }
-  // });
-
   load.value = (data) => {
     system.reset = null;
     system.tick = 0;

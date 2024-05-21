@@ -96,7 +96,7 @@ export const importSystem = (system) => {
 
   rule_dict.forEach((rule) => {
     const to_idx = rule.indexOf("\\to");
-    const right_idx = rule.indexOf("\\right");
+    const right_idx = rule.indexOf("\\right]");
 
     if (to_idx < right_idx) {
       // regular
@@ -223,7 +223,7 @@ export const exportSystem = (graph) => {
   Object.entries(rulebook.all_rules).forEach(([node, rules]) => {
     if (rules != undefined) {
       rules.forEach((rule) => {
-        if (rule.includes("\\left")) {
+        if (rule.includes("\\left[")) {
           const idx = rule.indexOf("\\right]");
           const newRule =
             rule.slice(0, idx + 7) + "_{" + node + "}" + rule.slice(idx + 7);
@@ -238,7 +238,7 @@ export const exportSystem = (graph) => {
   Object.entries(rulebook.global_rules).forEach(([node, rules]) => {
     if (rules != undefined) {
       rules.forEach((rule) => {
-        if (rule.includes("\\left")) {
+        if (rule.includes("\\left[")) {
           const idx = rule.indexOf("\\right]");
           const newRule =
             rule.slice(0, idx + 7) + "_{" + node + "}" + rule.slice(idx + 7);
