@@ -42,7 +42,7 @@
             ></button>
             <div class="max-w-xl mt-4 overflow-auto max-h-[80vh]">
               <label class="mb-2 text-sm font-medium"> Shown Rules </label>
-              <table class="w-full h-full overflow-scroll">
+              <table class="w-full h-full overflow-scroll mb-2">
                 <tbody>
                   <tr v-for="[id, rules] of Object.entries(rulebook.all_rules)">
                     <td class="p-4 text-left border border-gray-200">
@@ -57,7 +57,7 @@
                 </tbody>
               </table>
               <label class="mb-2 text-sm font-medium"> Global Rules </label>
-              <table class="w-full h-full overflow-scroll">
+              <table class="w-full h-full overflow-scroll mb-2">
                 <tbody>
                   <tr
                     v-for="[id, rules] of Object.entries(rulebook.global_rules)"
@@ -75,7 +75,7 @@
                 </tbody>
               </table>
               <label class="mb-2 text-sm font-medium"> Global Edges </label>
-              <table class="w-full h-full overflow-scroll">
+              <table class="w-full h-full overflow-scroll mb-2">
                 <tbody>
                   <tr v-for="[index, edge] of rulebook.global_edges.entries()">
                     <!-- <td class="p-4 text-left border border-gray-200">
