@@ -11,6 +11,7 @@ const system = reactive({
   speed: 1.5,
   tick: 0,
   history: [],
+  labels: [],
   backup: useStorage("system", sample),
   reset: null,
   ws: null,

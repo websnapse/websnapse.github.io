@@ -49,14 +49,14 @@
                   <tr class="bg-dark/20">
                     <th class="p-4 text-left border border-gray-200">Time</th>
                     <th
-                      v-for="neuron in system.data().neurons"
-                      v-html="getKatex(neuron.id)"
+                      v-for="neuron in system.labels"
+                      v-html="getKatex(neuron)"
                       class="p-4 font-bold text-left border border-gray-200 equation"
                     ></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
+                  <!-- <tr
                     v-for="(decision, tick) in system.history"
                     :class="tick % 2 ? 'bg-dark/10' : ''"
                   >
@@ -67,6 +67,19 @@
                       class="p-4 text-left border border-gray-200 equation"
                       v-for="(rule, neuron) in decision"
                       v-html="getRule(neuron, rule)"
+                    ></td>
+                  </tr> -->
+                  <tr
+                    v-for="(decision, tick) in system.history"
+                    :class="tick % 2 ? 'bg-dark/10' : ''"
+                  >
+                    <td class="p-4 text-left border border-gray-200">
+                      {{ tick }}
+                    </td>
+                    <td
+                      class="p-4 text-left border border-gray-200 equation"
+                      v-for="(rule, neuron) in decision"
+                      v-html="getKatex(rule)"
                     ></td>
                   </tr>
                 </tbody>
@@ -98,17 +111,5 @@ const getKatex = (text) => {
     throwOnError: false,
     displayMode: true,
   });
-};
-
-const data = system.data();
-
-const getRule = (neuron, rule) => {
-  return getKatex(
-    data.neurons[neuron].type === "regular"
-      ? data.neurons[neuron].rules[rule] ?? "-"
-      : rule
-      ? foldString(rule)
-      : "-"
-  );
 };
 </script>

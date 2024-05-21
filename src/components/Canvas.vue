@@ -64,6 +64,19 @@ const handleBeforeUnload = (event) => {
 };
 
 import rulebook from "@/stores/rulebook";
+import { foldString } from "@/utils/math";
+
+const data = system.data();
+
+const getRule = (neuron, rule) => {
+  return getKatex(
+    data.neurons[neuron].type === "regular"
+      ? data.neurons[neuron].rules[rule] ?? "-"
+      : rule
+      ? foldString(rule)
+      : "-"
+  );
+};
 
 onMounted(() => {
   const vh = document.getElementById("mountNode").offsetHeight;
@@ -185,7 +198,41 @@ onMounted(() => {
             system.tick = data.tick;
             break;
           case "history":
-            system.history = data.history;
+            let all_neurons = new Set();
+
+            data.labels.forEach((iter) => {
+              console.log(iter);
+              iter.forEach((neuron) => {
+                all_neurons.add(neuron);
+              });
+            });
+
+            system.labels = [...all_neurons];
+
+            system.history = [];
+            for (let i = 0; i < data.history.length; i++) {
+              system.history.push(new Array(system.labels.length).fill("-"));
+            }
+
+            data.history.forEach((decision, i) => {
+              decision.forEach((neuron, j) => {
+                if (neuron) {
+                  const idx = system.labels.indexOf(data.labels[i][j]);
+
+                  if (typeof neuron == "string") {
+                    system.history[i][idx] = foldString(neuron);
+                  } else {
+                    let curRule = -1;
+                    if (data.labels[i][j] in rulebook.all_rules) {
+                      curRule = rulebook.all_rules[data.labels[i][j]];
+                    } else if (data.labels[i][j] in rulebook.global_rules) {
+                      curRule = rulebook.global_rules[data.labels[i][j]];
+                    }
+                    system.history[i][idx] = curRule[neuron];
+                  }
+                }
+              });
+            });
             break;
           default:
             break;

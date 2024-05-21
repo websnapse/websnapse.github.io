@@ -84,7 +84,6 @@ const getHistory = () => {
 };
 
 const getRulebook = () => {
-  console.log(rulebook.global_rules);
   for (const id in rulebook.global_rules) {
     if (rulebook.global_rules[id].length == 0) {
       delete rulebook.global_rules[id];
