@@ -153,16 +153,4 @@ const getKatex = (text) => {
     displayMode: true,
   });
 };
-
-const data = system.data();
-
-const getRule = (neuron, rule) => {
-  return getKatex(
-    data.neurons[neuron].type === "regular"
-      ? data.neurons[neuron].rules[rule] ?? "-"
-      : rule
-      ? foldString(rule)
-      : "-"
-  );
-};
 </script>
