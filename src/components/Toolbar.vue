@@ -15,7 +15,6 @@ import dialog from "@/stores/dialog";
 import addRule from "@/graph/utils/add-rule";
 import addEdge from "@/graph/utils/add-edge";
 import rulebook from "@/stores/rulebook";
-import { rule } from "postcss";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
@@ -85,6 +84,12 @@ const getHistory = () => {
 };
 
 const getRulebook = () => {
+  console.log(rulebook.global_rules);
+  for (const id in rulebook.global_rules) {
+    if (rulebook.global_rules[id].length == 0) {
+      delete rulebook.global_rules[id];
+    }
+  }
   dialog.rulebook = true;
 };
 
