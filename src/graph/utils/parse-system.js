@@ -202,7 +202,7 @@ export const exportSystem = (graph) => {
     return {
       id,
       content,
-      rules,
+      rules: [],
       type,
       position: {
         x,

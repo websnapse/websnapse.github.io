@@ -222,7 +222,11 @@ onMounted(() => {
                 if (neuron !== null) {
                   const idx = system.labels.indexOf(data.labels[i][j]);
                   if (typeof neuron == "string") {
-                    system.history[i][idx] = foldString(neuron);
+                    if (neuron == "") {
+                      system.history[i][idx] = "-";
+                    } else {
+                      system.history[i][idx] = foldString(neuron);
+                    }
                   } else {
                     let curRule = -1;
                     if (data.labels[i][j] in rulebook.all_rules) {
