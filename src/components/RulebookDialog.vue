@@ -75,13 +75,13 @@
                 </tbody>
               </table>
               <label class="mb-2 text-sm font-medium"> Global Edges </label>
-              <table class="w-full h-full overflow-scroll mb-2">
+              <table class="h-full overflow-scroll mb-2">
                 <tbody>
                   <tr v-for="[index, edge] of rulebook.global_edges.entries()">
                     <!-- <td class="p-4 text-left border border-gray-200">
                       {{ id }}
                     </td> -->
-                    <td
+                    <!-- <td
                       class="p-4 text-left border border-gray-200 equation"
                       v-html="edge['from']"
                       @click="rulebook.global_edges.splice(index, 1)"
@@ -89,6 +89,11 @@
                     <td
                       class="p-4 text-left border border-gray-200 equation"
                       v-html="edge['to']"
+                      @click="rulebook.global_edges.splice(index, 1)"
+                    ></td> -->
+                    <td
+                      class="p-4 text-left border border-gray-200 equation"
+                      v-html="joinEdge(edge)"
                       @click="rulebook.global_edges.splice(index, 1)"
                     ></td>
                   </tr>
@@ -152,5 +157,9 @@ const getKatex = (text) => {
     throwOnError: false,
     displayMode: true,
   });
+};
+
+const joinEdge = (edge) => {
+  return getKatex(`${edge["from"]} \\to ${edge["to"]}`);
 };
 </script>
