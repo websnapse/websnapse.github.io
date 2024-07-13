@@ -36,6 +36,7 @@ import settings from '@/stores/settings';
 import { importSystem } from '@/graph/utils/parse-system';
 import { useToast } from 'vue-toast-notification';
 import { redo, undo } from '@/graph/utils/action-stack';
+import { replaceInlineMath } from '@/utils/math';
 
 const $toast = useToast();
 
@@ -63,7 +64,10 @@ onMounted(() => {
   graph.value = g;
 
   load.value = (data) => {
-    system.ws.close();
+    system.halted = true;
+    if (system.ws) {
+      system.ws.close();
+    }
     system.reset = null;
     system.tick = 0;
     g.destroyLayout();
@@ -146,10 +150,11 @@ onMounted(() => {
           case 'step':
             config.value = JSON.parse(JSON.stringify(data.configurations));
             data.configurations = null;
-            if (data.halted && navbar.running) {
+            if (data.halted) {
               $toast.success('Simulation completed successfully', {
                 position: 'top-right',
               });
+              system.halted = true;
               navbar.running = false;
             }
 
@@ -164,6 +169,10 @@ onMounted(() => {
             break;
           case 'history':
             system.history = data.history;
+            break;
+          case 'error':
+            navbar.running = false;
+            $toast.error(replaceInlineMath(data.message), { position: 'top-right' });
             break;
           default:
             break;
