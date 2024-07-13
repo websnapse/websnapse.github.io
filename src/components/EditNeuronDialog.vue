@@ -45,14 +45,9 @@
                     >
                       ID
                     </label>
-                    <input
-                      type="search"
-                      id="default-search"
-                      disabled
-                      v-model="props.details.id"
-                      class="block w-full p-3 text-sm border border-gray-300 rounded-lg outline-none bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="n1"
-                      required
+                    <MathEditor
+                      v-bind:model-value="props.details.id"
+                      :readonly="true"
                     />
                   </div>
                   <div class="relative flex flex-col gap-1">
@@ -96,16 +91,13 @@
                       Add Rule
                     </button>
                   </div>
-
-                  <div class="mt-4">
-                    <button
-                      type="submit"
-                      class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      @click="checkDetails"
-                    >
-                      Update
-                    </button>
-                  </div>
+                  <button
+                    type="submit"
+                    class="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    @click.prevent="checkDetails"
+                  >
+                    Update
+                  </button>
                 </form>
               </div>
             </div>
@@ -124,21 +116,53 @@ import {
   DialogTitle,
 } from '@headlessui/vue';
 import MathEditor from '@/components/MathEditor.vue';
+import { useToast } from 'vue-toast-notification';
+import {replaceInlineMath} from '@/utils/math';
 
 const props = defineProps(['isOpen', 'closeModal', 'details']);
 
-const checkDetails = () => {
-  if (props.details.type === 'regular') {
-    props.details.rules.forEach((rule) => {
-      if (rule === '') {
-        alert('Please enter rules');
+const $toast = useToast();
+
+const validateNeuron = async (neuron) => {
+  const res = await fetch(`${import.meta.env.VITE_HTTP_API}/validate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(neuron),
+  });
+
+  const data = await res.json();
+
+  return data;
+};
+
+const checkDetails = async () => {
+  switch (props.details.type) {
+    case 'regular':
+      const res = await validateNeuron(props.details);
+      $toast.open({
+        title: 'Validation results:',
+        message: replaceInlineMath(res.message),
+        type: res.type,
+        position: 'top-right',
+      })
+      if (res.type === 'error') {
         return;
       }
-    });
-  }
-
-  if (props.details.type === 'output') {
-    props.details.content = '';
+      break;
+    case 'input':
+      if (props.details.content === '') {
+        $toast.error('Please enter neuron content');
+        return;
+      }
+      break;
+    case 'output':
+      props.details.content = '';
+      break;
+    default:
+      alert('Invalid neuron type');
+      return;
   }
 
   props.details.success = true;

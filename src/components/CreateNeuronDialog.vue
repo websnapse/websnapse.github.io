@@ -48,13 +48,9 @@
                     >
                       ID
                     </label>
-                    <input
-                      type="text"
-                      id="label"
-                      v-model="neuron.id"
-                      class="input-field"
-                      placeholder="n1"
-                      required
+                    <MathEditor
+                      v-bind:model-value="neuron.id"
+                      @change="(value) => (neuron.id = value)"
                     />
                   </div>
                   <div class="relative flex flex-col gap-1">
@@ -199,9 +195,13 @@ import {
   ListboxOptions,
   ListboxOption,
 } from '@headlessui/vue';
-import MathEditor from '@/components/MathEditor.vue';
+import MathEditor from '@/components/MathEditor.vue'
+import { useToast } from 'vue-toast-notification';
+import {replaceInlineMath} from '@/utils/math';;
 
 const props = defineProps(['isOpen', 'closeModal']);
+
+const $toast = useToast();
 
 const types = ['regular', 'input', 'output'];
 
@@ -214,18 +214,50 @@ const addRule = () => {
   }, 0);
 };
 
-const checkDetails = () => {
-  if (neuron.type === 'regular') {
-    neuron.rules.forEach((rule) => {
-      if (rule === '') {
-        alert('Please enter rules');
+const validateNeuron = async (neuron) => {
+  const res = await fetch(`${import.meta.env.VITE_HTTP_API}/validate`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(neuron),
+  });
+
+  const data = await res.json();
+
+  return data;
+};
+
+const checkDetails = async () => {
+  switch (neuron.type) {
+    case 'regular':
+      if (neuron.rules.length === 0) {
+        $toast.error('Please enter at least one rule', { position: 'top-right' });
         return;
       }
-    });
-  }
-
-  if (neuron.type === 'output') {
-    neuron.content = '';
+      const res = await validateNeuron(neuron);
+      $toast.open({
+        title: 'Validation results:',
+        message: replaceInlineMath(res.message),
+        type: res.type,
+        position: 'top-right',
+      })
+      if (res.type === 'error') {
+        return;
+      }
+      break;
+    case 'input':
+      if (neuron.content === '') {
+        $toast.error('Please enter neuron content');
+        return;
+      }
+      break;
+    case 'output':
+      neuron.content = '';
+      break;
+    default:
+      alert('Invalid neuron type');
+      return;
   }
 
   neuron.success = true;
