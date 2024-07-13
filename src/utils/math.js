@@ -1,5 +1,4 @@
 import style from '@/stores/styles';
-import settings from '@/stores/settings';
 
 const MathJax = window.MathJax;
 
@@ -30,6 +29,28 @@ export const foldString = (str) => {
     }
   }
   return result;
+};
+
+const latexToSvg = (formula) => {
+  let wrapper = MathJax.tex2svg(`${formula}`, {
+    em: 10,
+    ex: 5,
+    display: true,
+  });
+  let mjOut = wrapper.getElementsByTagName('svg')[0];
+  mjOut.style.display = 'inline-block';
+  mjOut = mjOut.outerHTML;
+  mjOut = `<span style="padding: 0em 0.4em; background-color: rgba(255, 255, 255, 0.2); border-radius: 0.2em; box-shadow: inset 0 0 4px rgba(0,0,0,0.2);">${mjOut}</span>`;
+
+  const output = mjOut;
+  return output;
+};
+
+export const replaceInlineMath = (text) => {
+  const regex = /\$(.*?)\$/g;
+  return text.replace(regex, (match, formula) => {
+    return latexToSvg(formula);
+  });
 };
 
 /**
