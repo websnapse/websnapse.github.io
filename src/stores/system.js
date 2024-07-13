@@ -13,6 +13,7 @@ const system = reactive({
   history: [],
   backup: useStorage('system', sample),
   reset: null,
+  halted: true,
   ws: null,
 
   data() {

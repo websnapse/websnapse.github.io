@@ -93,11 +93,13 @@ const stop = () => {
 
 const play = async () => {
   navbar.running = true;
-  if (!system.reset) {
+  if (system.halted || system.reset) {
     system.ws = new WebSocket(
       `${import.meta.env.VITE_WS_API}/ws/simulate/${system.mode}`
     );
-    system.reset = system.data();
+    if (!system.reset) {
+      system.reset = system.data();
+    }
   } else {
     system.ws.send(JSON.stringify({ cmd: 'continue' }));
   }
