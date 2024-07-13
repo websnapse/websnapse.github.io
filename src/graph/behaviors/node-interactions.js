@@ -36,13 +36,16 @@ export default function nodeInteractions() {
           // get item edges
           let edges = [];
           item.getEdges().forEach((edge) => edges.push(clone(edge.getModel())));
+          this.graph.removeItem(item);
+          this.graph.addItem('node', {
+            ...model,
+            ...updated,
+          });
           setTimeout(() => {
-            this.graph.removeItem(item);
-            this.graph.addItem('node', {
-              ...model,
-              ...updated,
-            });
             edges.forEach((edge) => {
+              // check if edge is already in the graph
+              const edgeExists = this.graph.findById(edge.id);
+              if (edgeExists) return;
               this.graph.addItem('edge', edge);
             });
           }, 100);
