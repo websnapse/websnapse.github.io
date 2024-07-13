@@ -31,6 +31,10 @@ const props = defineProps({
     type: Function,
     required: true,
   },
+  readonly: {
+    type: Boolean,
+    default: false
+  },
   onDelete: {
     type: Function,
     required: false,
@@ -40,6 +44,7 @@ const props = defineProps({
 const specialKeys = {
   '/': '\\slash',
   '*': '\\ast',
+  // ' ': ''
 };
 
 const mathField = ref(null);
@@ -48,18 +53,21 @@ onMounted(() => {
   const MQ = MathQuill.getInterface(2);
   const mathQuillElement = mathField.value;
 
-  const mathFieldInstance = MQ.MathField(mathQuillElement, {
+  const mathFieldInstance = props.readonly 
+    ? MQ.StaticMath(mathQuillElement)
+    : MQ.MathField(mathQuillElement, {
     handlers: {
       edit: () => {
         props.onChange(mathFieldInstance.latex());
       },
     },
+    spaceBehavesLikeTab: true,
     autoCommands: 'slash to rightarrow lambda ast',
   });
 
   mathFieldInstance.el().addEventListener('keydown', function (e) {
     if (e.key in specialKeys) {
-      mathFieldInstance.cmd(specialKeys[e.key]);
+      console.log(mathFieldInstance.cmd(specialKeys[e.key]));
       e.preventDefault();
     }
   });
